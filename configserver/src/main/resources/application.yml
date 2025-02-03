@@ -8,5 +8,6 @@ spring:
         config:
             server:
                 git:
-                    uri: "https://github.com/FlavioTroja/eq.config-repo"
+                    uri: "https://github.com/FlavioTroja/EQ"
+                    searchPaths: "configrepo"
                     clone-on-start: true
