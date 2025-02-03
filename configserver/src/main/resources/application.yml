@@ -1,0 +1,12 @@
+server:
+    port: 8888
+
+spring:
+    profiles:
+        active: dev
+    cloud:
+        config:
+            server:
+                git:
+                    uri: "https://github.com/FlavioTroja/eq.config-repo"
+                    clone-on-start: true
