@@ -3,7 +3,7 @@ spring:
         name: loadbalancer
 
 server:
-    port: 7171
+    port: 8763
 
 eureka:
   client:

@@ -13,7 +13,7 @@ public class CustomerService {
     @GetMapping("/gethello")
     public String getMethodName() {
         String res = calendar.hello();
-        return "ciao " + res;
+        return "get" + res;
     }
 
 }

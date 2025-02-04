@@ -1,0 +1,21 @@
+spring:
+    application:
+        name: gateway
+    cloud:
+        gateway:
+            discovery:
+                locator:
+                    enabled: true    
+            routes[0]:
+                    predicates[0]: Path=/api/calendar/**        
+                    uri: lb://CALENDAR
+
+server:
+    port: 8765
+
+eureka:
+  client:
+    service-url: 
+        default-zone: ${EUREKA_URI:http://localhost:8761/eureka}
+        instance:
+            prefer-ip-address: true    
