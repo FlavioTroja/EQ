@@ -10,10 +10,10 @@ public class CustomerService {
     @Autowired
     private Calendar calendar;
 
-    @GetMapping("/gethello")
+    @GetMapping("/today")
     public String getMethodName() {
-        String res = calendar.hello();
-        return "get" + res;
+        String res = calendar.today();
+        return "today: " + res;
     }
 
 }

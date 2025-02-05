@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(name = "CALENDAR")
 public interface Calendar {
 
-    @GetMapping("/api/hello")
-    public String hello();
+    @GetMapping("/api/calendar/today")
+    public String today();
 }
