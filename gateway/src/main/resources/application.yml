@@ -9,6 +9,9 @@ spring:
             routes[0]:
                     predicates[0]: Path=/api/calendar/**        
                     uri: lb://CALENDAR
+            routes[1]:
+                    predicates[0]: Path=/api/registry/**        
+                    uri: lb://REGISTRY        
 
 server:
     port: 8765
