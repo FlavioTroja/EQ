@@ -11,7 +11,7 @@ spring:
                     uri: lb://CALENDAR
             routes[1]:
                     predicates[0]: Path=/api/registry/**        
-                    uri: lb://REGISTRY        
+                    uri: lb://CALENDAR        
 
 server:
     port: 8765
