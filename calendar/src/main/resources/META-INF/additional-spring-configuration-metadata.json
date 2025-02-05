@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "server.instance.id",
+    "type": "java.lang.String",
+    "description": "A description for 'server.instance.id'"
+  },
+  {
+    "name": "message.welcome",
+    "type": "java.lang.String",
+    "description": "A description for 'message.welcome'"
+  }
+]}
