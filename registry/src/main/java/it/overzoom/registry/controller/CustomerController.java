@@ -1,4 +1,4 @@
-package it.overzoom.registry.domain.controller;
+package it.overzoom.registry.controller;
 
 import java.util.List;
 
@@ -7,13 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.overzoom.registry.domain.Customer;
 import it.overzoom.registry.exception.ResourceNotFoundException;
-import it.overzoom.registry.repository.CustomerRepository;
+import it.overzoom.registry.service.CustomerServiceImpl;
 import jakarta.validation.Valid;
 
 @RestController
@@ -21,23 +22,30 @@ import jakarta.validation.Valid;
 public class CustomerController {
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerServiceImpl customerService;
 
     @GetMapping("/")
     public List<Customer> getAll() {
-        return customerRepository.findAll();
+        return customerService.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getById(@PathVariable(value = "id") String customerId)
             throws ResourceNotFoundException {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + customerId));
-        return ResponseEntity.ok().body(customer);
+
+        return ResponseEntity.ok().body(customerService.getById(customerId));
     }
 
     @PostMapping("/")
     public Customer create(@Valid @RequestBody Customer customer) {
-        return customerRepository.save(customer);
+        return customerService.create(customer);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Customer> update(
+            @PathVariable(value = "id") String customerId,
+            @Valid @RequestBody Customer customer) throws ResourceNotFoundException {
+
+        return ResponseEntity.ok(customerService.update(customerId, customer));
     }
 }

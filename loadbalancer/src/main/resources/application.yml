@@ -1,7 +1,0 @@
-spring:
-    application:
-        name: loadbalancer
-
-server:
-    port: 8763
-
