@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### HAS ERR ###
+hs_err_*

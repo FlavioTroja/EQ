@@ -1,18 +1,23 @@
 package it.overzoom.registry.service;
 
-import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import it.overzoom.registry.domain.Customer;
-import it.overzoom.registry.exception.ResourceNotFoundException;
 
 public interface CustomerService {
 
-    List<Customer> findAll();
+    Page<Customer> findAll(Pageable pageable);
 
-    Customer getById(String customerId) throws ResourceNotFoundException;
+    Optional<Customer> findById(String customerId);
+
+    boolean existsById(String customerId);
 
     Customer create(Customer customer);
 
-    Customer update(String customerId, Customer customerDetails) throws ResourceNotFoundException;
+    Optional<Customer> update(Customer customer);
 
+    Optional<Customer> partialUpdate(String customerId, Customer customer);
 }

@@ -1,12 +1,16 @@
 package it.overzoom.registry.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.UuidGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -25,8 +29,9 @@ public class User {
 
     private String name;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private Set<Customer> customers;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "eq")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "eq" }, allowSetters = true)
+    private Set<Customer> customers = new HashSet<>();
 
 }

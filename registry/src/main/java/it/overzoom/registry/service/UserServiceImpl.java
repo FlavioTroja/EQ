@@ -1,5 +1,6 @@
 package it.overzoom.registry.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,5 +17,17 @@ public class UserServiceImpl implements UserService {
 
     public Optional<User> findById(String id) {
         return userRepository.findById(id);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User create(User user) {
+        return userRepository.save(user);
+    }
+
+    public User update(User user) {
+        return userRepository.save(user);
     }
 }
