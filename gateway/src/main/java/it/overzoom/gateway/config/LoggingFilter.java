@@ -1,4 +1,4 @@
-package it.overzoom.gateway;
+package it.overzoom.gateway.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

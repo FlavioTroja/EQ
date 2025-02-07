@@ -1,6 +1,6 @@
 spring:
     application:
-        name: gateway
+        name: gateway 
     cloud:
         gateway:
             discovery:
@@ -12,6 +12,11 @@ spring:
             routes[1]:
                     predicates[0]: Path=/api/calendar/**        
                     uri: lb://CALENDAR
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_mE1PCCeYh                
             
 
 server:
