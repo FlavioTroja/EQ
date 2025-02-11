@@ -8,11 +8,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.eq.calendar.domain.Meeting;
 import it.overzoom.eq.calendar.repository.MeetingRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class MeetingServiceImpl implements MeetingService {
 
     @Autowired
@@ -29,11 +31,13 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
+    @Transactional
     public Meeting create(Meeting meeting) {
         return meetingRepository.save(meeting);
     }
 
     @Override
+    @Transactional
     public Optional<Meeting> update(Meeting meeting) {
         return this.findById(meeting.getId()).map(existingMeeting -> {
             existingMeeting.setTitle(meeting.getTitle());
@@ -50,6 +54,7 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
+    @Transactional
     public Optional<Meeting> partialUpdate(String meetingId, Meeting meeting) {
         return this.findById(meetingId)
                 .map(existingMeeting -> {

@@ -1,7 +1,6 @@
 package it.overzoom.eq.calendar.controller;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +24,7 @@ import it.overzoom.eq.calendar.exception.BadRequestException;
 import it.overzoom.eq.calendar.exception.ResourceNotFoundException;
 import it.overzoom.eq.calendar.service.MeetingServiceImpl;
 import jakarta.validation.Valid;
+import lombok.SneakyThrows;
 
 @RestController
 @RequestMapping("/api/calendar/meetings")
@@ -36,8 +36,8 @@ public class MeetingController {
     private MeetingServiceImpl meetingService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Meeting> getById(@PathVariable(value = "id") String meetingId)
-            throws ResourceNotFoundException {
+    @SneakyThrows
+    public ResponseEntity<Meeting> findById(@PathVariable(value = "id") String meetingId) {
         LOG.debug("REST request to get Meeting : {}", meetingId);
         Meeting meeting = meetingService.findById(meetingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting non trovato per questo id :: " + meetingId));
@@ -45,8 +45,8 @@ public class MeetingController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Meeting> create(@Valid @RequestBody Meeting meeting)
-            throws BadRequestException, URISyntaxException {
+    @SneakyThrows
+    public ResponseEntity<Meeting> create(@Valid @RequestBody Meeting meeting) {
         LOG.debug("REST request to save Meeting : {}", meeting);
         if (meeting.getId() != null) {
             throw new BadRequestException("Un nuovo meeting non può già avere un ID");
@@ -56,8 +56,8 @@ public class MeetingController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Meeting> update(@Valid @RequestBody Meeting meeting)
-            throws BadRequestException, ResourceNotFoundException {
+    @SneakyThrows
+    public ResponseEntity<Meeting> update(@Valid @RequestBody Meeting meeting) {
         LOG.debug("REST request to update Meeting : {}", meeting);
         if (meeting.getId() == null) {
             throw new BadRequestException("ID invalido.");
@@ -72,9 +72,9 @@ public class MeetingController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @SneakyThrows
     public ResponseEntity<Meeting> partialUpdate(@PathVariable(value = "id") String meetingId,
-            @RequestBody Meeting meeting)
-            throws BadRequestException, ResourceNotFoundException {
+            @RequestBody Meeting meeting) {
         LOG.debug("REST request to partial update Meeting : {}", meeting);
         if (meetingId == null) {
             throw new BadRequestException("ID invalido.");
