@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
         return this.findById(customerDetails.getId()).map(existingCustomer -> {
             existingCustomer.setName(customerDetails.getName());
             existingCustomer.setEmail(customerDetails.getEmail());
-            existingCustomer.setPhone(customerDetails.getPhone());
+            existingCustomer.setPhoneNumber(customerDetails.getPhoneNumber());
             userService.findById(customerDetails.getEq().getId()).ifPresent(u -> existingCustomer.setEq(u));
             return existingCustomer;
         }).map(this::create);
@@ -54,8 +54,8 @@ public class CustomerServiceImpl implements CustomerService {
                     if (customerDetails.getEmail() != null) {
                         existingCustomer.setEmail(customerDetails.getEmail());
                     }
-                    if (customerDetails.getPhone() != null) {
-                        existingCustomer.setPhone(customerDetails.getPhone());
+                    if (customerDetails.getPhoneNumber() != null) {
+                        existingCustomer.setPhoneNumber(customerDetails.getPhoneNumber());
                     }
 
                     return existingCustomer;

@@ -26,7 +26,7 @@ public class Customer {
     @Email
     private String email;
 
-    private String phone;
+    private String phoneNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "customers" }, allowSetters = true)

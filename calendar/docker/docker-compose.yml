@@ -1,18 +1,18 @@
 services:
-  gatewaydb:
+  calendardb:
     image: postgres
-    container_name: gatewaydb
+    container_name: calendardb
     restart: always
     shm_size: 128mb
     ports:
-      - "5465:5432"
+      - "5481:5432"
     volumes:
-      - gatewaydb:/data/postgres  
+      - calendardb:/data/postgres  
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
-      POSTGRES_DB: gateway
+      POSTGRES_DB: calendar
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d postgres" ]
       interval: 30s
@@ -20,8 +20,8 @@ services:
       retries: 5
 
 networks:
-  gatewaydb:
+  calendardb:
     driver: bridge
 
 volumes:
-  gatewaydb:
+  calendardb:

@@ -1,9 +1,5 @@
-# Use postgres/example user/password credentials
-version: '3.9'
-
 services:
-
-  db:
+  registrydb:
     image: postgres
     container_name: registrydb
     restart: always
@@ -11,7 +7,7 @@ services:
     ports:
       - "5480:5432"
     volumes:
-      - db:/data/postgres  
+      - registrydb:/data/postgres  
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -24,8 +20,8 @@ services:
       retries: 5
 
 networks:
-  db:
+  registrydb:
     driver: bridge
 
 volumes:
-  db:
+  registrydb:

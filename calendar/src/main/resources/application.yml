@@ -1,6 +1,17 @@
 spring:
     application:
         name: calendar
+    datasource:
+        url: jdbc:postgresql://localhost:5481/calendar
+        username: postgres   
+        password: postgres   
+    jpa:
+        show-sql: true    
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+        hibernate: 
+            ddl-auto: update            
 
 server:
     port: 8081

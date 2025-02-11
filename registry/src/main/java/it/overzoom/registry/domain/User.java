@@ -14,6 +14,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +29,11 @@ public class User {
     private String id;
 
     private String name;
+
+    @Email
+    private String email;
+
+    private String phoneNumber;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "eq")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
