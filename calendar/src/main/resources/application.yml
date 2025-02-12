@@ -16,7 +16,11 @@ spring:
 server:
     port: 8081
     instance:
-        id: 1     
+        id: 1    
+
+logging:
+  level: 
+    it.overzoom.eq.calendar.feign: DEBUG
 
 springdoc:
     api-docs:
