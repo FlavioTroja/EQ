@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.java.Log;
+
+@Log
 @RestController
 @RequestMapping("/api/calendar")
 public class CalendarController {
@@ -34,6 +37,7 @@ public class CalendarController {
      */
     @GetMapping("/month/current")
     public List<LocalDate> getCurrentMonth() {
+        log.info("get current month");
         LocalDate now = LocalDate.now();
         YearMonth yearMonth = YearMonth.of(now.getYear(), now.getMonthValue());
         return getDaysInMonth(yearMonth);
@@ -56,6 +60,7 @@ public class CalendarController {
     public List<LocalDate> getMonth(
             @RequestParam(name = "year", required = false) Integer year,
             @RequestParam(name = "month", required = false) Integer month) {
+        log.info("get specific month");
         LocalDate now = LocalDate.now();
 
         int effectiveYear = (year != null) ? year : now.getYear();
@@ -85,6 +90,7 @@ public class CalendarController {
      * contenente tutti i giorni del mese specificato.
      */
     private List<LocalDate> getDaysInMonth(YearMonth yearMonth) {
+        log.info("get days in month");
         List<LocalDate> days = new ArrayList<>();
         int lengthOfMonth = yearMonth.lengthOfMonth();
         for (int day = 1; day <= lengthOfMonth; day++) {

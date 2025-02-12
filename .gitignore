@@ -38,3 +38,6 @@ out/
 
 ### HAS ERR ###
 hs_err_*
+
+### YARN ### 
+yarn.lock

@@ -4,8 +4,6 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +23,12 @@ import it.overzoom.eq.calendar.exception.ResourceNotFoundException;
 import it.overzoom.eq.calendar.service.MeetingServiceImpl;
 import jakarta.validation.Valid;
 import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 
+@Log
 @RestController
 @RequestMapping("/api/calendar/meetings")
 public class MeetingController {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MeetingController.class);
 
     @Autowired
     private MeetingServiceImpl meetingService;
@@ -38,7 +36,7 @@ public class MeetingController {
     @GetMapping("/{id}")
     @SneakyThrows
     public ResponseEntity<Meeting> findById(@PathVariable(value = "id") String meetingId) {
-        LOG.debug("REST request to get Meeting : {}", meetingId);
+        log.info("REST request to get meeting by ID : " + meetingId);
         Meeting meeting = meetingService.findById(meetingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting non trovato per questo id :: " + meetingId));
         return ResponseEntity.ok().body(meeting);
@@ -47,7 +45,7 @@ public class MeetingController {
     @PostMapping("")
     @SneakyThrows
     public ResponseEntity<Meeting> create(@Valid @RequestBody Meeting meeting) {
-        LOG.debug("REST request to save Meeting : {}", meeting);
+        log.info("REST request to save Meeting : " + meeting.toString());
         if (meeting.getId() != null) {
             throw new BadRequestException("Un nuovo meeting non può già avere un ID");
         }
@@ -58,7 +56,7 @@ public class MeetingController {
     @PutMapping("")
     @SneakyThrows
     public ResponseEntity<Meeting> update(@Valid @RequestBody Meeting meeting) {
-        LOG.debug("REST request to update Meeting : {}", meeting);
+        log.info("REST request to update Meeting : " + meeting.toString());
         if (meeting.getId() == null) {
             throw new BadRequestException("ID invalido.");
         }
@@ -75,7 +73,7 @@ public class MeetingController {
     @SneakyThrows
     public ResponseEntity<Meeting> partialUpdate(@PathVariable(value = "id") String meetingId,
             @RequestBody Meeting meeting) {
-        LOG.debug("REST request to partial update Meeting : {}", meeting);
+        log.info("REST request to partial update Meeting : " + meeting.toString());
         if (meetingId == null) {
             throw new BadRequestException("ID invalido.");
         }
@@ -92,7 +90,7 @@ public class MeetingController {
      */
     @GetMapping("/today")
     public ResponseEntity<List<Meeting>> findMeetingsToday() {
-        LOG.debug("REST request to get today's Meetings");
+        log.info("REST request to get today's Meetings");
         List<Meeting> meetings = meetingService.findMeetingsToday();
         return ResponseEntity.ok().body(meetings);
     }
@@ -108,7 +106,7 @@ public class MeetingController {
     public ResponseEntity<List<Meeting>> findMeetingsByInterval(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        LOG.debug("REST request to get Meetings by interval from {} to {}", startDate, endDate);
+        log.info("REST request to get Meetings by interval from " + startDate + "to " + endDate);
         List<Meeting> meetings = meetingService.findMeetingsByInterval(startDate, endDate);
         return ResponseEntity.ok().body(meetings);
     }
