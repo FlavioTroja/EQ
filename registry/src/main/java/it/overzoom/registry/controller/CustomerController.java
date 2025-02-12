@@ -1,7 +1,6 @@
 package it.overzoom.registry.controller;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.service.CustomerServiceImpl;
 import jakarta.validation.Valid;
+import lombok.SneakyThrows;
 
 @RestController
 @RequestMapping("/api/registry/customers")
@@ -43,8 +43,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getById(@PathVariable(value = "id") String customerId)
-            throws ResourceNotFoundException {
+    @SneakyThrows
+    public ResponseEntity<Customer> findById(@PathVariable(value = "id") String customerId) {
         LOG.debug("REST request to get User : {}", customerId);
         Customer customer = customerService.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato per questo id :: " + customerId));
@@ -53,8 +53,8 @@ public class CustomerController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Customer> create(@Valid @RequestBody Customer customer)
-            throws BadRequestException, URISyntaxException {
+    @SneakyThrows
+    public ResponseEntity<Customer> create(@Valid @RequestBody Customer customer) {
         LOG.debug("REST request to save Customer : {}", customer);
         if (customer.getId() != null) {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
@@ -64,8 +64,8 @@ public class CustomerController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Customer> update(@Valid @RequestBody Customer customer)
-            throws BadRequestException, ResourceNotFoundException {
+    @SneakyThrows
+    public ResponseEntity<Customer> update(@Valid @RequestBody Customer customer) {
         LOG.debug("REST request to update Customer : {}", customer);
         if (customer.getId() == null) {
             throw new BadRequestException("ID invalido.");
@@ -81,8 +81,9 @@ public class CustomerController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @SneakyThrows
     public ResponseEntity<Customer> partialUpdate(@PathVariable(value = "id") String customerId,
-            @RequestBody Customer customer) throws BadRequestException, ResourceNotFoundException {
+            @RequestBody Customer customer) {
         LOG.debug("REST request to partial update Customer : {}", customer);
         if (customerId == null) {
             throw new BadRequestException("ID invalido.");
