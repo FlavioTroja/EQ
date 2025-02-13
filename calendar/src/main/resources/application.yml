@@ -2,9 +2,9 @@ spring:
     application:
         name: calendar
     datasource:
-        url: jdbc:postgresql://localhost:5481/calendar
-        username: postgres   
-        password: postgres   
+        url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5481}/calendar
+        username: ${RDS_USERNAME:postgres}   
+        password: ${RDS_PASSWORD:postgres}   
     jpa:
         show-sql: true    
         properties:
