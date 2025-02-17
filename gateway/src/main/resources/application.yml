@@ -21,4 +21,11 @@ spring:
             routes[1]:
                     predicates[0]: Path=/api/calendar/**        
                     uri: lb://CALENDAR    
-        
+      
+eureka:
+    client:
+        service-url:
+            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    instance:
+        prefer-ip-address: true
+      

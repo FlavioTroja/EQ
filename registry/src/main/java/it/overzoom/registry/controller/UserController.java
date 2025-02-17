@@ -1,8 +1,11 @@
 package it.overzoom.registry.controller;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +24,12 @@ import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.User;
 import it.overzoom.registry.service.UserServiceImpl;
 import jakarta.validation.Valid;
-import lombok.SneakyThrows;
-import lombok.extern.java.Log;
 
-@Log
 @RestController
 @RequestMapping("/api/registry/users")
 public class UserController {
+
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserServiceImpl userService;
@@ -41,8 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @SneakyThrows
-    public ResponseEntity<User> findById(@PathVariable(value = "id") String userId) {
+    public ResponseEntity<User> findById(@PathVariable(value = "id") String userId) throws ResourceNotFoundException {
         log.info("REST request to get user by ID: " + userId);
         User user = userService.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato per questo id :: " + userId));
@@ -51,8 +52,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    @SneakyThrows
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) throws BadRequestException, URISyntaxException {
         log.info("REST request to save User : " + user.toString());
         if (user.getId() != null) {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
@@ -62,8 +62,8 @@ public class UserController {
     }
 
     @PutMapping("")
-    @SneakyThrows
-    public ResponseEntity<User> update(@Valid @RequestBody User user) {
+    public ResponseEntity<User> update(@Valid @RequestBody User user) throws BadRequestException,
+            ResourceNotFoundException {
         log.info("REST request to update User:" + user.toString());
         if (user.getId() == null) {
             throw new BadRequestException("ID invalido.");
@@ -79,9 +79,9 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    @SneakyThrows
     public ResponseEntity<User> partialUpdate(@PathVariable(value = "id") String userId,
-            @RequestBody User user) {
+            @RequestBody User user) throws BadRequestException,
+            ResourceNotFoundException {
         log.info("REST request to partial update User: " + user.toString());
         if (userId == null) {
             throw new BadRequestException("ID invalido.");

@@ -1,0 +1,148 @@
+services:
+  eurekaserver:
+    build:
+      context: .
+      dockerfile: eurekaserver/docker/Dockerfile
+    image: eurekaserver:latest
+    container_name: eurekaserver
+    restart: always
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_REGISTER-WITH-EUREKA=false
+      - EUREKA_CLIENT_FETCH-REGISTRY=false  
+    networks:
+      - eq_net
+
+  gatewaydb:
+    image: postgres
+    container_name: gatewaydb
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5465:5432"
+    volumes:
+      - gatewaydb:/data/postgres  
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+      POSTGRES_DB: gateway
+    networks:
+      - eq_net
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/docker/Dockerfile
+    image: gateway:latest
+    container_name: gateway
+    restart: always
+    ports:
+      - "8765:8765"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://gatewaydb:5432/gateway
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_URI: http://eurekaserver:8761/eureka
+    depends_on:
+      eurekaserver:
+        condition: service_started
+      gatewaydb:
+        condition: service_started
+    networks:
+      - eq_net
+
+  registrydb:
+    image: mongo
+    container_name: registrydb
+    restart: always
+    logging:
+      options:
+        max-size: 200m
+    ports:
+      - "5480:27017"
+    volumes:
+      - registrydb:/data/db  
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secr3t
+      MONGO_INITDB_DATABASE: registry
+    networks:
+      - eq_net  
+
+  registry:
+    build:
+      context: .
+      dockerfile: registry/docker/Dockerfile
+    image: registry:latest
+    container_name: registry
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATA_MONGODB_HOST: registrydb
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_USERNAME: admin
+      SPRING_DATA_MONGODB_PASSWORD: secr3t
+      SPRING_DATA_MONGODB_DATABASE: registry
+      EUREKA_URI: http://eurekaserver:8761/eureka
+    depends_on:
+      eurekaserver:
+        condition: service_started
+      registrydb:
+        condition: service_started
+    networks:
+      - eq_net    
+
+  calendardb:
+    image: postgres
+    container_name: calendardb
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5481:5432"
+    volumes:
+      - calendardb:/data/postgres  
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+      POSTGRES_DB: calendar
+    networks:
+      - eq_net
+
+  calendar:
+    build:
+      context: .
+      dockerfile: calendar/docker/Dockerfile
+    image: calendar:latest
+    container_name: calendar
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      RDS_HOSTNAME: calendardb
+      RDS_USERNAME: postgres
+      RDS_PASSWORD: postgres
+      RDS_PORT: 5432
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_URI: http://eurekaserver:8761/eureka
+    depends_on:
+      eurekaserver:
+        condition: service_started
+      calendardb:
+        condition: service_started
+    networks:
+      - eq_net
+
+networks:
+  eq_net:
+    driver: bridge
+
+volumes:
+  gatewaydb:
+  registrydb:
+  calendardb:

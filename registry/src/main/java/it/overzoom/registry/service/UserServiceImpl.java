@@ -32,27 +32,27 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> update(User userDetails) {
-        return this.findById(userDetails.getId()).map(existingUser -> {
-            existingUser.setName(userDetails.getName());
-            existingUser.setEmail(userDetails.getEmail());
-            existingUser.setPhoneNumber(userDetails.getPhoneNumber());
-            existingUser.setRoles(userDetails.getRoles());
+    public Optional<User> update(User user) {
+        return this.findById(user.getId()).map(existingUser -> {
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setPhoneNumber(user.getPhoneNumber());
+            existingUser.setRoles(user.getRoles());
             return existingUser;
         }).map(this::create);
     }
 
-    public Optional<User> partialUpdate(String userId, User userDetails) {
+    public Optional<User> partialUpdate(String userId, User user) {
         return this.findById(userId)
                 .map(existingUser -> {
-                    if (userDetails.getName() != null) {
-                        existingUser.setName(userDetails.getName());
+                    if (user.getName() != null) {
+                        existingUser.setName(user.getName());
                     }
-                    if (userDetails.getEmail() != null) {
-                        existingUser.setEmail(userDetails.getEmail());
+                    if (user.getEmail() != null) {
+                        existingUser.setEmail(user.getEmail());
                     }
-                    if (userDetails.getPhoneNumber() != null) {
-                        existingUser.setPhoneNumber(userDetails.getPhoneNumber());
+                    if (user.getPhoneNumber() != null) {
+                        existingUser.setPhoneNumber(user.getPhoneNumber());
                     }
 
                     return existingUser;
