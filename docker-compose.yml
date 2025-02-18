@@ -1,17 +1,4 @@
 services:
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.1.2
-    container_name: keycloak
-    restart: always
-    ports:
-      - "7070:8080"
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-    command: start-dev
-    networks:
-      - eq_net
-
   eurekaserver:
     build:
       context: .
@@ -66,6 +53,25 @@ services:
         condition: service_started
     networks:
       - eq_net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.2
+    container_name: keycloak
+    restart: always
+    ports:
+      - "5050:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://gatewaydb:5432/gateway
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+    command: start-dev
+    depends_on:
+      - gatewaydb
+    networks:
+      - eq_net    
 
   registrydb:
     image: mongo

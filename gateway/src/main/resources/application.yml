@@ -5,10 +5,10 @@ spring:
     application:
         name: gateway 
     security:
-        oauth2:
-            resourceserver:
-                jwt:
-                    issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_izf16yOTp
+            oauth2:
+                resourceserver:
+                    jwt:
+                        issuer-uri: http://localhost:5050/realms/EQ
 
     cloud:
         gateway:
@@ -28,4 +28,5 @@ eureka:
             defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
     instance:
         prefer-ip-address: true
+        
       
