@@ -5,10 +5,10 @@ spring:
     application:
         name: gateway 
     security:
-            oauth2:
-                resourceserver:
-                    jwt:
-                        issuer-uri: http://localhost:5050/realms/EQ
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://localhost:5050/realms/EQ
 
     cloud:
         gateway:

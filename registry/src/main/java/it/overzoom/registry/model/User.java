@@ -3,6 +3,7 @@ package it.overzoom.registry.model;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.Email;
@@ -13,6 +14,9 @@ public class User {
 
     @Id
     private String id;
+
+    @Indexed
+    private String userId;
 
     private String name;
 
@@ -84,10 +88,18 @@ public class User {
         this.type = type;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", email=" + email + ", phoneNumber=" + phoneNumber
-                + ", customers=" + customers + ", roles=" + roles + ", type=" + type + "]";
+        return "User [id=" + id + ", userId=" + userId + ", name=" + name + ", email=" + email + ", phoneNumber="
+                + phoneNumber + ", customers=" + customers + ", roles=" + roles + ", type=" + type + "]";
     }
 
 }

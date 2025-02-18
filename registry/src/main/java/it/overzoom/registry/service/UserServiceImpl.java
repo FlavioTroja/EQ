@@ -20,15 +20,20 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
-    public Optional<User> findById(String userId) {
-        return userRepository.findById(userId);
+    public Optional<User> findById(String id) {
+        return userRepository.findById(id);
     }
 
-    public boolean existsById(String userId) {
-        return userRepository.existsById(userId);
+    public Optional<User> findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+    public boolean existsById(String id) {
+        return userRepository.existsById(id);
     }
 
     public User create(User user) {
+
         return userRepository.save(user);
     }
 
@@ -42,8 +47,8 @@ public class UserServiceImpl implements UserService {
         }).map(this::create);
     }
 
-    public Optional<User> partialUpdate(String userId, User user) {
-        return this.findById(userId)
+    public Optional<User> partialUpdate(String id, User user) {
+        return this.findById(id)
                 .map(existingUser -> {
                     if (user.getName() != null) {
                         existingUser.setName(user.getName());

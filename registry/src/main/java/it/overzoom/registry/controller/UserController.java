@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.User;
+import it.overzoom.registry.security.SecurityUtils;
 import it.overzoom.registry.service.UserServiceImpl;
 import jakarta.validation.Valid;
 
@@ -42,13 +43,11 @@ public class UserController {
         return ResponseEntity.ok().body(page.getContent());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable(value = "id") String userId) throws ResourceNotFoundException {
-        log.info("REST request to get user by ID: " + userId);
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato per questo id :: " + userId));
-
-        return ResponseEntity.ok().body(user);
+    @GetMapping("/profile")
+    public ResponseEntity<User> getMyProfile() throws ResourceNotFoundException {
+        return userService.findByUserId(SecurityUtils.getCurrentUserId())
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
     }
 
     @PostMapping("")
@@ -79,19 +78,19 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<User> partialUpdate(@PathVariable(value = "id") String userId,
+    public ResponseEntity<User> partialUpdate(@PathVariable(value = "id") String id,
             @RequestBody User user) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update User: " + user.toString());
-        if (userId == null) {
+        if (id == null) {
             throw new BadRequestException("ID invalido.");
         }
-        if (!userService.existsById(userId)) {
+        if (!userService.existsById(id)) {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        User updateUser = userService.partialUpdate(userId, user)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + userId));
+        User updateUser = userService.partialUpdate(id, user)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
 
         return ResponseEntity.ok().body(updateUser);
     }
