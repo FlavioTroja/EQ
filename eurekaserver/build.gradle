@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'it.overzoom.qe'
-version = '0.0.1-SNAPSHOT'
+version = '		'
 
 java {
 	toolchain {
@@ -35,4 +35,8 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootJar {
+    archiveFileName = "eurekaserver.jar"
 }

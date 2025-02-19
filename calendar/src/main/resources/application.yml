@@ -32,4 +32,9 @@ springdoc:
 message:
     welcome: Hello Properties Dev
 
-          
+eureka:
+    client:
+        service-url:
+            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    instance:
+        prefer-ip-address: true                 

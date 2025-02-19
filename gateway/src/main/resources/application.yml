@@ -8,7 +8,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_izf16yOTp
+                    issuer-uri: http://localhost:5050/realms/EQ
 
     cloud:
         gateway:
@@ -21,4 +21,12 @@ spring:
             routes[1]:
                     predicates[0]: Path=/api/calendar/**        
                     uri: lb://CALENDAR    
+      
+eureka:
+    client:
+        service-url:
+            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    instance:
+        prefer-ip-address: true
         
+      

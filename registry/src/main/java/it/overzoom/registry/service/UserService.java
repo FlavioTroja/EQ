@@ -11,13 +11,15 @@ public interface UserService {
 
     Page<User> findAll(Pageable pageable);
 
-    Optional<User> findById(String userId);
+    Optional<User> findById(String id);
 
-    boolean existsById(String userId);
+    Optional<User> findByUserId(String userId);
+
+    boolean existsById(String id);
 
     User create(User user);
 
     Optional<User> update(User user);
 
-    Optional<User> partialUpdate(String userId, User user);
+    Optional<User> partialUpdate(String id, User user);
 }

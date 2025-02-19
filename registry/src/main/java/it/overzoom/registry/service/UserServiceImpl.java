@@ -20,39 +20,44 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
-    public Optional<User> findById(String userId) {
-        return userRepository.findById(userId);
+    public Optional<User> findById(String id) {
+        return userRepository.findById(id);
     }
 
-    public boolean existsById(String userId) {
-        return userRepository.existsById(userId);
+    public Optional<User> findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+    public boolean existsById(String id) {
+        return userRepository.existsById(id);
     }
 
     public User create(User user) {
+
         return userRepository.save(user);
     }
 
-    public Optional<User> update(User userDetails) {
-        return this.findById(userDetails.getId()).map(existingUser -> {
-            existingUser.setName(userDetails.getName());
-            existingUser.setEmail(userDetails.getEmail());
-            existingUser.setPhoneNumber(userDetails.getPhoneNumber());
-            existingUser.setRoles(userDetails.getRoles());
+    public Optional<User> update(User user) {
+        return this.findById(user.getId()).map(existingUser -> {
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setPhoneNumber(user.getPhoneNumber());
+            existingUser.setRoles(user.getRoles());
             return existingUser;
         }).map(this::create);
     }
 
-    public Optional<User> partialUpdate(String userId, User userDetails) {
-        return this.findById(userId)
+    public Optional<User> partialUpdate(String id, User user) {
+        return this.findById(id)
                 .map(existingUser -> {
-                    if (userDetails.getName() != null) {
-                        existingUser.setName(userDetails.getName());
+                    if (user.getName() != null) {
+                        existingUser.setName(user.getName());
                     }
-                    if (userDetails.getEmail() != null) {
-                        existingUser.setEmail(userDetails.getEmail());
+                    if (user.getEmail() != null) {
+                        existingUser.setEmail(user.getEmail());
                     }
-                    if (userDetails.getPhoneNumber() != null) {
-                        existingUser.setPhoneNumber(userDetails.getPhoneNumber());
+                    if (user.getPhoneNumber() != null) {
+                        existingUser.setPhoneNumber(user.getPhoneNumber());
                     }
 
                     return existingUser;
