@@ -19,6 +19,15 @@ spring:
             username: admin
             auto-index-creation: true
 
+management:
+    endpoint:
+        health:
+            show-details: WHEN_AUTHORIZED
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+
 eureka:
     client:
         service-url:
