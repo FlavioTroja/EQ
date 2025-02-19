@@ -16,12 +16,31 @@ spring:
                 locator:
                     enabled: true    
             routes[0]:
-                    predicates[0]: Path=/api/registry/**        
+                    predicates[0]: Path=/api/registry/** , /registry/api-docs       
                     uri: lb://REGISTRY        
             routes[1]:
-                    predicates[0]: Path=/api/calendar/**        
+                    predicates[0]: Path=/api/calendar/** , /calendar/api-docs       
                     uri: lb://CALENDAR    
-      
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /api-docs/swagger-config
+    urls:
+      - url: /api-docs
+        name: API Gateway Service
+        primaryName: API Gateway Service
+      - url: /calendar/api-docs
+        name: Calendar Service
+        primaryName: Calendar Service
+      - url: /registry/api-docs
+        name: Registry Service
+        primaryName: Registry Service
+
 eureka:
     client:
         service-url:

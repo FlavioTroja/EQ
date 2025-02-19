@@ -13,11 +13,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        http.csrf(csrf -> csrf.disable());
 
         http.authorizeExchange(exchange -> exchange
-                .anyExchange().authenticated()).oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-
-        http.csrf(csrf -> csrf.disable());
+                .pathMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/api-docs/**",
+                        "/registry/swagger-ui.html",
+                        "/registry/api-docs/**",
+                        "/calendar/swagger-ui.html",
+                        "/calendar/api-docs/**")
+                .permitAll()
+                .anyExchange().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }
