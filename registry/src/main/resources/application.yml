@@ -19,6 +19,19 @@ spring:
             username: admin
             auto-index-creation: true
 
+openapi:
+    service:
+        title: registry doc
+        version: 1.0.0
+        url: http://localhost:8765
+
+springdoc:
+    api-docs:
+        path: /registry/api-docs
+    swagger-ui:
+        path: /registry/swagger-ui.html  
+        operationsSorter: method            
+
 eureka:
     client:
         service-url:

@@ -21,8 +21,10 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/api-docs/**",
                         "/registry/swagger-ui.html",
+                        "/registry/swagger-ui/**",
                         "/registry/api-docs/**",
                         "/calendar/swagger-ui.html",
+                        "/calendar/swagger-ui/**",
                         "/calendar/api-docs/**")
                 .permitAll()
                 .anyExchange().authenticated())

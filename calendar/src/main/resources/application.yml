@@ -32,7 +32,7 @@ springdoc:
     api-docs:
         path: /calendar/api-docs
     swagger-ui:
-        path: /calendar/swagger-ui-custom.html  
+        path: /calendar/swagger-ui.html  
         operationsSorter: method
 
 message:

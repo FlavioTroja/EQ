@@ -23,23 +23,20 @@ spring:
                     uri: lb://CALENDAR    
 
 springdoc:
-  enable-native-support: true
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-    config-url: /api-docs/swagger-config
-    urls:
-      - url: /api-docs
-        name: API Gateway Service
-        primaryName: API Gateway Service
-      - url: /calendar/api-docs
-        name: Calendar Service
-        primaryName: Calendar Service
-      - url: /registry/api-docs
-        name: Registry Service
-        primaryName: Registry Service
+    enable-native-support: true
+    api-docs:
+        enabled: true
+    swagger-ui:
+        enabled: true
+        path: /swagger-ui.html
+        config-url: /api-docs/swagger-config
+        urls:
+        - url: /api-docs
+          name: API Gateway Service
+        - url: /calendar/api-docs
+          name: Calendar Service
+        - url: /registry/api-docs
+          name: Registry Service
 
 eureka:
     client:
