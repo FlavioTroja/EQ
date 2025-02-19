@@ -9,7 +9,6 @@ export interface SimpleCardItem {
   iconName: string,
   label: string,
   path: string,
-  roleSelector?: string,
 }
 
 @Component({
@@ -17,9 +16,7 @@ export interface SimpleCardItem {
   standalone: true,
   imports: [ CommonModule, MatIconModule ],
   template: `
-    <div
-      *fbHideByCodeSelector="item.roleSelector || ''"
-      class="w-full p-2 sm:w-44 sm:h-44 bg-foreground default-shadow-hover rounded-md text-center flex flex-row sm:flex-col content-evenly items-center justify-start sm:justify-around cursor-pointer gap-2"
+    <div class="w-full p-2 sm:w-44 sm:h-44 bg-foreground default-shadow-hover rounded-md text-center flex flex-row sm:flex-col content-evenly items-center justify-start sm:justify-around cursor-pointer gap-2"
       (click)="goToRoute(item.path)">
       <div class="h-5"></div>
       <mat-icon class="material-symbols-rounded -ml-2 sm:ml-0" [ngStyle]="{ 'width': '60px', 'height': '60px', 'font-size': '60px' }"> {{ item.iconName }}</mat-icon>

@@ -39,13 +39,13 @@ import { Observable, of } from "rxjs";
     </div>
 
     <div *fbIfNotLogged class="flex justify-between items-center w-full h-[3.5rem] min-h-[3.5rem]">
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-2.5">
         <div class="!h-[3.5rem] w-[3.5rem] flex items-center bg-extended-logo">
         </div>
         <div class="font-bold text-3xl select-none">fratm</div>
       </div>
       <div class="flex flex-row-reverse gap-2" [ngClass]="{'fixed z-40 right-2 bottom-20' : isMobile}">
-        <div class="flex cursor-pointer text-xl p-2 border border-balls rounded">Login</div>
+        <div class="flex cursor-pointer text-xl p-2 border border-balls rounded" (click)="redirectToLogin()">Login</div>
         <div class="flex cursor-pointer text-xl p-2">Privacy Policy</div>
         <div class="flex cursor-pointer text-xl p-2">Terms</div>
         <div class="flex cursor-pointer text-xl p-2">About</div>
@@ -120,6 +120,10 @@ export class NavbarComponent {
       return of(true);
     }
     return this.store.select(hidden);
+  }
+
+  redirectToLogin(): void {
+    this.store.dispatch(RouterActions.go({ path: ["auth/login"] }))
   }
 
   protected readonly isFinite = isFinite;

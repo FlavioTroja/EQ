@@ -18,8 +18,13 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/landingPage/landingPage.component"),
   },
   {
+    path: "auth/login",
+    pathMatch: "full",
+    loadComponent: () => import("./pages/auth/login/login.component"),
+  },
+  {
     path: "home",
-    canActivate: [ AuthGuard ],
+    // canActivate: [ AuthGuard ],
     providers: [
     ],
     pathMatch: 'full',
@@ -33,7 +38,7 @@ export const routes: Routes = [
   },
   {
     path: "suppliers",
-    canActivate: [ AuthGuard ],
+    // canActivate: [ AuthGuard ],
     providers: [
       provideState("supplier-manager", supplierManagementReducers),
       provideEffects(SuppliersEffects)
@@ -42,7 +47,7 @@ export const routes: Routes = [
   },
   {
     path: "customers",
-    canActivate: [ AuthGuard ],
+    // canActivate: [ AuthGuard ],
     providers: [
       provideState("customer-manager", customerManagementReducers),
       provideEffects(CustomersEffects)
@@ -51,7 +56,7 @@ export const routes: Routes = [
   },
   {
     path: "users",
-    canActivate: [ AuthGuard ],
+    // canActivate: [ AuthGuard ],
     providers: [
       provideState("user-manager", userManagementReducers),
       provideEffects([UsersEffects, RoleNamesEffects])
@@ -60,7 +65,7 @@ export const routes: Routes = [
   },
   {
     path: "settings",
-    canActivate: [ AuthGuard ],
+    // canActivate: [ AuthGuard ],
     loadChildren: () => import("./pages/settings/settings.routing")
   },
   {

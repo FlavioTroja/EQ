@@ -15,9 +15,9 @@ import { InputComponent } from "../../../components/input/input.component";
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule, ReactiveFormsModule, InputComponent],
   template: `
-    <div class="m-auto max-w-[20em] min-w-[10em] flex flex-wrap items-start justify-between md:max-w-screen-xl">
-      <img src="/../assets/images/logo.png" class="h-14" alt="Logo" />
-    </div>
+<!--    <div class="m-auto max-w-[20em] min-w-[10em] flex flex-wrap items-start justify-between md:max-w-screen-xl">-->
+<!--      <img src="/../assets/images/logo.png" class="h-14" alt="Logo" />-->
+<!--    </div>-->
 
     <div class="m-auto max-w-[20em] min-w-[10em] flex flex-col gap-4 py-28 items-center">
       <div class="text-3xl font-extrabold">Accedi</div>

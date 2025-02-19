@@ -19,7 +19,7 @@ export class AuthService {
       grant_type: "password"
     };
 
-    return this.http.post<Auth>(`${BASE_URL}/realms/EQ/protocol/openid-connect/token`, payload);
+    return this.http.post<Auth>(`${BASE_URL}/realms/master/protocol/openid-connect/auth`, payload);
   }
 
   saveAuth(auth: Auth) {

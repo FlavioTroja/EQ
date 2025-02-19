@@ -34,16 +34,24 @@ export default class HomeComponent {
   small: boolean = window.innerWidth < 900;
   frequentlyUsedArray: SimpleCardItem[] = [
     {
-      iconName: "package_2",
-      label: "Prodotti",
-      path: "/products",
-      roleSelector: "dashboard.buttons.products"
+      iconName: "edit_document",
+      label: "Nuovo Verbale",
+      path: "/verbals/new",
     },
     {
-      iconName: "local_shipping",
-      label: "Fornitori",
-      path: "/suppliers",
-      roleSelector: ""
+      iconName: "description",
+      label: "Verbali",
+      path: "/verbals",
+    },
+    {
+      iconName: "precision_manufacturing",
+      label: "Macchine",
+      path: "/machines",
+    },
+    {
+      iconName: "group",
+      label: "Clienti",
+      path: "/customers",
     },
   ];
 
