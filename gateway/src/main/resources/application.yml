@@ -52,6 +52,9 @@ keycloak:
   realm: EQ
   resource: eq-project
 
+frontend:
+    origin-url: ${FRONTEND_URI:http://localhost:4200}
+
 eureka:
     client:
         service-url:

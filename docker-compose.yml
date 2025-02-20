@@ -11,6 +11,8 @@ services:
     environment:
       - EUREKA_CLIENT_REGISTER-WITH-EUREKA=false
       - EUREKA_CLIENT_FETCH-REGISTRY=false  
+      - KEYCLOAK_URI=http://keycloak:8080
+      - FRONTEND_URI=http://localhost:4200
     networks:
       - eq_net
 
