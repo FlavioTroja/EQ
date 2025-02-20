@@ -46,3 +46,7 @@ tasks.named('test') {
 bootJar {
     archiveFileName = "gateway.jar"
 }
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
