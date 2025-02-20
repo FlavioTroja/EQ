@@ -79,7 +79,6 @@ public class AuthController {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "refresh_token");
         formData.add("client_id", clientId);
-        formData.add("client_secret", clientSecret);
         formData.add("refresh_token", refreshToken);
 
         HttpHeaders headers = new HttpHeaders();
@@ -100,7 +99,6 @@ public class AuthController {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", clientId);
-        formData.add("client_secret", clientSecret);
         formData.add("refresh_token", refreshToken);
 
         HttpHeaders headers = new HttpHeaders();
