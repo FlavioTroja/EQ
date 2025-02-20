@@ -22,14 +22,23 @@ spring:
                     predicates[0]: Path=/api/calendar/** , /calendar/api-docs       
                     uri: lb://CALENDAR    
 
+
+openapi:
+    service:
+        title: gateway doc
+        version: 1.0.0
+        url: http://localhost:8765
+
 springdoc:
     enable-native-support: true
     api-docs:
         enabled: true
+        path: /api-docs
     swagger-ui:
         enabled: true
         path: /swagger-ui.html
         config-url: /api-docs/swagger-config
+        operationsSorter: method
         urls:
         - url: /api-docs
           name: API Gateway Service

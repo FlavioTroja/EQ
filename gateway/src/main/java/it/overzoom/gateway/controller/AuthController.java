@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -152,9 +151,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> registrationData) {
-        String registrationUrl = UriComponentsBuilder
-                .fromHttpUrl(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/registrations")
-                .toUriString();
+        String registrationUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/registrations";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
