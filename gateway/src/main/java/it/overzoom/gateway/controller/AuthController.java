@@ -40,16 +40,39 @@ public class AuthController {
         this.clientId = clientId;
     }
 
+    public static class LoginRequest {
+        private String username;
+        private String password;
+
+        public LoginRequest() {
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam("username") String username,
-            @RequestParam("password") String password) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest login) {
         String tokenUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "password");
         formData.add("client_id", clientId);
-        formData.add("username", username);
-        formData.add("password", password);
+        formData.add("username", login.username);
+        formData.add("password", login.password);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
