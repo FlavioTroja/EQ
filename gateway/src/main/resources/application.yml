@@ -51,6 +51,9 @@ keycloak:
   auth-server-url: ${KEYCLOAK_URI:http://localhost:5050}
   realm: EQ
   resource: eq-project
+  admin:
+    realm: master
+    resource: admin-cli
 
 frontend:
     origin-url: ${FRONTEND_URI:http://localhost:4200}

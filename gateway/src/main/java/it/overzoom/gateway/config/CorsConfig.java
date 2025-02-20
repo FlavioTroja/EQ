@@ -17,7 +17,7 @@ public class CorsConfig {
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin(fontendOriginUrl);
-        config.addAllowedMethod("*"); // Abilita tutti i metodi (GET, POST, PUT, DELETE, OPTIONS, ecc.)
+        config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
 

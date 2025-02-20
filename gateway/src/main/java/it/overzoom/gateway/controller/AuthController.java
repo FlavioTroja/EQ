@@ -12,6 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -25,17 +26,25 @@ public class AuthController {
 
     private final RestTemplate restTemplate;
     private final String keycloakUrl;
+
     private final String realm;
     private final String clientId;
+
+    private final String adminRealm;
+    private final String adminClientId;
 
     public AuthController(
             @Value("${keycloak.auth-server-url}") String keycloakUrl,
             @Value("${keycloak.realm}") String realm,
-            @Value("${keycloak.resource}") String clientId) {
+            @Value("${keycloak.resource}") String clientId,
+            @Value("${keycloak.admin.realm}") String adminRealm,
+            @Value("${keycloak.admin.resource}") String adminClientId) {
         this.restTemplate = new RestTemplate();
         this.keycloakUrl = keycloakUrl;
         this.realm = realm;
         this.clientId = clientId;
+        this.adminRealm = adminRealm;
+        this.adminClientId = adminClientId;
     }
 
     public static class LoginRequest {
@@ -77,9 +86,6 @@ public class AuthController {
         }
     }
 
-    /**
-     * Endpoint per il login (password grant)
-     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest login) {
         String tokenUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token";
@@ -92,8 +98,38 @@ public class AuthController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> jsonMap = mapper.readValue(response.getBody(),
+                    new TypeReference<Map<String, Object>>() {
+                    });
+            return ResponseEntity.status(response.getStatusCode())
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .body(jsonMap);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore nella conversione del JSON");
+        }
+    }
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<?> adminLogin(@RequestBody LoginRequest login) {
+        String tokenUrl = keycloakUrl + "/realms/" + adminRealm + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "password");
+        formData.add("client_id", adminClientId);
+        formData.add("username", login.getUsername());
+        formData.add("password", login.getPassword());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
+
         ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
 
         try {
@@ -121,10 +157,9 @@ public class AuthController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
 
+        ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
         return ResponseEntity.status(response.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(response.getBody());
@@ -140,25 +175,26 @@ public class AuthController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(logoutUrl, request, String.class);
 
+        ResponseEntity<String> response = restTemplate.postForEntity(logoutUrl, request, String.class);
         return ResponseEntity.status(response.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(response.getBody());
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, Object> registrationData) {
-        String registrationUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/registrations";
+    public ResponseEntity<?> register(@RequestHeader("Authorization") String adminToken,
+            @RequestBody Map<String, Object> registrationData) {
+
+        String registrationUrl = keycloakUrl + "/admin/realms/" + realm + "/users";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(adminToken);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(registrationData, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(registrationUrl, request, String.class);
-
         return ResponseEntity.status(response.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(response.getBody());
