@@ -41,7 +41,7 @@ springdoc:
         operationsSorter: method
         urls:
         - url: /api-docs
-          name: Gateway Microservice
+          name: API Gateway Microservice
         - url: /calendar/api-docs
           name: Calendar Microservice
         - url: /registry/api-docs

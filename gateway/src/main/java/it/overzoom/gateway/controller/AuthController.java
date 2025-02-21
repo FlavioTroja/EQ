@@ -165,6 +165,25 @@ public class AuthController {
                 .body(response.getBody());
     }
 
+    @PostMapping("/admin/refresh-token")
+    public ResponseEntity<?> adminRefreshToken(@RequestBody RefreshTokenRequest refreshRequest) {
+        String tokenUrl = keycloakUrl + "/realms/" + adminRealm + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "refresh_token");
+        formData.add("client_id", adminClientId);
+        formData.add("refresh_token", refreshRequest.getRefreshToken());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
+        return ResponseEntity.status(response.getStatusCode())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(response.getBody());
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest logoutRequest) {
         String logoutUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
@@ -183,7 +202,25 @@ public class AuthController {
                 .body(response.getBody());
     }
 
-    @PostMapping("/register")
+    @PostMapping("/admin/logout")
+    public ResponseEntity<?> adminLogout(@RequestBody RefreshTokenRequest logoutRequest) {
+        String logoutUrl = keycloakUrl + "/realms/" + adminRealm + "/protocol/openid-connect/logout";
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("client_id", adminClientId);
+        formData.add("refresh_token", logoutRequest.getRefreshToken());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(logoutUrl, request, String.class);
+        return ResponseEntity.status(response.getStatusCode())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(response.getBody());
+    }
+
+    @PostMapping("/admin/register")
     public ResponseEntity<?> register(@RequestHeader("Authorization") String adminToken,
             @RequestBody Map<String, Object> registrationData) {
 
