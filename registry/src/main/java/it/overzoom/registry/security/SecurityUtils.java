@@ -16,4 +16,14 @@ public class SecurityUtils {
                 .map(jwt -> (String) jwt.getClaim("sub"))
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
     }
+
+    public static boolean isAdmin() throws ResourceNotFoundException {
+        Jwt jwt = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .filter(auth -> auth.getPrincipal() instanceof Jwt)
+                .map(auth -> (Jwt) auth.getPrincipal())
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
+
+        var roles = jwt.getClaimAsStringList("roles");
+        return roles != null && roles.contains("admin");
+    }
 }
