@@ -35,7 +35,7 @@ public class Customer {
 
     private String phoneNumber;
 
-    private String note;
+    private String notes;
 
     public String getId() {
         return id;
@@ -117,12 +117,19 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getNote() {
-        return note;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer [id=" + id + ", userId=" + userId + ", name=" + name + ", fiscalCode=" + fiscalCode
+                + ", vatCode=" + vatCode + ", pec=" + pec + ", sdi=" + sdi + ", paymentMethod=" + paymentMethod
+                + ", email=" + email + ", phoneNumber=" + phoneNumber + ", notes=" + notes + "]";
     }
 
 }

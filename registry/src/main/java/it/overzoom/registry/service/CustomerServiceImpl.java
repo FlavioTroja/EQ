@@ -52,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
             existingCustomer.setPaymentMethod(customer.getPaymentMethod());
             existingCustomer.setEmail(customer.getEmail());
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
-            existingCustomer.setNote(customer.getNote());
+            existingCustomer.setNotes(customer.getNotes());
             return existingCustomer;
         }).map(this::create);
     }
@@ -85,8 +85,8 @@ public class CustomerServiceImpl implements CustomerService {
                     if (customer.getPhoneNumber() != null) {
                         existingCustomer.setPhoneNumber(customer.getPhoneNumber());
                     }
-                    if (customer.getNote() != null) {
-                        existingCustomer.setNote(customer.getNote());
+                    if (customer.getNotes() != null) {
+                        existingCustomer.setNotes(customer.getNotes());
                     }
                     return existingCustomer;
                 })
