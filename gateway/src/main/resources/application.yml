@@ -41,11 +41,11 @@ springdoc:
         operationsSorter: method
         urls:
         - url: /api-docs
-          name: API Gateway Service
+          name: Gateway Microservice
         - url: /calendar/api-docs
-          name: Calendar Service
+          name: Calendar Microservice
         - url: /registry/api-docs
-          name: Registry Service
+          name: Registry Microservice
 
 keycloak:
   auth-server-url: ${KEYCLOAK_URI:http://localhost:5050}
