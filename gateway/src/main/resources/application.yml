@@ -22,26 +22,41 @@ spring:
                     predicates[0]: Path=/api/calendar/** , /calendar/api-docs       
                     uri: lb://CALENDAR    
 
+
+openapi:
+    service:
+        title: gateway doc
+        version: 1.0.0
+        url: http://localhost:8765
+
 springdoc:
     enable-native-support: true
     api-docs:
         enabled: true
+        path: /api-docs
     swagger-ui:
         enabled: true
         path: /swagger-ui.html
         config-url: /api-docs/swagger-config
+        operationsSorter: method
         urls:
         - url: /api-docs
-          name: API Gateway Service
+          name: API Gateway Microservice
         - url: /calendar/api-docs
-          name: Calendar Service
+          name: Calendar Microservice
         - url: /registry/api-docs
-          name: Registry Service
+          name: Registry Microservice
 
 keycloak:
   auth-server-url: ${KEYCLOAK_URI:http://localhost:5050}
   realm: EQ
   resource: eq-project
+  admin:
+    realm: master
+    resource: admin-cli
+
+frontend:
+    origin-url: ${FRONTEND_URI:http://localhost:4200}
 
 eureka:
     client:

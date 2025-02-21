@@ -9,8 +9,8 @@ services:
     ports:
       - "8761:8761"
     environment:
-      - EUREKA_CLIENT_REGISTER-WITH-EUREKA=false
-      - EUREKA_CLIENT_FETCH-REGISTRY=false  
+      EUREKA_CLIENT_REGISTER-WITH-EUREKA: false
+      EUREKA_CLIENT_FETCH-REGISTRY: false  
     networks:
       - eq_net
 
@@ -46,6 +46,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: dev
       EUREKA_URI: http://eurekaserver:8761/eureka
+      KEYCLOAK_URI: http://keycloak:8080
+      FRONTEND_URI: http://localhost:4200
     depends_on:
       eurekaserver:
         condition: service_started
