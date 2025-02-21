@@ -27,7 +27,6 @@ import { Observable, of } from "rxjs";
       <div class="flex flex-row-reverse gap-2" [ngClass]="{'fixed z-40 right-2 bottom-20' : isMobile}">
         <ng-template ngFor let-item="$implicit" [ngForOf]="buttons" *ngIf="buttons">
           <app-button
-            *fbHideByCodeSelector="item.roleSelector || ''"
             [selectors]="item.selectors"
             (onClick)="handleClick(item)"
             [iconName]="item.iconName"

@@ -2,14 +2,16 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from "./core/auth/services/auth.guard";
 import NotFoundComponent from "./components/not-found/not-found.component";
 import { provideState } from "@ngrx/store";
-import { reducers as supplierManagementReducers } from "./pages/suppliers/store/reducers";
 import { reducers as customerManagementReducers } from "./pages/customers/store/reducers";
 import { reducers as userManagementReducers } from "./pages/users/store/reducers";
+import { reducers as machineManagementReducers } from "./pages/machines/store/reducers";
+import { reducers as verbalManagementReducers } from "./pages/verbals/store/reducers";
 import { provideEffects } from "@ngrx/effects";
-import { SuppliersEffects } from "./pages/suppliers/store/effects/suppliers.effects";
 import { CustomersEffects } from "./pages/customers/store/effects/customers.effects";
 import { UsersEffects } from "./pages/users/store/effects/users.effects";
 import { RoleNamesEffects } from "./pages/users/store/effects/roleNames.effects";
+import { MachinesEffects } from "./pages/machines/store/effects/machines.effects";
+import { VerbalsEffects } from "./pages/verbals/store/effects/verbals.effects";
 
 export const routes: Routes = [
   {
@@ -37,13 +39,22 @@ export const routes: Routes = [
     }
   },
   {
-    path: "suppliers",
+    path: "machines",
     // canActivate: [ AuthGuard ],
     providers: [
-      provideState("supplier-manager", supplierManagementReducers),
-      provideEffects(SuppliersEffects)
+      provideState("machine-manager", machineManagementReducers),
+      provideEffects(MachinesEffects)
     ],
-    loadChildren: () => import("./pages/suppliers/suppliers.routing")
+    loadChildren: () => import("./pages/machines/machines.routing")
+  },
+  {
+    path: "verbals",
+    // canActivate: [ AuthGuard ],
+    providers: [
+      provideState("verbal-manager", verbalManagementReducers),
+      provideEffects(VerbalsEffects)
+    ],
+    loadChildren: () => import("./pages/verbals/verbals.routing")
   },
   {
     path: "customers",

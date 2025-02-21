@@ -37,17 +37,17 @@ import { uiSetSidebarCollapseState } from "../../core/ui/store/ui.actions";
     </div>
   `,
   styles: [`
-  .bg-extended-logo {
-    background-image: url("../../../assets/images/logo.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
-  .bg-collapsed-logo {
-    @extend .bg-extended-logo;
-    background-image: url("../../../assets/images/collapsed-logo.png");
-  }
+    .bg-extended-logo {
+      background-image: url("../../../assets/images/logo.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  
+    .bg-collapsed-logo {
+      @extend .bg-extended-logo;
+      background-image: url("../../../assets/images/collapsed-logo.png");
+    }
   `]
 })
 export class SidebarComponent {

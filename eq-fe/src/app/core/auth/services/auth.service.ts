@@ -11,19 +11,13 @@ const AUTH_KEY = "Authorization";
 export class AuthService {
   http = inject(HttpClient);
 
-  login(credentials: LoginPayload) {
-    const payload = {
-      client_id: "eq-project",
-      username: credentials.usernameOrEmail,
-      password: credentials.password,
-      grant_type: "password"
-    };
+  login(payload: LoginPayload) {
 
-    return this.http.post<Auth>(`${BASE_URL}/realms/master/protocol/openid-connect/auth`, payload);
+    return this.http.post<Auth>(`${BASE_URL}/auth/login`, payload);
   }
 
   saveAuth(auth: Auth) {
-    localStorage.setItem(AUTH_KEY, auth.token ?? "");
+    localStorage.setItem(AUTH_KEY, auth.access_token ?? "");
   }
 
   getAccessToken() {

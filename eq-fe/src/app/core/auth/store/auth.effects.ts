@@ -16,14 +16,14 @@ export class AuthEffects  {
     map(() => this.authService.getAccessToken()),
     filter(accessToken => !!accessToken),
     exhaustMap((accessToken) => [
-      AuthActions.saveAuth({ auth: { token: accessToken ?? undefined } }),
+      AuthActions.saveAuth({ auth: { access_token: accessToken ?? undefined } }),
       ProfileActions.loadProfile()
     ])
   ));
 
   loginEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.login),
-    exhaustMap(({ usernameOrEmail, password }) => this.authService.login({ usernameOrEmail, password })
+    exhaustMap(({ username, password }) => this.authService.login({ username, password })
       .pipe(
         map(auth => AuthActions.loginSuccess({ auth: auth })),
         catchError((err) => {
