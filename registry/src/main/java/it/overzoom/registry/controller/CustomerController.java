@@ -38,7 +38,7 @@ public class CustomerController {
     @GetMapping("")
     public ResponseEntity<List<Customer>> findAll(Pageable pageable) throws ResourceNotFoundException {
         log.info("REST request to get a page of Customers");
-        Page<Customer> page = SecurityUtils.isAdmin()
+        Page<Customer> page = !SecurityUtils.isAdmin()
                 ? customerService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
                 : customerService.findAll(pageable);
         return ResponseEntity.ok().body(page.getContent());
