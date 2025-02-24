@@ -1,5 +1,7 @@
 package it.overzoom.registry.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,6 +38,8 @@ public class Customer {
     private String phoneNumber;
 
     private String notes;
+
+    private List<Location> locations;
 
     public String getId() {
         return id;
@@ -125,11 +129,19 @@ public class Customer {
         this.notes = notes;
     }
 
+    public List<Location> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
+    }
+
     @Override
     public String toString() {
         return "Customer [id=" + id + ", userId=" + userId + ", name=" + name + ", fiscalCode=" + fiscalCode
                 + ", vatCode=" + vatCode + ", pec=" + pec + ", sdi=" + sdi + ", paymentMethod=" + paymentMethod
-                + ", email=" + email + ", phoneNumber=" + phoneNumber + ", notes=" + notes + "]";
+                + ", email=" + email + ", phoneNumber=" + phoneNumber + ", notes=" + notes + ", locations=" + locations
+                + "]";
     }
-
 }
