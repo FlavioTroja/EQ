@@ -1,0 +1,95 @@
+package it.overzoom.registry.controller;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.model.Location;
+import it.overzoom.registry.security.SecurityUtils;
+import it.overzoom.registry.service.LocationServiceImpl;
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/registry/locations")
+public class LocationController {
+
+    private static final Logger log = LoggerFactory.getLogger(LocationController.class);
+
+    @Autowired
+    private LocationServiceImpl locationService;
+
+    @GetMapping("")
+    public ResponseEntity<List<Location>> findAll(Pageable pageable) throws ResourceNotFoundException {
+        log.info("REST request to get a page of Locations");
+        Page<Location> page = !SecurityUtils.isAdmin()
+                ? locationService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
+                : locationService.findAll(pageable);
+        return ResponseEntity.ok().body(page.getContent());
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Location> create(@Valid @RequestBody Location location)
+            throws BadRequestException, URISyntaxException, ResourceNotFoundException {
+        log.info("REST request to save Location : " + location.toString());
+        if (location.getId() != null) {
+            throw new BadRequestException("Un nuovo cliente non può già avere un ID");
+        }
+        if (!SecurityUtils.isAdmin()) {
+            location.setUserId(SecurityUtils.getCurrentUserId());
+        }
+        location = locationService.create(location);
+        return ResponseEntity.created(new URI("/api/registry/locations/" + location.getId())).body(location);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<Location> update(@Valid @RequestBody Location location)
+            throws BadRequestException, ResourceNotFoundException {
+        log.info("REST request to update Location: " + location.toString());
+        if (location.getId() == null) {
+            throw new BadRequestException("ID invalido.");
+        }
+        if (!locationService.existsById(location.getId())) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
+
+        Location updateLocation = locationService.update(location)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Cliente non trovato con questo ID :: " + location.getId()));
+
+        return ResponseEntity.ok().body(updateLocation);
+    }
+
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Location> partialUpdate(@PathVariable(value = "id") String id,
+            @RequestBody Location location) throws BadRequestException, ResourceNotFoundException {
+        log.info("REST request to partial update Location: " + location.toString());
+        if (id == null) {
+            throw new BadRequestException("ID invalido.");
+        }
+        if (!locationService.existsById(id)) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
+
+        Location updateLocation = locationService.partialUpdate(id, location)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
+
+        return ResponseEntity.ok().body(updateLocation);
+    }
+}

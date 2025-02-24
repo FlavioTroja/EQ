@@ -2,6 +2,8 @@ package it.overzoom.registry.model;
 
 import java.util.List;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "location")
@@ -10,10 +12,14 @@ public class Location {
     @Id
     private String id;
 
+    @Indexed
+    private String userId;
+
     private String name;
     
     private String address;
     
+    @DBRef
     private List<Machine> machines;
 
     public String getId() {
@@ -22,6 +28,14 @@ public class Location {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
