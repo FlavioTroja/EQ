@@ -73,7 +73,8 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   }
 
   get isNewCustomer() {
-    return this.id() === "new";
+    console.log("isNewCustomer", this.id());
+    return this.id() === "new" || !this.id();
   }
 
   get maxNoteCharLength(){
@@ -81,7 +82,9 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log(this.isNewCustomer)
     if (!this.isNewCustomer) {
+      console.log("inside new customer");
       this.store.dispatch(
         CustomerActions.getCustomer({ id: this.id() })
       );

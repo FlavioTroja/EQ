@@ -64,7 +64,7 @@ export default class VerbalsComponent implements AfterViewInit, OnInit {
   store: Store<AppState> = inject(Store);
   subject = new Subject();
   dialog = inject(MatDialog);
-  verbalPaginate$ = of({ docs: [] as Verbal[] } as PaginateDatasource<Verbal>);
+  verbalPaginate$ = of({ content: [] as Verbal[] } as PaginateDatasource<Verbal>);
 
   queryParams = toSignal(this.store.select(selectRouteQueryParamParam()));
 

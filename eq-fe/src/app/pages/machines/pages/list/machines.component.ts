@@ -64,7 +64,7 @@ export default class MachinesComponent implements AfterViewInit, OnInit {
   store: Store<AppState> = inject(Store);
   subject = new Subject();
   dialog = inject(MatDialog);
-  machinePaginate$ = of({ docs: [] as Machine[] } as PaginateDatasource<Machine>);
+  machinePaginate$ = of({ content: [] as Machine[] } as PaginateDatasource<Machine>);
   
   queryParams = toSignal(this.store.select(selectRouteQueryParamParam()));
 

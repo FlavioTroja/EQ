@@ -19,7 +19,7 @@ import { MatSelectChange } from "@angular/material/select";
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [ CommonModule, MatIconModule, MatSortModule, MatTableModule, PaginationComponent, TableButtonComponent ],
+  imports: [CommonModule, MatIconModule, MatSortModule, MatTableModule, PaginationComponent, TableButtonComponent],
   template: `
     <div class="min-w-full w-min bg-foreground default-shadow rounded-md">
       <div class="table-container">
@@ -107,7 +107,7 @@ export class TableComponent<T> implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.matDataSource = new MatTableDataSource(this.dataSource.docs);
+    this.matDataSource = new MatTableDataSource(this.dataSource.content);
   }
 
   getNewSelectedPage(page: number) {

@@ -74,36 +74,6 @@ import { Address } from "../../../../models/Address";
       </div>
     </ng-template>
 
-    <ng-template #typeRow let-row>
-      <div class="bg-gray-100 rounded-full max-w-max py-1 px-2 flex justify-between items-center">
-        <mat-icon class="material-symbols-rounded">
-          <span *ngIf="row.type === 'PRIVATO'">boy</span>
-          <span *ngIf="row.type === 'INSTALLATORE'">install_desktop</span>
-          <span *ngIf="row.type === 'DISTRIBUTORE'">circles_ext</span>
-          <span *ngIf="row.type === 'RIVENDITORE'">partner_exchange</span>
-        </mat-icon>
-        <span class="px-1">{{ formatType(row.type) }}</span>
-      </div>
-    </ng-template>
-
-    <ng-template #contactRow let-row>
-      <div class="flex flex-col gap-2">
-        <a *ngIf="row.email" [href]="'mailto:' + row.email" class="inline-flex items-center px-2.5 py-0.5 rounded-md shadow-sm accent text-sm font-medium fit-content">
-          <mat-icon class="icon-size material-symbols-rounded">mail</mat-icon>&nbsp;{{ row?.email?.toLowerCase() }}
-        </a>
-
-        <a *ngIf="row.phone" [href]="'https://wa.me/' + row.phone" target="_blank"  class="inline-flex items-center px-2.5 py-0.5 rounded-md shadow-sm accent text-sm font-medium fit-content">
-          <mat-icon class="icon-size material-symbols-rounded">phone</mat-icon>&nbsp;{{ row.phone }}
-        </a>
-      </div>
-    </ng-template>
-
-    <ng-template #addressRow let-row>
-      <div *ngIf="getBillingAddress(row.addresses) as billAddress">
-        {{ billAddress.address }}, {{ billAddress.number }} - {{ billAddress.city }} ({{ billAddress.province.toUpperCase() }})
-      </div>
-    </ng-template>
-
     <ng-template #skeleton>
       <app-table-skeleton [columns]="columns"/>
     </ng-template>
@@ -113,9 +83,6 @@ import { Address } from "../../../../models/Address";
 export default class ListCustomerComponent implements OnInit, AfterViewInit {
 
   @ViewChild("nameRow") nameRow: TemplateRef<any> | undefined;
-  @ViewChild("contactRow") contactRow: TemplateRef<any> | undefined;
-  @ViewChild("addressRow") addressRow: TemplateRef<any> | undefined;
-  @ViewChild("typeRow") typeRow: TemplateRef<any> | undefined;
 
   store: Store<AppState> = inject(Store);
   customerPaginate$ = this.store.select(getCustomersPaginate);
@@ -166,43 +133,8 @@ export default class ListCustomerComponent implements OnInit, AfterViewInit {
           width: "15rem",
           sortable: true
         },
-        {
-          columnDef: 'address',
-          header: 'Indirizzo Predefinito',
-          template: this.addressRow,
-          width: "30rem",
-          sortable: false
-        },
-        {
-          columnDef: 'type',
-          header: 'Tipologia Cliente',
-          template: this.typeRow,
-          width: "15rem",
-          sortable: true
-        },
-        {
-          columnDef: 'email',
-          header: 'Contatto',
-          template: this.contactRow,
-          width: "25rem",
-          sortable: false
-        }
       ];
       this.displayedColumns = [...this.columns.map(c => c.columnDef), "actions"];
-
-      this.filterTabs = [
-        {
-          field: "typeValues",
-          name: "tipologia cliente",
-          options: customerTypeArray.map((c, i) => ({ id: i, name: c.name, checked: !!this.typeValues?.includes(i) })),
-          popUp: false,
-          iconName: "plus",
-          selectIds: this.typeValues || [],
-          searcher: false,
-          onSelectedTab: (tab: FilterElement) => this.onSelectedTab(tab),
-          onSelectOption: (tabName: string, option: FilterOption) => this.onSelectedOption(tabName, option)
-        },
-      ];
     })
   }
 

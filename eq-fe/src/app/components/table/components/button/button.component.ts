@@ -14,8 +14,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
                   'error': item.bgColor === 'red',
                   'warning': item.bgColor === 'orange',
                   'accent': item.bgColor === 'sky',
-                  'green-buttons': item.bgColor === 'green',
-                  'red-buttons': item.bgColor === 'red',
                   'opacity-50 pointer-events-none' : isDisabled
                   }"
             (click)="item.callback ? item.callback(row) : null"

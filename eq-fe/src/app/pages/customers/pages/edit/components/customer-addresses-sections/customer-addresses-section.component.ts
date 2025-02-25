@@ -42,7 +42,7 @@ import { MessageContainerComponent } from "../../../../../../components/message-
       <div class="grid gap-2">
           <div class="flex flex-row justify-between p-2">
               <div class="flex flex-col text-xl font-extrabold uppercase"
-                   *ngIf="!viewOnly || addressesArray.length > 0">indirizzi di spedizione
+                   *ngIf="!viewOnly || addressesArray.length > 0">Sedi
               </div>
               <div *ngIf="!viewOnly">
                   <button class="focus:outline-none p-2 rounded-full w-full border-input bg-foreground flex items-center"
@@ -55,33 +55,11 @@ import { MessageContainerComponent } from "../../../../../../components/message-
 
       <div class="flex flex-row justify-center" *ngIf="!viewOnly && !addressesArray.length">
 
-<!--        <div class="m-auto mb-10" style="background-color: #F9F1E8">-->
-<!--          <div class="p-2 items-start text-indigo-100 rounded-[1.7em] flex default-shadow-hover">-->
-<!--              <span class="flex rounded-full uppercase p-3 text-xs font-bold"-->
-<!--                    style="background-color: #EEA549">-->
-<!--                  <mat-icon class="material-symbols-rounded-filled" style="color: #F9F1E8">warning</mat-icon>-->
-<!--              </span>-->
-<!--            <div class="flex flex-col gap-1">-->
-<!--                      <span class="font-semibold text-left flex-auto pl-2"-->
-<!--                            style="color: #EEA549">NESSUN INDIRIZZO</span>-->
-<!--              <span class="text-left text-sm text-black flex-auto pl-2 pr-12 pb-2">-->
-<!--            Per aggiungere un indirizzo di spedizione <br>-->
-<!--            <div class="flex">-->
-<!--              premi il tasto "<span class="h-5 w-5 rounded-full bg-foreground pl-1 pt-1">-->
-<!--                                <mat-icon class="icon-size material-symbols-rounded"-->
-<!--                                          style="font-size: 0.75rem">add</mat-icon>-->
-<!--                              </span>" a destra-->
-<!--            </div>-->
-<!--          </span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-
         <app-message-container
           type="warning"
           icon="warning"
-          title="NESSUN INDIRIZZO"
-          message="Per aggiungere un indirizzo di spedizione"
+          title="NESSUNA SEDE"
+          message="Per aggiungere una sede"
           [add]="true"/>
 
       </div>
