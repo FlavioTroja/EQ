@@ -14,7 +14,7 @@ export class ProfileService {
   store: Store<AppState> = inject(Store);
 
   load() {
-    return this.http.get<PartialUser>(`${BASE_URL}/auth/profile`);
+    return this.http.get<PartialUser>(`${BASE_URL}/api/registry/users/profile`);
   }
 
   edit(user: PartialUser) {

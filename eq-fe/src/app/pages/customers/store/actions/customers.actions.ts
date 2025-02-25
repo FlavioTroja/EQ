@@ -11,7 +11,7 @@ export const addCustomerSuccess = createAction("[Customers] Add customer Success
 
 export const addCustomerFailed = createAction("[Customers] Add Failed", props<{ error: HttpError }>());
 
-export const getCustomer = createAction("[Customers] Get", props<{ id: number }>());
+export const getCustomer = createAction("[Customers] Get", props<{ id: string }>());
 
 export const getCustomerSuccess = createAction("[Customers] Get customer Success", props<{ current: Customer }>());
 
@@ -27,7 +27,7 @@ export const editCustomerSuccess = createAction("[Customers] Edit customer Succe
 
 export const editCustomerFailed = createAction("[Customers] Edit Failed", props<{ error: HttpError }>());
 
-export const deleteCustomer = createAction("[Customers] Delete", props<{ id: number }>());
+export const deleteCustomer = createAction("[Customers] Delete", props<{ id: string }>());
 
 export const deleteCustomerSuccess = createAction("[Customers] Delete customer Success", props<{ customer: Customer }>());
 

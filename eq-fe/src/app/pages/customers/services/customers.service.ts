@@ -18,28 +18,28 @@ export class CustomersService {
       id: undefined,
       addresses: payload.addresses?.map(p => ({ ...p, id: undefined })),
     }
-    return this.http.post<Customer>(`${BASE_URL}/customers/create`, newPayload);
+    return this.http.post<Customer>(`${BASE_URL}/api/registry/customers`, newPayload);
   }
 
-  getCustomer(id: number) {
-    return this.http.get<Customer>(`${BASE_URL}/customers/${id}`, { params: { populate: "addresses" } });
+  getCustomer(id: string) {
+    return this.http.get<Customer>(`${BASE_URL}/api/registry/customers/${id}`, { params: { populate: "addresses" } });
   }
 
-  editCustomer(id: number, payload: PartialCustomer) {
+  editCustomer(id: string, payload: PartialCustomer) {
     const body = { ...payload, id: undefined };
-    return this.http.patch<Customer>(`${BASE_URL}/customers/${id}`, body);
+    return this.http.patch<Customer>(`${BASE_URL}/api/registry/customers/${id}`, body);
   }
 
-  deleteCustomer(id: number) {
-    return this.http.delete<Customer>(`${BASE_URL}/customers/${id}`);
+  deleteCustomer(id: string) {
+    return this.http.delete<Customer>(`${BASE_URL}/api/registry/customers/${id}`);
   }
 
   loadCustomers(payload: Query<CustomerFilter>) {
-    return this.http.post<PaginateDatasource<Customer>>(`${BASE_URL}/customers`, payload);
+    return this.http.get<PaginateDatasource<Customer>>(`${BASE_URL}/api/registry/customers`);
   }
 
   loadAllCustomers(payload: Query<CustomerFilter>) {
-    return this.http.post<Customer[]>(`${BASE_URL}/customers/all`, payload);
+    return this.http.get<Customer[]>(`${BASE_URL}/api/registry/customers/all`);
   }
 
 

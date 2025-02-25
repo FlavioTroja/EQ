@@ -39,12 +39,13 @@ import { MatSelectComponent } from "../mat-select/mat-select.component";
         </button>
       </div>
       <div class="flex flex-col">
-        {{((paginator.pageIndex) * paginator.pageSize) + 1}}
-        - {{((paginator.pageIndex + 1) * paginator.pageSize) > (paginateResults.totalDocs || 0) ? paginateResults.totalDocs : (paginator.pageIndex + 1) * paginator.pageSize}}
-        di {{(paginateResults.totalDocs || 0)   }}
+        {{ ((paginator.pageIndex) * paginator.pageSize) + 1 }}
+        - {{ ((paginator.pageIndex + 1) * paginator.pageSize) > (paginateResults.totalElements || 0) ? paginateResults.totalElements : (paginator.pageIndex + 1) * paginator.pageSize }}
+        di {{ (paginateResults.totalElements || 0) }}
       </div>
       <div class="flex flex-col">
-          <app-mat-select [value]="paginator.pageSize.toString()" [options]="['10', '25', '50']" (onChange)="pageSizeToEmit.emit($event)" />
+        <app-mat-select [value]="paginator.pageSize.toString()" [options]="['10', '25', '50']"
+                        (onChange)="pageSizeToEmit.emit($event)"/>
       </div>
     </div>
   `,

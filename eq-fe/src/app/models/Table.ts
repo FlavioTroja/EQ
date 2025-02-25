@@ -3,8 +3,8 @@ import { Roles } from "./User";
 import { TooltipOpts } from "../../global";
 
 export interface PaginateDatasource<T> {
-  docs: T[]
-  totalDocs: number
+  content: T[]
+  totalElements: number
   totalPages: number
   hasPrevPage: boolean
   hasNextPage: boolean

@@ -13,7 +13,7 @@ import { AppState } from "../../../../app.config";
   template: `
     <ng-template ngFor let-item="$implicit" [ngForOf]="sidebarRoutes"
                  *ngIf="(activeRoute$ | async) as activeRoute">
-        <app-route-element *fbHideByCodeSelector="item.roleSelector || ''" [route]="item" [activeRoute]="activeRoute"/>
+        <app-route-element [route]="item" [activeRoute]="activeRoute"/>
     </ng-template>
   `,
   styles: [

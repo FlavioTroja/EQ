@@ -76,7 +76,7 @@ export class CustomersEffects  {
       this.store.select(getActiveCustomerChanges)
     ]),
     exhaustMap(([_, changes]) => {
-      if(isNaN(changes.id!)) {
+      if(changes.id === "new") {
         return of(CustomersActions.addCustomer({ customer: changes as Customer }));
       }
       return this.customerService.editCustomer(changes?.id!, changes as Customer)

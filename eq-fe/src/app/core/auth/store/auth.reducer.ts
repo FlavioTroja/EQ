@@ -11,10 +11,10 @@ export const initialState: AuthState = {}
 const authReducer = createReducer(
   initialState,
   on(AuthActions.saveAuth, (state, {auth }) => ({
-    accessToken: createAuthorizationToken(auth.token)
+    accessToken: createAuthorizationToken(auth.access_token)
   })),
-  on(AuthActions.loginSuccess, (state, {auth }) => ({
-    accessToken: createAuthorizationToken(auth.token)
+  on(AuthActions.loginSuccess, (state, { auth }) => ({
+    accessToken: createAuthorizationToken(auth.access_token)
   })),
   on(AuthActions.loginFailed, (state, { error }) => ({
     httpError: { ...error }
