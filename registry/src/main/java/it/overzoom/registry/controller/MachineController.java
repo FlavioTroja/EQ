@@ -2,8 +2,6 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Machine;
-import it.overzoom.registry.security.SecurityUtils;
 import it.overzoom.registry.service.MachineServiceImpl;
 import jakarta.validation.Valid;
 
@@ -37,20 +34,20 @@ public class MachineController {
     private MachineServiceImpl machineService;
 
     @GetMapping("")
-    public ResponseEntity<List<Machine>> findAll(
-            Pageable pageable) {
+    public ResponseEntity<Page<Machine>> findAll(Pageable pageable) {
         log.info("REST request to get a page of Machines");
         Page<Machine> page = machineService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent());
+        return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Machine> getById(@PathVariable(value = "id") String locationId) throws ResourceNotFoundException {
+    public ResponseEntity<Machine> findById(@PathVariable(value = "id") String locationId)
+            throws ResourceNotFoundException {
         return machineService.findById(locationId)
-            .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Sede non trovata."));
+                .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Macchina non trovata."));
     }
 
-    @PostMapping("")
+    @PostMapping("/admin")
     public ResponseEntity<Machine> create(@Valid @RequestBody Machine machine)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Machine : " + machine.toString());
@@ -61,7 +58,7 @@ public class MachineController {
         return ResponseEntity.created(new URI("/api/machines/" + machine.getId())).body(machine);
     }
 
-    @PutMapping("")
+    @PutMapping("/admin")
     public ResponseEntity<Machine> update(@Valid @RequestBody Machine machine) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to update Machine:" + machine.toString());
@@ -77,7 +74,7 @@ public class MachineController {
         return ResponseEntity.ok().body(updateMachine);
     }
 
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/admin/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Machine> partialUpdate(@PathVariable(value = "id") String id,
             @RequestBody Machine machine) throws BadRequestException,
             ResourceNotFoundException {

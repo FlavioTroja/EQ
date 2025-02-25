@@ -2,7 +2,6 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +35,19 @@ public class CustomerController {
     private CustomerServiceImpl customerService;
 
     @GetMapping("")
-    public ResponseEntity<List<Customer>> findAll(Pageable pageable) throws ResourceNotFoundException {
+    public ResponseEntity<Page<Customer>> findAll(Pageable pageable) throws ResourceNotFoundException {
         log.info("REST request to get a page of Customers");
         Page<Customer> page = !SecurityUtils.isAdmin()
                 ? customerService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
                 : customerService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent());
+        return ResponseEntity.ok().body(page);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> findById(@PathVariable(value = "id") String customerId)
+            throws ResourceNotFoundException {
+        return customerService.findById(customerId)
+                .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
     }
 
     @PostMapping("")

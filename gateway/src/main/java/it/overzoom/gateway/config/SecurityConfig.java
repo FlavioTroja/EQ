@@ -1,16 +1,53 @@
 package it.overzoom.gateway.config;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import reactor.core.publisher.Flux;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+
+    @Value("${keycloak.resource}")
+    private String keycloakResource;
+
+    @Bean
+    public ReactiveJwtAuthenticationConverter jwtAuthenticationConverter() {
+        ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+            Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
+            if (resourceAccess != null) {
+                Map<String, Object> eqProject = (Map<String, Object>) resourceAccess.get(keycloakResource);
+                if (eqProject != null && eqProject.containsKey("roles")) {
+                    List<String> roles = (List<String>) eqProject.get("roles");
+                    roles.forEach(role -> {
+                        System.out.println("CHECK ROLE: " + role.toUpperCase());
+                        authorities.add(new SimpleGrantedAuthority(role.toUpperCase()));
+                    });
+                }
+            }
+
+            return Flux.fromIterable(authorities);
+        });
+        return converter;
+    }
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {

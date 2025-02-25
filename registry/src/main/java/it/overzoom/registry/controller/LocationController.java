@@ -2,7 +2,6 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +35,19 @@ public class LocationController {
     private LocationServiceImpl locationService;
 
     @GetMapping("")
-    public ResponseEntity<List<Location>> findAll(Pageable pageable) throws ResourceNotFoundException {
+    public ResponseEntity<Page<Location>> findAll(Pageable pageable) throws ResourceNotFoundException {
         log.info("REST request to get a page of Locations");
         Page<Location> page = !SecurityUtils.isAdmin()
                 ? locationService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
                 : locationService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent());
+        return ResponseEntity.ok().body(page);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Location> findById(@PathVariable(value = "id") String locationId)
+            throws ResourceNotFoundException {
+        return locationService.findById(locationId)
+                .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Sede non trovata."));
     }
 
     @PostMapping("")

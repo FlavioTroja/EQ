@@ -20,7 +20,7 @@ spring:
                     uri: lb://REGISTRY        
             routes[1]:
                     predicates[0]: Path=/api/calendar/** , /calendar/api-docs       
-                    uri: lb://CALENDAR    
+                    uri: lb://CALENDAR                        
 
 
 openapi:
@@ -53,10 +53,7 @@ keycloak:
   resource: eq-project
   admin:
     realm: master
-    resource: admin-cli
-
-frontend:
-    origin-url: ${FRONTEND_URI:http://localhost:4200}
+    resource: admin-cli    
 
 eureka:
     client:
