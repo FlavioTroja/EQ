@@ -21,16 +21,16 @@ export class CustomersService {
     return this.http.post<Customer>(`${BASE_URL}/api/registry/customers`, newPayload);
   }
 
-  getCustomer(id: number) {
+  getCustomer(id: string) {
     return this.http.get<Customer>(`${BASE_URL}/api/registry/customers/${id}`, { params: { populate: "addresses" } });
   }
 
-  editCustomer(id: number, payload: PartialCustomer) {
+  editCustomer(id: string, payload: PartialCustomer) {
     const body = { ...payload, id: undefined };
     return this.http.patch<Customer>(`${BASE_URL}/api/registry/customers/${id}`, body);
   }
 
-  deleteCustomer(id: number) {
+  deleteCustomer(id: string) {
     return this.http.delete<Customer>(`${BASE_URL}/api/registry/customers/${id}`);
   }
 

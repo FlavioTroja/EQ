@@ -17,11 +17,10 @@ import *  as CustomerActions from "../../../customers/store/actions/customers.ac
 import { map, pairwise, takeUntil } from "rxjs/operators";
 import { InputComponent } from "../../../../components/input/input.component";
 import { MatIconModule } from "@angular/material/icon";
-import { difference, generateRandomCode } from "../../../../../utils/utils";
+import { difference } from "../../../../../utils/utils";
 import { Subject } from "rxjs";
 import { MatSelectModule } from "@angular/material/select";
 import { CustomerAddressesSectionComponent } from "./components/customer-addresses-sections/customer-addresses-section.component";
-import { getFiscalCodeRegex, getPhoneNumberRegExp } from "../../../../../utils/regex";
 
 
 @Component({
@@ -32,8 +31,6 @@ import { getFiscalCodeRegex, getPhoneNumberRegExp } from "../../../../../utils/r
   styles: [``]
 })
 export default class EditCustomerComponent implements OnInit, OnDestroy {
-  //need to stay due to textarea being used, it doesn't handle the custom errors
-  private readonly maxNoteCharacters = 512;
 
   store: Store<AppState> = inject(Store);
   subject = new Subject();
@@ -49,15 +46,15 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   ));
 
   customerForm = this.fb.group({
-    name: [{ value: "", disabled: this.viewOnly() }, [Validators.required, Validators.maxLength(256)]],
-    fiscalCode: [{ value: "", disabled: this.viewOnly() }, Validators.pattern(getFiscalCodeRegex()), !Validators.required],
-    vatNumber: [{ value: "", disabled: this.viewOnly() }, Validators.maxLength(256)],
-    sdiNumber: [{ value: "", disabled: this.viewOnly() }, Validators.maxLength(256)],
-    type: [{ value: CustomerType.PRIVATO, disabled: this.viewOnly() }, [Validators.required]],
-    email: [{ value: "", disabled: this.viewOnly() }, [Validators.required, Validators.email]],
-    pec: [{ value: "", disabled: this.viewOnly() }, Validators.maxLength(256)],
-    phone: [{ value: "", disabled: this.viewOnly() }, Validators.pattern(getPhoneNumberRegExp())],
-    note: [{ value: "", disabled: this.viewOnly() }, Validators.maxLength(this.maxNoteCharacters)],
+    name: [{ value: "", disabled: this.viewOnly() }, Validators.required],
+    fiscalCode: [{ value: "", disabled: this.viewOnly() }],
+    vatNumber: [{ value: "", disabled: this.viewOnly() }],
+    sdiNumber: [{ value: "", disabled: this.viewOnly() }],
+    type: [{ value: CustomerType.PRIVATO, disabled: this.viewOnly() }],
+    email: [{ value: "", disabled: this.viewOnly() }],
+    pec: [{ value: "", disabled: this.viewOnly() }],
+    phone: [{ value: "", disabled: this.viewOnly() }],
+    note: [{ value: "", disabled: this.viewOnly() }],
     addresses: [[{}]],
   });
 
@@ -73,18 +70,12 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   }
 
   get isNewCustomer() {
-    console.log("isNewCustomer", this.id());
     return this.id() === "new" || !this.id();
-  }
-
-  get maxNoteCharLength(){
-    return this.maxNoteCharacters;
   }
 
   ngOnInit() {
     console.log(this.isNewCustomer)
     if (!this.isNewCustomer) {
-      console.log("inside new customer");
       this.store.dispatch(
         CustomerActions.getCustomer({ id: this.id() })
       );
@@ -109,10 +100,7 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
 
   loadAddresses(addresses: AddressOnCustomerSection[]) {
     this.customerForm.patchValue({
-      addresses: addresses.map(p => ({
-        ...p,
-        code: generateRandomCode()
-      }))
+      addresses: []
     });
   }
 
@@ -133,9 +121,10 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
           ]
         };
 
+        console.log("changes",diff)
         return createCustomerPayload(diff);
       }),
-      map((changes: any) => Object.keys(changes).length !== 0 && !this.customerForm.invalid ? { ...changes, id: +this.id() } : {}),
+      map((changes: any) => Object.keys(changes).length !== 0 && !this.customerForm.invalid ? { ...changes, id: this.id() } : {}),
       takeUntil(this.subject),
       // tap(changes => console.log(changes)),
     ).subscribe((changes: any) => this.store.dispatch(CustomerActions.customerActiveChanges({ changes })));

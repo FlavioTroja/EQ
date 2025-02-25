@@ -17,28 +17,28 @@ export class VerbalsService {
       ...payload,
       id: undefined,
     }
-    return this.http.post<Verbal>(`${BASE_URL}/verbals/create`, newPayload);
+    return this.http.post<Verbal>(`${BASE_URL}/api/registry/verbals/create`, newPayload);
   }
 
   getVerbal(id: number,  params?: DefaultQueryParams) {
-    return this.http.get<Verbal>(`${BASE_URL}/verbals/${id}`, { params: { ...params } });
+    return this.http.get<Verbal>(`${BASE_URL}/api/registry/verbals/${id}`, { params: { ...params } });
   }
 
   editVerbal(id: number, payload: PartialVerbal) {
     const body = { ...payload, id: undefined };
-    return this.http.patch<Verbal>(`${BASE_URL}/verbals/${id}`, body);
+    return this.http.patch<Verbal>(`${BASE_URL}/api/registry/verbals/${id}`, body);
   }
 
   deleteVerbal(id: number) {
-    return this.http.delete<Verbal>(`${BASE_URL}/verbals/${id}`);
+    return this.http.delete<Verbal>(`${BASE_URL}/api/registry/verbals/${id}`);
   }
 
   loadVerbals(payload: Query<VerbalFilter>) {
-    return this.http.post<PaginateDatasource<Verbal>>(`${BASE_URL}/verbals`, payload);
+    return this.http.post<PaginateDatasource<Verbal>>(`${BASE_URL}/api/registry/verbals`, payload);
   }
 
   loadAllVerbals(payload: Query<object>) {
-    return this.http.post<Verbal[]>(`${BASE_URL}/verbals/all`, payload);
+    return this.http.post<Verbal[]>(`${BASE_URL}/api/registry/verbals/all`, payload);
   }
 
 

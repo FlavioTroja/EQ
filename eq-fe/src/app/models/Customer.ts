@@ -3,7 +3,7 @@ import { Section } from "../../global";
 import { Address } from "./Address";
 
 export interface Customer {
-  id: number,
+  id: string,
   name: string,
   fiscalCode: string,
   vatNumber: string,

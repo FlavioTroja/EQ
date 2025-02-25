@@ -78,10 +78,6 @@
                   [ngClass]="{'border-input-error' : f.note.invalid && f.note.dirty, 'viewOnly' : viewOnly()}"
                   id="customer-note"
                   formControlName="note"></textarea>
-
-        <div *ngIf="f.note.invalid && f.note.dirty" class="px-3 py-1 text-xs text-red-800">
-          Il campo 'note' non deve superare i {{maxNoteCharLength}} caratteri
-        </div>
       </div>
     </div>
 

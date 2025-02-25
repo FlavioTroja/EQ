@@ -17,28 +17,28 @@ export class MachinesService {
       ...payload,
       id: undefined,
     }
-    return this.http.post<Machine>(`${BASE_URL}/machines/create`, newPayload);
+    return this.http.post<Machine>(`${BASE_URL}/api/registry/machines/create`, newPayload);
   }
 
   getMachine(id: number,  params?: DefaultQueryParams) {
-    return this.http.get<Machine>(`${BASE_URL}/machines/${id}`, { params: { ...params } });
+    return this.http.get<Machine>(`${BASE_URL}/api/registry/machines/${id}`, { params: { ...params } });
   }
 
   editMachine(id: number, payload: PartialMachine) {
     const body = { ...payload, id: undefined };
-    return this.http.patch<Machine>(`${BASE_URL}/machines/${id}`, body);
+    return this.http.patch<Machine>(`${BASE_URL}/api/registry/machines/${id}`, body);
   }
 
   deleteMachine(id: number) {
-    return this.http.delete<Machine>(`${BASE_URL}/machines/${id}`);
+    return this.http.delete<Machine>(`${BASE_URL}/api/registry/machines/${id}`);
   }
 
   loadMachines(payload: Query<MachineFilter>) {
-    return this.http.post<PaginateDatasource<Machine>>(`${BASE_URL}/machines`, payload);
+    return this.http.post<PaginateDatasource<Machine>>(`${BASE_URL}/api/registry/machines`, payload);
   }
 
   loadAllMachines(payload: Query<object>) {
-    return this.http.post<Machine[]>(`${BASE_URL}/machines/all`, payload);
+    return this.http.post<Machine[]>(`${BASE_URL}/api/registry/machines/all`, payload);
   }
 
 

@@ -13,28 +13,28 @@ export class UsersService {
   http = inject(HttpClient);
 
   addUser(payload: PartialUser) {
-    return this.http.post<User>(`${BASE_URL}/users/create`, payload);
+    return this.http.post<User>(`${BASE_URL}/api/registry/users/create`, payload);
   }
 
   getUser(id: number) {
-    return this.http.get<User>(`${BASE_URL}/users/${id}`);
+    return this.http.get<User>(`${BASE_URL}/api/registry/users/${id}`);
   }
 
   editUser(id: number, payload: PartialUser) {
     const body = { ...payload, id: undefined };
-    return this.http.patch<User>(`${BASE_URL}/users/${id}`, body);
+    return this.http.patch<User>(`${BASE_URL}/api/registry/users/${id}`, body);
   }
 
   deleteUser(id: number) {
-    return this.http.delete<User>(`${BASE_URL}/users/${id}`);
+    return this.http.delete<User>(`${BASE_URL}/api/registry/users/${id}`);
   }
 
   loadUsers(payload: Query<UserFilter>) {
-    return this.http.post<PaginateDatasource<User>>(`${BASE_URL}/users`, payload);
+    return this.http.post<PaginateDatasource<User>>(`${BASE_URL}/api/registry/users`, payload);
   }
 
   loadAllUsers(payload: Query<UserFilter>) {
-    return this.http.post<User[]>(`${BASE_URL}/users/all`, payload);
+    return this.http.post<User[]>(`${BASE_URL}/api/registry/users/all`, payload);
   }
 
 
