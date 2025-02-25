@@ -92,4 +92,9 @@ public class CustomerServiceImpl implements CustomerService {
                 })
                 .map(this::create);
     }
+
+    @Override
+    public void deleteById(String id) {
+        customerRepository.deleteById(id);
+    }
 }

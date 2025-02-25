@@ -22,4 +22,6 @@ public interface CustomerService {
     Optional<Customer> update(Customer customer);
 
     Optional<Customer> partialUpdate(String id, Customer customer);
+
+    void deleteById(String id);
 }

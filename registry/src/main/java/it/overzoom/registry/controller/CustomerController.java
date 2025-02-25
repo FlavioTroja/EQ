@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,4 +99,16 @@ public class CustomerController {
 
         return ResponseEntity.ok().body(updateCustomer);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") String customerId)
+            throws ResourceNotFoundException {
+
+        if (!customerService.existsById(customerId)) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
+        customerService.deleteById(customerId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
