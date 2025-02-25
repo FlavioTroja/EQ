@@ -40,6 +40,7 @@ public class MachineServiceImpl implements MachineService {
     public Optional<Machine> update(Machine machine) {
         return this.findById(machine.getId()).map(existingMachine -> {
             existingMachine.setName(machine.getName());
+            existingMachine.setType(machine.getType());
             return existingMachine;
         }).map(this::create);
     }
@@ -50,6 +51,9 @@ public class MachineServiceImpl implements MachineService {
                 .map(existingMachine -> {
                     if (machine.getName() != null) {
                         existingMachine.setName(machine.getName());
+                    }
+                    if (machine.getType() != null) {
+                        existingMachine.setType(machine.getType());
                     }
                     return existingMachine;
                 })

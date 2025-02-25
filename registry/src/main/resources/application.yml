@@ -37,7 +37,4 @@ eureka:
         service-url:
             defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
     instance:
-        prefer-ip-address: true
-
-frontend:
-    origin-url: ${FRONTEND_URI:http://localhost:4200}        
+        prefer-ip-address: true   

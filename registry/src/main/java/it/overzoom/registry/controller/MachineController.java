@@ -47,7 +47,7 @@ public class MachineController {
                 .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Macchina non trovata."));
     }
 
-    @PostMapping("/admin")
+    @PostMapping("")
     public ResponseEntity<Machine> create(@Valid @RequestBody Machine machine)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Machine : " + machine.toString());
@@ -58,7 +58,7 @@ public class MachineController {
         return ResponseEntity.created(new URI("/api/machines/" + machine.getId())).body(machine);
     }
 
-    @PutMapping("/admin")
+    @PutMapping("")
     public ResponseEntity<Machine> update(@Valid @RequestBody Machine machine) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to update Machine:" + machine.toString());
@@ -74,7 +74,7 @@ public class MachineController {
         return ResponseEntity.ok().body(updateMachine);
     }
 
-    @PatchMapping(value = "/admin/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Machine> partialUpdate(@PathVariable(value = "id") String id,
             @RequestBody Machine machine) throws BadRequestException,
             ResourceNotFoundException {

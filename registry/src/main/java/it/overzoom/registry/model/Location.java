@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "location")
@@ -20,8 +19,7 @@ public class Location {
 
     private String address;
 
-    @DBRef
-    private List<Machine> machines;
+    private List<Environment> environments;
 
     public String getId() {
         return id;
@@ -55,16 +53,16 @@ public class Location {
         this.address = address;
     }
 
-    public List<Machine> getMachines() {
-        return machines;
+    public List<Environment> getEnvironments() {
+        return environments;
     }
 
-    public void setMachines(List<Machine> machines) {
-        this.machines = machines;
+    public void setEnvironments(List<Environment> environments) {
+        this.environments = environments;
     }
 
-    @Override
     public String toString() {
-        return "Location [id=" + id + ", name=" + name + ", address=" + address + ", machines=" + machines + "]";
+        return "Location [id=" + id + ", userId=" + userId + ", name=" + name + ", address=" + address
+                + ", environments=" + environments + "]";
     }
 }

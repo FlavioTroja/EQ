@@ -1,17 +1,21 @@
 package it.overzoom.registry.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "machine")
-public class Machine {
+@Document(collection = "environment")
+public class Environment {
 
     @Id
     private String id;
 
     private String name;
 
-    private TypeMachine type;
+    @DBRef
+    private List<Machine> machines;
 
     public String getId() {
         return id;
@@ -29,17 +33,17 @@ public class Machine {
         this.name = name;
     }
 
-    public TypeMachine getType() {
-        return type;
+    public List<Machine> getMachines() {
+        return machines;
     }
 
-    public void setType(TypeMachine type) {
-        this.type = type;
+    public void setMachines(List<Machine> machines) {
+        this.machines = machines;
     }
 
     @Override
     public String toString() {
-        return "Machine [id=" + id + ", name=" + name + ", type=" + type + "]";
+        return "Environment [id=" + id + ", name=" + name + ", machines=" + machines + "]";
     }
 
 }

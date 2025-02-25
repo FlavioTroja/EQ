@@ -1,6 +1,5 @@
 package it.overzoom.registry.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -9,9 +8,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class CorsConfig {
-
-    @Value("${frontend.origin-url}")
-    private String fontendOriginUrl;
 
     @Bean
     public CorsWebFilter corsWebFilter() {
