@@ -1,4 +1,4 @@
-package it.overzoom.gateway.config;
+package it.overzoom.registry.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
