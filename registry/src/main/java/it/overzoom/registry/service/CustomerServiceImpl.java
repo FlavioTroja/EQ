@@ -7,8 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.repository.CustomerRepository;
+import it.overzoom.registry.security.SecurityUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -16,14 +19,25 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    private static boolean hasAccess(Customer customer) throws ResourceNotFoundException {
+        return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(customer.getUserId());
+    }
+
     @Override
     public Page<Customer> findAll(Pageable pageable) {
         return customerRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<Customer> findById(String id) {
-        return customerRepository.findById(id);
+    public Customer findById(String id) throws ResourceNotFoundException, BadRequestException {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
+
+        if (!hasAccess(customer)) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+        }
+
+        return customer;
     }
 
     @Override

@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Location;
-import it.overzoom.registry.security.SecurityUtils;
 import it.overzoom.registry.service.LocationServiceImpl;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/registry/locations")
+@RequestMapping("/api/registry/customers/{customerId}/locations")
 public class LocationController {
 
     private static final Logger log = LoggerFactory.getLogger(LocationController.class);
@@ -35,11 +34,10 @@ public class LocationController {
     private LocationServiceImpl locationService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Location>> findAll(Pageable pageable) throws ResourceNotFoundException {
-        log.info("REST request to get a page of Locations");
-        Page<Location> page = !SecurityUtils.isAdmin()
-                ? locationService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
-                : locationService.findAll(pageable);
+    public ResponseEntity<Page<Location>> findCustomerId(@PathVariable(value = "customerId") String customerId,
+            Pageable pageable) throws ResourceNotFoundException, BadRequestException {
+        log.info("REST request to get a page of Locations by customerId: " + customerId);
+        Page<Location> page = locationService.findByCustomerId(customerId, pageable);
         return ResponseEntity.ok().body(page);
     }
 
@@ -51,17 +49,19 @@ public class LocationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Location> create(@Valid @RequestBody Location location)
+    public ResponseEntity<Location> create(@PathVariable(value = "customerId") String customerId,
+            @Valid @RequestBody Location location)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Location : " + location.toString());
         if (location.getId() != null) {
-            throw new BadRequestException("Un nuovo cliente non può già avere un ID");
+            throw new BadRequestException("Una nuova sede non può già avere un ID");
         }
-        if (!SecurityUtils.isAdmin()) {
-            location.setUserId(SecurityUtils.getCurrentUserId());
-        }
+        location.setCustomerId(customerId);
         location = locationService.create(location);
-        return ResponseEntity.created(new URI("/api/registry/locations/" + location.getId())).body(location);
+        return ResponseEntity
+                .created(new URI(
+                        "/api/registry/customers/" + location.getCustomerId() + "/locations/" + location.getId()))
+                .body(location);
     }
 
     @PutMapping("")

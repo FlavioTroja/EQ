@@ -10,5 +10,5 @@ import it.overzoom.registry.model.Location;
 @Repository
 public interface LocationRepository extends MongoRepository<Location, String> {
 
-        Page<Location> findByUserId(String userId, Pageable pageable);
+        Page<Location> findByCustomerId(String customerId, Pageable pageable);
 }

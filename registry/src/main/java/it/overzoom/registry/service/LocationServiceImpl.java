@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Location;
 import it.overzoom.registry.repository.LocationRepository;
 
@@ -16,9 +19,14 @@ public class LocationServiceImpl implements LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
+    @Autowired
+    private CustomerService customerService;
+
     @Override
-    public Page<Location> findAll(Pageable pageable) {
-        return locationRepository.findAll(pageable);
+    public Page<Location> findByCustomerId(String customerId, Pageable pageable)
+            throws ResourceNotFoundException, BadRequestException {
+        Customer customer = customerService.findById(customerId);
+        return locationRepository.findByCustomerId(customer.getId(), pageable);
     }
 
     @Override
@@ -27,17 +35,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Page<Location> findByUserId(String userId, Pageable pageable) {
-        return locationRepository.findByUserId(userId, pageable);
-    }
-
-    @Override
     public boolean existsById(String id) {
         return locationRepository.existsById(id);
     }
 
     @Override
-    public Location create(Location location) {
+    public Location create(Location location) throws ResourceNotFoundException, BadRequestException {
+        Customer customer = customerService.findById(location.getCustomerId());
+        location.setCustomerId(customer.getId());
         return locationRepository.save(location);
     }
 

@@ -18,6 +18,11 @@ public class SecurityUtils {
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
     }
 
+    public static boolean isCurrentUser(String userId) throws ResourceNotFoundException {
+        String currentUserId = getCurrentUserId();
+        return currentUserId.equals(userId);
+    }
+
     public static boolean isAdmin() throws ResourceNotFoundException {
         Jwt jwt = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(auth -> auth.getPrincipal() instanceof Jwt)

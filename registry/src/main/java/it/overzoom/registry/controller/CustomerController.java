@@ -45,10 +45,10 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> findById(@PathVariable(value = "id") String customerId)
-            throws ResourceNotFoundException {
-        return customerService.findById(customerId)
-                .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
+    public ResponseEntity<Customer> findById(@PathVariable("id") String customerId)
+            throws ResourceNotFoundException, BadRequestException {
+        Customer customer = customerService.findById(customerId);
+        return ResponseEntity.ok(customer);
     }
 
     @PostMapping("")

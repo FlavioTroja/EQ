@@ -13,7 +13,7 @@ public class Location {
     private String id;
 
     @Indexed
-    private String userId;
+    private String customerId;
 
     private String name;
 
@@ -29,12 +29,12 @@ public class Location {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public String getName() {
@@ -62,7 +62,7 @@ public class Location {
     }
 
     public String toString() {
-        return "Location [id=" + id + ", userId=" + userId + ", name=" + name + ", address=" + address
+        return "Location [id=" + id + ", customerId=" + customerId + ", name=" + name + ", address=" + address
                 + ", environments=" + environments + "]";
     }
 }

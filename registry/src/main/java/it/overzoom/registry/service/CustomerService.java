@@ -5,13 +5,15 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
 
 public interface CustomerService {
 
     Page<Customer> findAll(Pageable pageable);
 
-    Optional<Customer> findById(String id);
+    Customer findById(String id) throws ResourceNotFoundException, BadRequestException;
 
     Page<Customer> findByUserId(String userId, Pageable pageable);
 

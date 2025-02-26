@@ -5,19 +5,20 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Location;
 
 public interface LocationService {
 
-    Page<Location> findAll(Pageable pageable);
+    Page<Location> findByCustomerId(String customerId, Pageable pageable)
+            throws ResourceNotFoundException, BadRequestException;
 
     Optional<Location> findById(String id);
 
-    Page<Location> findByUserId(String userId, Pageable pageable);
-
     boolean existsById(String id);
 
-    Location create(Location location);
+    Location create(Location location) throws ResourceNotFoundException, BadRequestException;
 
     Optional<Location> update(Location location);
 
