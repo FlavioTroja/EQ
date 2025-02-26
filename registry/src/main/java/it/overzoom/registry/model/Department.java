@@ -3,16 +3,23 @@ package it.overzoom.registry.model;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "environment")
-public class Environment {
+import jakarta.validation.constraints.NotNull;
+
+@Document(collection = "department")
+public class Department {
 
     @Id
     private String id;
 
     private String name;
+
+    @Indexed
+    @NotNull
+    private String locationId;
 
     @DBRef
     private List<Machine> machines;
@@ -41,9 +48,18 @@ public class Environment {
         this.machines = machines;
     }
 
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
+    }
+
     @Override
     public String toString() {
-        return "Environment [id=" + id + ", name=" + name + ", machines=" + machines + "]";
+        return "Department [id=" + id + ", name=" + name + ", locationId=" + locationId + ", machines=" + machines
+                + "]";
     }
 
 }

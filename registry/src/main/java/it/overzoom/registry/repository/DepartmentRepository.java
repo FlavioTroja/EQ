@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import it.overzoom.registry.model.Location;
+import it.overzoom.registry.model.Department;
 
 @Repository
-public interface LocationRepository extends MongoRepository<Location, String> {
+public interface DepartmentRepository extends MongoRepository<Department, String> {
 
-        Page<Location> findByCustomerId(String customerId, Pageable pageable);
+    Page<Department> findByLocationId(String locationId, Pageable pageable);
 
-        List<Location> findByCustomerId(String customerId);
+    List<Department> findByLocationId(String locationId);
 }

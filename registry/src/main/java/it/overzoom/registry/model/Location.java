@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.validation.constraints.NotNull;
 
 @Document(collection = "location")
 public class Location {
@@ -13,13 +16,15 @@ public class Location {
     private String id;
 
     @Indexed
+    @NotNull
     private String customerId;
 
     private String name;
 
     private String address;
 
-    private List<Environment> environments;
+    @DBRef
+    private List<Department> departments;
 
     public String getId() {
         return id;
@@ -53,16 +58,16 @@ public class Location {
         this.address = address;
     }
 
-    public List<Environment> getEnvironments() {
-        return environments;
+    public List<Department> getDepartments() {
+        return departments;
     }
 
-    public void setEnvironments(List<Environment> environments) {
-        this.environments = environments;
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
     }
 
     public String toString() {
         return "Location [id=" + id + ", customerId=" + customerId + ", name=" + name + ", address=" + address
-                + ", environments=" + environments + "]";
+                + ", departments=" + departments + "]";
     }
 }

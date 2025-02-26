@@ -1,6 +1,6 @@
 package it.overzoom.registry.service;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
+import it.overzoom.registry.model.Location;
 import it.overzoom.registry.repository.CustomerRepository;
+import it.overzoom.registry.repository.LocationRepository;
 import it.overzoom.registry.security.SecurityUtils;
 
 @Service
@@ -18,6 +20,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
 
     private static boolean hasAccess(Customer customer) throws ResourceNotFoundException {
         return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(customer.getUserId());
@@ -36,6 +41,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (!hasAccess(customer)) {
             throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
         }
+
+        List<Location> locs = locationRepository.findByCustomerId(id);
+        customer.setLocations(locs);
 
         return customer;
     }
@@ -56,55 +64,56 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<Customer> update(Customer customer) {
-        return this.findById(customer.getId()).map(existingCustomer -> {
-            existingCustomer.setName(customer.getName());
-            existingCustomer.setFiscalCode(customer.getFiscalCode());
-            existingCustomer.setVatCode(customer.getVatCode());
-            existingCustomer.setPec(customer.getPec());
-            existingCustomer.setSdi(customer.getSdi());
-            existingCustomer.setPaymentMethod(customer.getPaymentMethod());
-            existingCustomer.setEmail(customer.getEmail());
-            existingCustomer.setPhoneNumber(customer.getPhoneNumber());
-            existingCustomer.setNotes(customer.getNotes());
-            return existingCustomer;
-        }).map(this::create);
+    public Customer update(Customer customer) throws ResourceNotFoundException, BadRequestException {
+        Customer existingCustomer = this.findById(customer.getId());
+
+        existingCustomer.setName(customer.getName());
+        existingCustomer.setFiscalCode(customer.getFiscalCode());
+        existingCustomer.setVatCode(customer.getVatCode());
+        existingCustomer.setPec(customer.getPec());
+        existingCustomer.setSdi(customer.getSdi());
+        existingCustomer.setPaymentMethod(customer.getPaymentMethod());
+        existingCustomer.setEmail(customer.getEmail());
+        existingCustomer.setPhoneNumber(customer.getPhoneNumber());
+        existingCustomer.setNotes(customer.getNotes());
+
+        return this.create(existingCustomer);
     }
 
     @Override
-    public Optional<Customer> partialUpdate(String id, Customer customer) {
-        return this.findById(id)
-                .map(existingCustomer -> {
-                    if (customer.getName() != null) {
-                        existingCustomer.setName(customer.getName());
-                    }
-                    if (customer.getFiscalCode() != null) {
-                        existingCustomer.setFiscalCode(customer.getFiscalCode());
-                    }
-                    if (customer.getVatCode() != null) {
-                        existingCustomer.setVatCode(customer.getVatCode());
-                    }
-                    if (customer.getPec() != null) {
-                        existingCustomer.setPec(customer.getPec());
-                    }
-                    if (customer.getSdi() != null) {
-                        existingCustomer.setSdi(customer.getSdi());
-                    }
-                    if (customer.getPaymentMethod() != null) {
-                        existingCustomer.setPaymentMethod(customer.getPaymentMethod());
-                    }
-                    if (customer.getEmail() != null) {
-                        existingCustomer.setEmail(customer.getEmail());
-                    }
-                    if (customer.getPhoneNumber() != null) {
-                        existingCustomer.setPhoneNumber(customer.getPhoneNumber());
-                    }
-                    if (customer.getNotes() != null) {
-                        existingCustomer.setNotes(customer.getNotes());
-                    }
-                    return existingCustomer;
-                })
-                .map(this::create);
+    public Customer partialUpdate(String id, Customer customer)
+            throws ResourceNotFoundException, BadRequestException {
+        Customer existingCustomer = this.findById(customer.getId());
+        if (customer.getName() != null) {
+            existingCustomer.setName(customer.getName());
+        }
+        if (customer.getFiscalCode() != null) {
+            existingCustomer.setFiscalCode(customer.getFiscalCode());
+        }
+        if (customer.getVatCode() != null) {
+            existingCustomer.setVatCode(customer.getVatCode());
+        }
+        if (customer.getPec() != null) {
+            existingCustomer.setPec(customer.getPec());
+        }
+        if (customer.getSdi() != null) {
+            existingCustomer.setSdi(customer.getSdi());
+        }
+        if (customer.getPaymentMethod() != null) {
+            existingCustomer.setPaymentMethod(customer.getPaymentMethod());
+        }
+        if (customer.getEmail() != null) {
+            existingCustomer.setEmail(customer.getEmail());
+        }
+        if (customer.getPhoneNumber() != null) {
+            existingCustomer.setPhoneNumber(customer.getPhoneNumber());
+        }
+        if (customer.getNotes() != null) {
+            existingCustomer.setNotes(customer.getNotes());
+        }
+
+        return this.create(existingCustomer);
+
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.Email;
@@ -16,6 +17,7 @@ public class Customer {
     private String id;
 
     @Indexed
+    @NotNull
     private String userId;
 
     @NotNull
@@ -39,6 +41,7 @@ public class Customer {
 
     private String notes;
 
+    @DBRef
     private List<Location> locations;
 
     public String getId() {

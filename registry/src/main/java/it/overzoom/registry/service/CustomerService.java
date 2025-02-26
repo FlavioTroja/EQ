@@ -1,7 +1,5 @@
 package it.overzoom.registry.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,9 +19,10 @@ public interface CustomerService {
 
     Customer create(Customer customer);
 
-    Optional<Customer> update(Customer customer);
+    Customer update(Customer customer) throws ResourceNotFoundException, BadRequestException;
 
-    Optional<Customer> partialUpdate(String id, Customer customer);
+    Customer partialUpdate(String id, Customer customer)
+            throws ResourceNotFoundException, BadRequestException;
 
     void deleteById(String id);
 }
