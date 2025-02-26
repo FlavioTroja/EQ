@@ -22,11 +22,12 @@ import * as MachinesActions from "../../../machines/store/actions/machines.actio
 import { createSortArray } from "../../../../../utils/utils";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
-import { of, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { selectRouteQueryParamParam } from "../../../../core/router/store/router.selectors";
 import { MatIconModule } from "@angular/material/icon";
+import { getMachinesPaginate } from "../../store/selectors/machines.selectors";
 
 @Component({
   selector: 'app-machines',
@@ -64,7 +65,7 @@ export default class MachinesComponent implements AfterViewInit, OnInit {
   store: Store<AppState> = inject(Store);
   subject = new Subject();
   dialog = inject(MatDialog);
-  machinePaginate$ = of({ content: [] as Machine[] } as PaginateDatasource<Machine>);
+  machinePaginate$ = this.store.select(getMachinesPaginate)
   
   queryParams = toSignal(this.store.select(selectRouteQueryParamParam()));
 

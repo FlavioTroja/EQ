@@ -25,7 +25,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
 import { ModalComponent, ModalDialogData } from "../../../../components/modal/modal.component";
 import * as CustomerActions from "../../../customers/store/actions/customers.actions";
 import { createSortArray } from "../../../../../utils/utils";
-import { CustomerFilter, CustomerTable, customerTypeArray, PartialCustomer } from "../../../../models/Customer";
+import { CustomerFilter, CustomerTable, PartialCustomer } from "../../../../models/Customer";
 import { MatIconModule } from "@angular/material/icon";
 import { selectRouteQueryParamParam } from "../../../../core/router/store/router.selectors";
 import { FilterElement, FilterOption } from "../../../../models/Filters";
@@ -197,7 +197,6 @@ export default class ListCustomerComponent implements OnInit, AfterViewInit {
         ...this.filters,
         query: {
           value: params.search || "",
-          typeValues: params.typeValues?.split(",").map(i => customerTypeArray[+i].value) ?? [],
         },
         options: {
           populate: this.filters.options?.populate,
@@ -261,10 +260,6 @@ export default class ListCustomerComponent implements OnInit, AfterViewInit {
       return addresses[0];
     }
     return billAddress;
-  }
-
-  formatType(value: string): string {
-    return customerTypeArray.find(o => o.value === value)?.name || "";
   }
 
   toggleFilter(): void {

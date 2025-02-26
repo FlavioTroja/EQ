@@ -17,7 +17,7 @@ export class VerbalsService {
       ...payload,
       id: undefined,
     }
-    return this.http.post<Verbal>(`${BASE_URL}/api/registry/verbals/create`, newPayload);
+    return this.http.post<Verbal>(`${BASE_URL}/api/registry/verbals`, newPayload);
   }
 
   getVerbal(id: number,  params?: DefaultQueryParams) {
@@ -34,7 +34,7 @@ export class VerbalsService {
   }
 
   loadVerbals(payload: Query<VerbalFilter>) {
-    return this.http.post<PaginateDatasource<Verbal>>(`${BASE_URL}/api/registry/verbals`, payload);
+    return this.http.get<PaginateDatasource<Verbal>>(`${BASE_URL}/api/registry/verbals`);
   }
 
   loadAllVerbals(payload: Query<object>) {

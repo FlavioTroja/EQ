@@ -7,16 +7,13 @@ export interface Customer {
   name: string,
   fiscalCode: string,
   vatNumber: string,
-  sdiNumber: string,
-  type: string,
-  email: string,
   pec: string,
+  sdi: string,
+  paymentMethod: string[],
+  email: string,
   phone: number,
   note?: number,
-  addresses: Address[],
-  createdAt: Date | string,
-  updatedAt: Date | string,
-  deleted: boolean,
+  locations: Location[]
 }
 
 export type PartialCustomer = Partial<Customer>;
@@ -27,13 +24,13 @@ export function createCustomerPayload(customer: any): CustomerDTO {
     name: customer.name,
     fiscalCode: customer.fiscalCode,
     vatNumber: customer.vatNumber,
-    sdiNumber: customer.sdiNumber,
+    sdi: customer.sdi,
     type: customer.type,
     email: customer.email,
     pec: customer.pec,
     phone: customer.phone,
     note: customer.note,
-    addresses: customer.addresses?.filter((i: any) => Object.keys(i).length),
+    locations: customer.locations?.filter((i: any) => Object.keys(i).length),
   }
   return <CustomerDTO>omitBy(customerDTO, overSome([isNil, isNaN]));
 }
@@ -49,17 +46,8 @@ export type CustomerDTO = Customer
 
 export type AddressOnCustomerSection = Partial<Address> & Section;
 
-export enum CustomerType {
-  PRIVATO = 'PRIVATO'
-}
-
-export const customerTypeArray = [
-  { name: 'Privato', value: CustomerType.PRIVATO },
-]
-
 export interface CustomerFilter {
   value?: string,
-  typeValues?: CustomerType[]
 }
 
 export interface DatePeriod {

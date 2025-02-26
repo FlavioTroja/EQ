@@ -8,8 +8,6 @@ import { getRouterData, selectCustomRouteParam } from "../../../../core/router/s
 import {
   AddressOnCustomerSection,
   createCustomerPayload,
-  CustomerType,
-  customerTypeArray,
   PartialCustomer
 } from "../../../../models/Customer";
 import { getCurrentCustomer } from "../../store/selectors/customers.selectors";
@@ -50,7 +48,6 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
     fiscalCode: [{ value: "", disabled: this.viewOnly() }],
     vatNumber: [{ value: "", disabled: this.viewOnly() }],
     sdiNumber: [{ value: "", disabled: this.viewOnly() }],
-    type: [{ value: CustomerType.PRIVATO, disabled: this.viewOnly() }],
     email: [{ value: "", disabled: this.viewOnly() }],
     pec: [{ value: "", disabled: this.viewOnly() }],
     phone: [{ value: "", disabled: this.viewOnly() }],
@@ -189,7 +186,5 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
     this.store.dispatch(CustomerActions.clearCustomerActive());
     this.store.dispatch(CustomerActions.clearCustomerHttpError());
   }
-
-  protected readonly customerTypeArray = customerTypeArray;
 
 }
