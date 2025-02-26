@@ -47,7 +47,6 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       EUREKA_URI: http://eurekaserver:8761/eureka
       KEYCLOAK_URI: http://keycloak:8080
-      FRONTEND_URI: http://localhost:4200
     depends_on:
       eurekaserver:
         condition: service_started
@@ -110,6 +109,7 @@ services:
       SPRING_DATA_MONGODB_PASSWORD: secr3t
       SPRING_DATA_MONGODB_DATABASE: registry
       EUREKA_URI: http://eurekaserver:8761/eureka
+      KEYCLOAK_URI: http://keycloak:8080
     depends_on:
       eurekaserver:
         condition: service_started

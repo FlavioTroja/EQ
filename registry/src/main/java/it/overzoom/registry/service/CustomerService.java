@@ -1,17 +1,17 @@
 package it.overzoom.registry.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
 
 public interface CustomerService {
 
     Page<Customer> findAll(Pageable pageable);
 
-    Optional<Customer> findById(String id);
+    Customer findById(String id) throws ResourceNotFoundException, BadRequestException;
 
     Page<Customer> findByUserId(String userId, Pageable pageable);
 
@@ -19,7 +19,10 @@ public interface CustomerService {
 
     Customer create(Customer customer);
 
-    Optional<Customer> update(Customer customer);
+    Customer update(Customer customer) throws ResourceNotFoundException, BadRequestException;
 
-    Optional<Customer> partialUpdate(String id, Customer customer);
+    Customer partialUpdate(String id, Customer customer)
+            throws ResourceNotFoundException, BadRequestException;
+
+    void deleteById(String id);
 }

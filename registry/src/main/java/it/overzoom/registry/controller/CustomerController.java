@@ -2,7 +2,6 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,12 +36,19 @@ public class CustomerController {
     private CustomerServiceImpl customerService;
 
     @GetMapping("")
-    public ResponseEntity<List<Customer>> findAll(Pageable pageable) throws ResourceNotFoundException {
+    public ResponseEntity<Page<Customer>> findAll(Pageable pageable) throws ResourceNotFoundException {
         log.info("REST request to get a page of Customers");
         Page<Customer> page = !SecurityUtils.isAdmin()
                 ? customerService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
                 : customerService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent());
+        return ResponseEntity.ok().body(page);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> findById(@PathVariable("id") String customerId)
+            throws ResourceNotFoundException, BadRequestException {
+        Customer customer = customerService.findById(customerId);
+        return ResponseEntity.ok(customer);
     }
 
     @PostMapping("")
@@ -69,9 +76,7 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Customer updateCustomer = customerService.update(customer)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Cliente non trovato con questo ID :: " + customer.getId()));
+        Customer updateCustomer = customerService.update(customer);
 
         return ResponseEntity.ok().body(updateCustomer);
     }
@@ -87,9 +92,20 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Customer updateCustomer = customerService.partialUpdate(id, customer)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
+        Customer updateCustomer = customerService.partialUpdate(id, customer);
 
         return ResponseEntity.ok().body(updateCustomer);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") String customerId)
+            throws ResourceNotFoundException {
+
+        if (!customerService.existsById(customerId)) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
+        customerService.deleteById(customerId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

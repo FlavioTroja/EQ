@@ -11,6 +11,8 @@ public class Machine {
 
     private String name;
 
+    private TypeMachine type;
+
     public String getId() {
         return id;
     }
@@ -27,9 +29,17 @@ public class Machine {
         this.name = name;
     }
 
+    public TypeMachine getType() {
+        return type;
+    }
+
+    public void setType(TypeMachine type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
-        return "Machine [id=" + id + ", name=" + name + "]";
+        return "Machine [id=" + id + ", name=" + name + ", type=" + type + "]";
     }
 
 }
