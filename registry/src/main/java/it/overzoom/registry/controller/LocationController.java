@@ -43,9 +43,9 @@ public class LocationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Location> findById(@PathVariable(value = "id") String locationId)
-            throws ResourceNotFoundException {
-        return locationService.findById(locationId)
-                .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Sede non trovata."));
+            throws ResourceNotFoundException, BadRequestException {
+        Location location = locationService.findById(locationId);
+        return ResponseEntity.ok(location);
     }
 
     @PostMapping("")
@@ -75,9 +75,7 @@ public class LocationController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Location updateLocation = locationService.update(location)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Cliente non trovato con questo ID :: " + location.getId()));
+        Location updateLocation = locationService.update(location);
 
         return ResponseEntity.ok().body(updateLocation);
     }
@@ -93,8 +91,7 @@ public class LocationController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Location updateLocation = locationService.partialUpdate(id, location)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
+        Location updateLocation = locationService.partialUpdate(id, location);
 
         return ResponseEntity.ok().body(updateLocation);
     }

@@ -76,9 +76,7 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Customer updateCustomer = customerService.update(customer)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Cliente non trovato con questo ID :: " + customer.getId()));
+        Customer updateCustomer = customerService.update(customer);
 
         return ResponseEntity.ok().body(updateCustomer);
     }
@@ -94,8 +92,7 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Customer updateCustomer = customerService.partialUpdate(id, customer)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
+        Customer updateCustomer = customerService.partialUpdate(id, customer);
 
         return ResponseEntity.ok().body(updateCustomer);
     }
