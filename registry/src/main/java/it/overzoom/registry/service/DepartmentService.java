@@ -1,7 +1,5 @@
 package it.overzoom.registry.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +12,7 @@ public interface DepartmentService {
     Page<Department> findByLocationId(String locationId, Pageable pageable)
             throws ResourceNotFoundException, BadRequestException;
 
-    Optional<Department> findById(String id);
+    Department findById(String id) throws ResourceNotFoundException, BadRequestException;
 
     boolean existsById(String id);
 

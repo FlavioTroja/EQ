@@ -1,7 +1,5 @@
 package it.overzoom.registry.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,16 +20,24 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private CustomerService customerService;
+
     @Override
     public Page<Department> findByLocationId(String locationId, Pageable pageable)
             throws ResourceNotFoundException, BadRequestException {
+
         Location location = locationService.findById(locationId);
+        customerService.findById(location.getCustomerId());
         return departmentRepository.findByLocationId(location.getId(), pageable);
     }
 
     @Override
-    public Optional<Department> findById(String id) {
-        return departmentRepository.findById(id);
+    public Department findById(String id) throws ResourceNotFoundException, BadRequestException {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Reparto non trovato."));
+
+        return department;
     }
 
     @Override

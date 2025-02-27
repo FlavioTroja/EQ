@@ -17,7 +17,6 @@ public class Customer {
     private String id;
 
     @Indexed
-    @NotNull
     private String userId;
 
     @NotNull
