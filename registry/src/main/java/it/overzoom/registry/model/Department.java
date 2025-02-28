@@ -19,7 +19,7 @@ public class Department {
     private String locationId;
 
     @DBRef
-    private List<Machine> machines;
+    private List<Source> sources;
 
     public String getId() {
         return id;
@@ -37,14 +37,6 @@ public class Department {
         this.name = name;
     }
 
-    public List<Machine> getMachines() {
-        return machines;
-    }
-
-    public void setMachines(List<Machine> machines) {
-        this.machines = machines;
-    }
-
     public String getLocationId() {
         return locationId;
     }
@@ -53,10 +45,17 @@ public class Department {
         this.locationId = locationId;
     }
 
-    @Override
-    public String toString() {
-        return "Department [id=" + id + ", name=" + name + ", locationId=" + locationId + ", machines=" + machines
-                + "]";
+    public List<Source> getSources() {
+        return sources;
     }
 
+    public void setSources(List<Source> sources) {
+        this.sources = sources;
+    }
+
+    @Override
+    public String toString() {
+        return "Department [id=" + id + ", name=" + name + ", locationId=" + locationId + ", sources=" + sources + "]";
+    }
+   
 }
