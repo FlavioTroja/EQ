@@ -1,9 +1,12 @@
 package it.overzoom.registry.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.validation.constraints.NotNull;
 
 @Document(collection = "measurement")
 public class Measurement {
@@ -11,12 +14,15 @@ public class Measurement {
     @Id
     private String id;
 
-    private Date date;
+    private LocalDateTime date;
 
+    @NotNull
     private String key;
-    
+
+    @NotNull
     private Float value;
 
+    @Indexed
     private String sourceId;
 
     public String getId() {
@@ -25,14 +31,6 @@ public class Measurement {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public String getKey() {
@@ -59,11 +57,17 @@ public class Measurement {
         this.sourceId = sourceId;
     }
 
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
         return "Measurement [id=" + id + ", date=" + date + ", key=" + key + ", value=" + value + ", sourceId="
                 + sourceId + "]";
     }
-
-    
 }

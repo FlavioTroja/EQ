@@ -50,18 +50,22 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
 
-        List<Location> locs = locationRepository.findByCustomerId(id);
-        customer.setLocations(locs);
+        List<Location> locations = locationRepository.findByCustomerId(id);
+        locations.forEach(this::populateLocationData);
+        customer.setLocations(locations);
 
-        locs.stream().forEach(loc -> {
-            List<Department> deps = departmentRepository.findByLocationId(loc.getId());
-            loc.setDepartments(deps);
-            deps.stream().forEach(d -> {
-                List<Source> sors = sourceRepository.findByDepartmentId(d.getId());
-                d.setSources(sors);
-            });
-        });
         return customer;
+    }
+
+    private void populateLocationData(Location location) {
+        List<Department> departments = departmentRepository.findByLocationId(location.getId());
+        departments.forEach(this::populateDepartmentData);
+        location.setDepartments(departments);
+    }
+
+    private void populateDepartmentData(Department department) {
+        List<Source> sources = sourceRepository.findByDepartmentId(department.getId());
+        department.setSources(sources);
     }
 
     @Override
