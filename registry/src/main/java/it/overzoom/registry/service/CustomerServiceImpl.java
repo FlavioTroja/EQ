@@ -12,9 +12,11 @@ import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
+import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.CustomerRepository;
 import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.LocationRepository;
+import it.overzoom.registry.repository.SourceRepository;
 import it.overzoom.registry.security.SecurityUtils;
 
 @Service
@@ -27,9 +29,14 @@ public class CustomerServiceImpl implements CustomerService {
     private LocationRepository locationRepository;
 
     @Autowired
+    private SourceRepository sourceRepository;
+
+    @Autowired
     private DepartmentRepository departmentRepository;
 
-    private static boolean hasAccess(Customer customer) throws ResourceNotFoundException {
+    public boolean hasAccess(String customerId) throws ResourceNotFoundException {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
         return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(customer.getUserId());
     }
 
@@ -39,13 +46,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer findById(String id) throws ResourceNotFoundException, BadRequestException {
+    public Customer findById(String id) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
-
-        if (!hasAccess(customer)) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
-        }
 
         List<Location> locs = locationRepository.findByCustomerId(id);
         customer.setLocations(locs);
@@ -53,6 +56,10 @@ public class CustomerServiceImpl implements CustomerService {
         locs.stream().forEach(loc -> {
             List<Department> deps = departmentRepository.findByLocationId(loc.getId());
             loc.setDepartments(deps);
+            deps.stream().forEach(d -> {
+                List<Source> sors = sourceRepository.findByDepartmentId(d.getId());
+                d.setSources(sors);
+            });
         });
         return customer;
     }

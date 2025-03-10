@@ -25,4 +25,6 @@ public interface CustomerService {
             throws ResourceNotFoundException, BadRequestException;
 
     void deleteById(String id);
+
+    boolean hasAccess(String customerId) throws ResourceNotFoundException;
 }

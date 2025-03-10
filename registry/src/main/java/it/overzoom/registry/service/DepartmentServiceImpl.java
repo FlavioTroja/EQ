@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Department;
-import it.overzoom.registry.model.Location;
 import it.overzoom.registry.repository.DepartmentRepository;
 
 @Service
@@ -17,19 +16,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    @Autowired
-    private LocationService locationService;
-
-    @Autowired
-    private CustomerService customerService;
-
     @Override
     public Page<Department> findByLocationId(String locationId, Pageable pageable)
             throws ResourceNotFoundException, BadRequestException {
 
-        Location location = locationService.findById(locationId);
-        customerService.findById(location.getCustomerId());
-        return departmentRepository.findByLocationId(location.getId(), pageable);
+        return departmentRepository.findByLocationId(locationId, pageable);
     }
 
     @Override
@@ -47,8 +38,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department create(Department department) throws ResourceNotFoundException, BadRequestException {
-        Location location = locationService.findById(department.getLocationId());
-        department.setLocationId(location.getId());
         return departmentRepository.save(department);
     }
 

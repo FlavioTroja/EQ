@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Location;
+import it.overzoom.registry.service.CustomerServiceImpl;
 import it.overzoom.registry.service.LocationServiceImpl;
 import jakarta.validation.Valid;
 
@@ -31,12 +32,20 @@ public class LocationController {
     private static final Logger log = LoggerFactory.getLogger(LocationController.class);
 
     @Autowired
+    private CustomerServiceImpl customerService;
+
+    @Autowired
     private LocationServiceImpl locationService;
 
     @GetMapping("")
     public ResponseEntity<Page<Location>> findCustomerId(@PathVariable(value = "customerId") String customerId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Locations by customerId: " + customerId);
+
+        if (!customerService.hasAccess(customerId)) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+        }
+
         Page<Location> page = locationService.findByCustomerId(customerId, pageable);
         return ResponseEntity.ok().body(page);
     }
@@ -45,6 +54,11 @@ public class LocationController {
     public ResponseEntity<Location> findById(@PathVariable(value = "id") String locationId)
             throws ResourceNotFoundException, BadRequestException {
         Location location = locationService.findById(locationId);
+
+        if (!customerService.hasAccess(location.getCustomerId())) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+        }
+
         return ResponseEntity.ok(location);
     }
 

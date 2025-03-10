@@ -21,7 +21,7 @@ public class Source {
     @Indexed
     private String departmentId;
 
-    @DBRef 
+    @DBRef
     private Machine machine;
 
     @DBRef

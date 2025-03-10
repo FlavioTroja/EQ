@@ -47,6 +47,11 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ResponseEntity<Customer> findById(@PathVariable("id") String customerId)
             throws ResourceNotFoundException, BadRequestException {
+
+        if (!customerService.hasAccess(customerId)) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+        }
+
         Customer customer = customerService.findById(customerId);
         return ResponseEntity.ok(customer);
     }
