@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
+import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
 import it.overzoom.registry.repository.CustomerRepository;
+import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.LocationRepository;
 import it.overzoom.registry.security.SecurityUtils;
 
@@ -23,6 +25,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     private static boolean hasAccess(Customer customer) throws ResourceNotFoundException {
         return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(customer.getUserId());
@@ -45,6 +50,10 @@ public class CustomerServiceImpl implements CustomerService {
         List<Location> locs = locationRepository.findByCustomerId(id);
         customer.setLocations(locs);
 
+        locs.stream().forEach(loc -> {
+            List<Department> deps = departmentRepository.findByLocationId(loc.getId());
+            loc.setDepartments(deps);
+        });
         return customer;
     }
 

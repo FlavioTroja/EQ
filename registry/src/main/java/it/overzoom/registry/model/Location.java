@@ -7,8 +7,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.validation.constraints.NotNull;
-
 @Document(collection = "location")
 public class Location {
 
@@ -16,7 +14,6 @@ public class Location {
     private String id;
 
     @Indexed
-    @NotNull
     private String customerId;
 
     private String name;
