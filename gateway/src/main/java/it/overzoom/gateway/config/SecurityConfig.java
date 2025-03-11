@@ -69,6 +69,9 @@ public class SecurityConfig {
                         "/calendar/swagger-ui.html",
                         "/calendar/swagger-ui/**",
                         "/calendar/api-docs/**",
+                        "/document/swagger-ui.html",
+                        "/document/swagger-ui/**",
+                        "/document/api-docs/**",
                         "/error")
                 .permitAll()
                 .anyExchange().authenticated())

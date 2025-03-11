@@ -6,7 +6,7 @@ log() {
 }
 
 # Array dei nomi delle cartelle dei microservizi
-services=("registry" "gateway" "eurekaserver" "calendar")
+services=("registry" "gateway" "eurekaserver" "calendar" "document")
 
 for service in "${services[@]}"; do
   if [ -d "$service" ]; then

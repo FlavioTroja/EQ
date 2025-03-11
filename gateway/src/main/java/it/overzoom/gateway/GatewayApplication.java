@@ -26,6 +26,7 @@ public class GatewayApplication {
 				.routes()
 				.route(r -> r.path("/calendar/api-docs").and().method(HttpMethod.GET).uri("lb://CALENDAR"))
 				.route(r -> r.path("/registry/api-docs").and().method(HttpMethod.GET).uri("lb://REGISTRY"))
+				.route(r -> r.path("/document/api-docs").and().method(HttpMethod.GET).uri("lb://DOCUMENT"))
 				.build();
 	}
 

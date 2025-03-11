@@ -9,7 +9,7 @@ import it.overzoom.registry.model.Measurement;
 
 public interface MeasurementService {
 
-    Page<Measurement> findAll(String sourceId, Pageable pageable);
+    Page<Measurement> findBySourceId(String sourceId, Pageable pageable);
 
     Optional<Measurement> findById(String id);
 

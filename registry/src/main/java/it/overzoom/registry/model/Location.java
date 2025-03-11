@@ -20,6 +20,10 @@ public class Location {
 
     private String address;
 
+    private String city;
+
+    private String province;
+
     @DBRef
     private List<Department> departments;
 
@@ -63,8 +67,20 @@ public class Location {
         this.departments = departments;
     }
 
-    public String toString() {
-        return "Location [id=" + id + ", customerId=" + customerId + ", name=" + name + ", address=" + address
-                + ", departments=" + departments + "]";
+    public String getCity() {
+        return city;
     }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
 }

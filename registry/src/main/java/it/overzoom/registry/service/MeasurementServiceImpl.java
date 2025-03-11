@@ -17,7 +17,7 @@ public class MeasurementServiceImpl implements MeasurementService {
     private MeasurementRepository measurementRepository;
 
     @Override
-    public Page<Measurement> findAll(String sourceId, Pageable pageable) {
+    public Page<Measurement> findBySourceId(String sourceId, Pageable pageable) {
         return measurementRepository.findBySourceId(sourceId, pageable);
     }
 

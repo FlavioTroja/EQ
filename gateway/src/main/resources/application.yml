@@ -20,7 +20,10 @@ spring:
                     uri: lb://REGISTRY        
             routes[1]:
                     predicates[0]: Path=/api/calendar/** , /calendar/api-docs       
-                    uri: lb://CALENDAR                        
+                    uri: lb://CALENDAR              
+            routes[2]:
+                    predicates[0]: Path=/api/document/** , /document/api-docs       
+                    uri: lb://DOCUMENT                                
 
 
 openapi:
@@ -46,6 +49,8 @@ springdoc:
           name: Calendar Microservice
         - url: /registry/api-docs
           name: Registry Microservice
+        - url: /document/api-docs
+          name: Document Microservice  
 
 keycloak:
   auth-server-url: ${KEYCLOAK_URI:http://localhost:5050}

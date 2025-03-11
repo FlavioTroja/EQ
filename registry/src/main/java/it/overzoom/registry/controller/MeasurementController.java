@@ -34,10 +34,10 @@ public class MeasurementController {
     private MeasurementServiceImpl measurementService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Measurement>> findAll(@PathVariable(value = "sourceId") String sourceId,
+    public ResponseEntity<Page<Measurement>> findBySourceId(@PathVariable(value = "sourceId") String sourceId,
             Pageable pageable) {
         log.info("REST request to get a page of Measurements");
-        Page<Measurement> page = measurementService.findAll(sourceId, pageable);
+        Page<Measurement> page = measurementService.findBySourceId(sourceId, pageable);
         return ResponseEntity.ok().body(page);
     }
 

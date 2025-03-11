@@ -159,6 +159,24 @@ services:
     networks:
       - eq_net
 
+  document:
+    build:
+      context: .
+      dockerfile: document/docker/Dockerfile
+    image: document:latest
+    container_name: document
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_URI: http://eurekaserver:8761/eureka
+    depends_on:
+      eurekaserver:
+        condition: service_started
+    networks:
+      - eq_net    
+
 networks:
   eq_net:
     driver: bridge
