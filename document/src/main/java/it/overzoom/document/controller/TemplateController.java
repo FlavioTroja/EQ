@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.overzoom.document.dto.UploadDto;
+import it.overzoom.document.dto.UploadDTO;
 import it.overzoom.document.service.PdfService;
 import it.overzoom.document.service.TemplateService;
 
@@ -35,9 +35,9 @@ public class TemplateController {
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UploadDto> upload(@RequestParam("file") MultipartFile file)
+    public ResponseEntity<UploadDTO> upload(@RequestParam("file") MultipartFile file)
             throws IOException, IllegalArgumentException {
         String normalizedFileName = templateService.saveTemplate(file);
-        return ResponseEntity.ok(new UploadDto(normalizedFileName));
+        return ResponseEntity.ok(new UploadDTO(normalizedFileName));
     }
 }

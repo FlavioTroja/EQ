@@ -1,10 +1,10 @@
 package it.overzoom.document.dto;
 
-public class UploadDto {
+public class UploadDTO {
 
     private String filename;
 
-    public UploadDto(String filename) {
+    public UploadDTO(String filename) {
         this.filename = filename;
     }
 
