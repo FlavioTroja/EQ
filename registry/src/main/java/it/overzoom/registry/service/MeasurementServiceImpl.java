@@ -8,13 +8,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.overzoom.registry.model.Measurement;
+import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.MeasurementRepository;
+import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
     private MeasurementRepository measurementRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private SourceRepository sourceRepository;
 
     @Override
     public Page<Measurement> findBySourceId(String sourceId, Pageable pageable) {

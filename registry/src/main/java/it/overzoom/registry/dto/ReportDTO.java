@@ -3,13 +3,16 @@ package it.overzoom.registry.dto;
 import java.util.List;
 
 import it.overzoom.registry.model.Customer;
+import it.overzoom.registry.model.Location;
 import it.overzoom.registry.model.Measurement;
 
 public class ReportDTO {
 
     private List<Measurement> prospectMeasurements;
 
-    private List<Measurement> measurements;
+    private List<Measurement> lastMeasurements;
+
+    private Location location;
 
     private Customer Customer;
 
@@ -21,14 +24,6 @@ public class ReportDTO {
         this.prospectMeasurements = prospectMeasurements;
     }
 
-    public List<Measurement> getMeasurements() {
-        return measurements;
-    }
-
-    public void setMeasurements(List<Measurement> measurements) {
-        this.measurements = measurements;
-    }
-
     public Customer getCustomer() {
         return Customer;
     }
@@ -37,4 +32,19 @@ public class ReportDTO {
         Customer = customer;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public List<Measurement> getLastMeasurements() {
+        return lastMeasurements;
+    }
+
+    public void setLastMeasurements(List<Measurement> lastMeasurements) {
+        this.lastMeasurements = lastMeasurements;
+    }
 }

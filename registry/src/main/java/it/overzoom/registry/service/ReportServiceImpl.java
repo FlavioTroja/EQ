@@ -1,20 +1,51 @@
 package it.overzoom.registry.service;
 
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.dto.ReportDTO;
+import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.model.Customer;
+import it.overzoom.registry.model.Department;
+import it.overzoom.registry.model.Location;
+import it.overzoom.registry.model.Measurement;
 import it.overzoom.registry.model.Report;
+import it.overzoom.registry.model.Source;
+import it.overzoom.registry.repository.CustomerRepository;
+import it.overzoom.registry.repository.DepartmentRepository;
+import it.overzoom.registry.repository.LocationRepository;
+import it.overzoom.registry.repository.MeasurementRepository;
 import it.overzoom.registry.repository.ReportRepository;
+import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ReportRepository reportRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private MeasurementRepository measurementRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private SourceRepository sourceRepository;
 
     @Override
     public Page<Report> findByLocationId(String locationId, Pageable pageable) {
@@ -34,5 +65,56 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Report create(Report report) {
         return reportRepository.save(report);
+    }
+
+    @Override
+    public ReportDTO prepare(String locationId) throws ResourceNotFoundException {
+        ReportDTO reportDTO = new ReportDTO();
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sede non trovata."));
+
+        Customer customer = customerRepository.findById(location.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
+
+        reportDTO.setLocation(location);
+        reportDTO.setCustomer(customer);
+
+        List<Department> departments = departmentRepository.findByLocationId(locationId);
+        departments.forEach(dept -> {
+            List<Source> sources = sourceRepository.findByDepartmentId(dept.getId());
+            sources.forEach(source -> {
+                List<Measurement> measurements = measurementRepository.findBySourceId(source.getId());
+                source.setMeasurements(measurements);
+            });
+            dept.setSources(sources);
+        });
+
+        List<Measurement> allMeasurements = departments.stream()
+                .filter(dept -> dept.getSources() != null)
+                .flatMap(dept -> dept.getSources().stream())
+                .filter(source -> source.getMeasurements() != null)
+                .flatMap(source -> source.getMeasurements().stream())
+                .collect(Collectors.toList());
+
+        if (allMeasurements != null && !allMeasurements.isEmpty()) {
+            LocalDate latestDay = allMeasurements.stream()
+                    .map(m -> m.getDate().toLocalDate())
+                    .max(Comparator.naturalOrder())
+                    .orElse(null);
+
+            List<Measurement> lastMeasurements = allMeasurements.stream()
+                    .filter(m -> m.getDate().toLocalDate().equals(latestDay))
+                    .collect(Collectors.toList());
+
+            List<Measurement> prospectMeasurements = allMeasurements.stream()
+                    .filter(m -> !m.getDate().toLocalDate().equals(latestDay))
+                    .collect(Collectors.toList());
+
+            reportDTO.setLastMeasurements(lastMeasurements);
+            reportDTO.setProspectMeasurements(prospectMeasurements);
+        }
+
+        return reportDTO;
     }
 }

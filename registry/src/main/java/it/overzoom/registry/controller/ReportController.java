@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.overzoom.registry.dto.ReportDTO;
 import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Report;
 import it.overzoom.registry.service.ReportServiceImpl;
 import jakarta.validation.Valid;
@@ -51,5 +53,13 @@ public class ReportController {
         report.setDate(LocalDateTime.now());
         report = reportService.create(report);
         return ResponseEntity.created(new URI("/api/reports/" + report.getId())).body(report);
+    }
+
+    @GetMapping("/prepare")
+    public ResponseEntity<ReportDTO> prepare(@PathVariable("locationId") String locationId)
+            throws ResourceNotFoundException {
+        log.info("REST request to prepare ReportDTO for location: {}", locationId);
+        ReportDTO reportDTO = reportService.prepare(locationId);
+        return ResponseEntity.ok(reportDTO);
     }
 }
