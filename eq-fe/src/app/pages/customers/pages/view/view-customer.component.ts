@@ -10,16 +10,14 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import * as CustomersActions from "../../../customers/store/actions/customers.actions";
 import { getCurrentCustomer } from "../../store/selectors/customers.selectors";
 import {
-  CustomerAddressesSectionComponent
-} from "../edit/components/customer-addresses-sections/customer-addresses-section.component";
-import { AddressOnCustomerSection, customerTypeArray } from "../../../../models/Customer";
-
-
+  CustomerLocationsSectionComponent
+} from "../../components/customer-locations-selections/customer-locations-section.component";
+import { LocationOnCustomerSection } from "../../../../models/Customer";
 
 @Component({
   selector: 'app-view-customer',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, CustomerAddressesSectionComponent],
+  imports: [CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, CustomerLocationsSectionComponent],
   template: `
     <div class="flex flex-col gap-2" *ngIf="active() as customer">
       <div class="bg-white default-shadow p-2 rounded-md">
@@ -32,19 +30,10 @@ import { AddressOnCustomerSection, customerTypeArray } from "../../../../models/
             </div>
             <div class="text-4xl pt-6 pb-4 font-extrabold"> {{ customer.name }} </div>
             <div class="flex gap-2">
-              <div *ngIf="customer.type" class="bg-gray-100 rounded-full max-w-max py-1 px-2 flex justify-between items-center">
-                <mat-icon class="material-symbols-rounded">
-                  <span *ngIf="customer.type === 'PRIVATO'">boy</span>
-                  <span *ngIf="customer.type === 'INSTALLATORE'">install_desktop</span>
-                  <span *ngIf="customer.type === 'DISTRIBUTORE'">circles_ext</span>
-                  <span *ngIf="customer.type === 'RIVENDITORE'">partner_exchange</span>
-                </mat-icon>
-                <span class="px-1">{{ formatType(customer.type) }}</span>
-              </div>
 
-              <div *ngIf="customer.sdiNumber" class="bg-gray-100 rounded-full max-w-max py-1 px-2 flex justify-between items-center">
+              <div *ngIf="customer.sdi" class="bg-gray-100 rounded-full max-w-max py-1 px-2 flex justify-between items-center">
                 <span class="font-bold letter-spacing">SDI</span>
-                <span class="px-1">{{ customer.sdiNumber }}</span>
+                <span class="px-1">{{ customer.sdi }}</span>
               </div>
 
               <div *ngIf="customer.pec" class="bg-gray-100 rounded-full max-w-max py-1 px-2 flex justify-between items-center">
@@ -79,9 +68,9 @@ import { AddressOnCustomerSection, customerTypeArray } from "../../../../models/
         statistiche
       </div>
 
-      <app-customer-addresses-section
+      <app-customer-locations-section
         [viewOnly]="true"
-        [addressesArray]="addresses"
+        [locations]="locations"
       />
     </div>
   `,
@@ -99,12 +88,8 @@ export default class ViewCustomerComponent implements OnInit {
     );
   }
 
-  get addresses() {
-    return this.active()?.addresses.filter(o => Object.keys(o).length > 0) as AddressOnCustomerSection[];
-  }
-
-  formatType(value: string): string {
-    return customerTypeArray.find(o => o.value === value)?.name!;
+  get locations() {
+    return this.active()?.locations.filter(o => Object.keys(o).length > 0) as LocationOnCustomerSection[];
   }
 
 }

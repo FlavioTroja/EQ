@@ -1,9 +1,9 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import * as VerbalActions from "../actions/verbals.actions";
-import { Verbal } from "../../../../models/Verbal";
+import { Document } from "../../../../models/Document";
 import { ActiveEntity } from "../../../../../global";
 
-const initialState: Partial<ActiveEntity<Verbal>> = {};
+const initialState: Partial<ActiveEntity<Document>> = {};
 
 const activeVerbalReducer = createReducer(
   initialState,
@@ -27,6 +27,6 @@ const activeVerbalReducer = createReducer(
   })),
 );
 
-export function reducer(state: Partial<ActiveEntity<Verbal>> | undefined, action: Action) {
+export function reducer(state: Partial<ActiveEntity<Document>> | undefined, action: Action) {
   return activeVerbalReducer(state, action)
 }

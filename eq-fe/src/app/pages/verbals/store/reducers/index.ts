@@ -3,13 +3,13 @@ import { reducer as verbalReducer } from "./verbals.reducer";
 import { reducer as httpErrorReducer } from "./http-error.reducer";
 import { reducer as activeReducer } from "./active.reducer";
 import { HttpError } from "../../../../models/Notification";
-import { Verbal } from "../../../../models/Verbal";
+import { Document } from "../../../../models/Document";
 import { PaginateDatasource } from "../../../../models/Table";
 import { ActiveEntity } from "../../../../../global";
 
 export interface VerbalManagementState {
-  verbals?: Partial<PaginateDatasource<Verbal>>;
-  active?: Partial<ActiveEntity<Verbal>>;
+  verbals?: Partial<PaginateDatasource<Document>>;
+  active?: Partial<ActiveEntity<Document>>;
   httpError?: Partial<HttpError>;
 }
 

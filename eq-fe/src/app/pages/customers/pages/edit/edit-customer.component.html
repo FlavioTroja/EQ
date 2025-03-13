@@ -54,18 +54,6 @@
         <app-input [formControl]="f.sdiNumber" formControlName="sdiNumber" label="SDI" id="sdi" type="text" />
       </div>
 
-      <div class="flex flex-col basis-1/2">
-        <label class="text-md justify-left block px-3 py-0 font-medium">tipologia cliente</label>
-        <mat-select
-          class="focus:outline-none p-3 border-input rounded-md w-full bg-foreground"
-          [formControl]="f.type"
-          [ngClass]="{'viewOnly' : viewOnly()}"
-        >
-          <mat-option class="p-3 bg-white !italic">Nessun valore</mat-option>
-          <mat-option class="p-3 bg-white" *ngFor="let type of customerTypeArray" [value]="type.value">{{type.name}}</mat-option>
-        </mat-select>
-      </div>
-
     </div>
 
     <div class="flex flex-row gap-2">
@@ -81,12 +69,6 @@
       </div>
     </div>
 
-    <app-customer-addresses-section
-      [viewOnly]="viewOnly()"
-      [addressesArray]="addresses"
-      (onAddressAdd)="onAddressAdd($event)"
-      (onAddressChangeData)="onAddressChangeData($event)"
-      (onRemoveAddress)="onRemoveAddress($event)"
-    />
+    <app-customer-locations-section [viewOnly]="false" [locations]="locations"/>
   </div>
 </form>

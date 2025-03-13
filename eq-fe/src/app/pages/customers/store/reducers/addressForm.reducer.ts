@@ -1,10 +1,10 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import { AddressOnCustomerSection } from "../../../../models/Customer";
+import { LocationOnCustomerSection } from "../../../../models/Customer";
 import { ActiveEntity } from "../../../../../global";
 import * as CustomerActions from "../actions/customers.actions";
 
 
-const initialState: Partial<ActiveEntity<AddressOnCustomerSection>> = {};
+const initialState: Partial<ActiveEntity<LocationOnCustomerSection>> = {};
 
 const activeAddressOnCustomerReducer = createReducer(
   initialState,
@@ -19,6 +19,6 @@ const activeAddressOnCustomerReducer = createReducer(
 
 );
 
-export function reducer(state: Partial<ActiveEntity<AddressOnCustomerSection>> | undefined, action: Action) {
+export function reducer(state: Partial<ActiveEntity<LocationOnCustomerSection>> | undefined, action: Action) {
   return activeAddressOnCustomerReducer(state, action)
 }

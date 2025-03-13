@@ -42,13 +42,6 @@ function handleError(store: Store<AppState>, err: HttpErrorResponse) {
   if(err.status === 401) {
     return store.dispatch(AuthActions.unauthorizedToken());
   }
-  // if(err instanceof HttpErrorResponse) {
-  //   switch (err.status) {
-  //     case 401:
-  //       return store.dispatch(RouterActions.go({ path: ["/auth/login"] }));
-  //     default: return null;
-  //   }
-  // }
 }
 
 function mapZodError(error: HttpError) {

@@ -1,10 +1,10 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import * as VerbalsActions from "../actions/verbals.actions";
-import { Verbal } from "../../../../models/Verbal";
+import { Document } from "../../../../models/Document";
 import { PaginateDatasource } from "../../../../models/Table";
 
 
-const initialState: Partial<PaginateDatasource<Verbal>> = {}
+const initialState: Partial<PaginateDatasource<Document>> = {}
 
 const verbalsReducer = createReducer(
   initialState,
@@ -13,6 +13,6 @@ const verbalsReducer = createReducer(
   }))
 );
 
-export function reducer(state: Partial<PaginateDatasource<Verbal>> | undefined, action: Action) {
+export function reducer(state: Partial<PaginateDatasource<Document>> | undefined, action: Action) {
   return verbalsReducer(state, action)
 }

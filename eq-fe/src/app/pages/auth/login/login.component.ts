@@ -23,8 +23,8 @@ import { InputComponent } from "../../../components/input/input.component";
           <div class="text-3xl font-extrabold">Accedi</div>
           <form class="contents" [formGroup]="loginFormGroup" (ngSubmit)="login()">
               <div class="w-full">
-                  <app-input [formControl]="f.username" formControlName="usernameOrEmail" label="e-mail o nome utente"
-                             id="usernameOrEmail" type="text"/>
+                  <app-input [formControl]="f.username" formControlName="username" label="e-mail o nome utente"
+                             id="username" type="text"/>
               </div>
 
               <div class="w-full">

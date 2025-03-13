@@ -6,8 +6,6 @@ import { mergeMap, tap } from "rxjs";
 import { Location } from "@angular/common";
 import * as AuthActions from "../../auth/store/auth.actions";
 
-// dispatch false --> serve ad indicare che l'effect non ritorna un azione
-
 @Injectable({
   providedIn: 'root'
 })
@@ -22,7 +20,6 @@ export class RouterEffects {
   unauthorizedToken =  createEffect(() => this.actions$.pipe(
     ofType(AuthActions.unauthorizedToken),
     mergeMap(action => [
-      // UiActions.uiNavbarLoadSection({ page: { path: action.path[0] } })
       AuthActions.logout()
     ])
   ));

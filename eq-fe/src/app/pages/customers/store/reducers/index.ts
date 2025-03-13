@@ -6,7 +6,7 @@ import { reducer as filtersReducer } from "./filters.reducer";
 import { reducer as addressFormReducer } from "./addressForm.reducer";
 import { reducer as newCustomerFormReducer } from "./newCustomerForm.reducer";
 import { HttpError } from "../../../../models/Notification";
-import { AddressOnCustomerSection, Customer, CustomerFilter } from "../../../../models/Customer";
+import { LocationOnCustomerSection, Customer, CustomerFilter } from "../../../../models/Customer";
 import { PaginateDatasource } from "../../../../models/Table";
 import { ActiveEntity, Query } from "../../../../../global";
 
@@ -14,7 +14,7 @@ export interface CustomerManagementState {
   customers?: Partial<PaginateDatasource<Customer>>;
   filters?: Query<CustomerFilter>;
   active?: Partial<ActiveEntity<Customer>>;
-  addressForm?: Partial<ActiveEntity<AddressOnCustomerSection>>;
+  addressForm?: Partial<ActiveEntity<LocationOnCustomerSection>>;
   newCustomerForm?: Partial<ActiveEntity<Customer>>;
   httpError?: Partial<HttpError>;
 }

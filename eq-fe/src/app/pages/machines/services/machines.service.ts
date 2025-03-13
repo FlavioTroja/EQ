@@ -17,7 +17,7 @@ export class MachinesService {
       ...payload,
       id: undefined,
     }
-    return this.http.post<Machine>(`${BASE_URL}/api/registry/machines/create`, newPayload);
+    return this.http.post<Machine>(`${BASE_URL}/api/registry/machines`, newPayload);
   }
 
   getMachine(id: number,  params?: DefaultQueryParams) {
@@ -34,7 +34,7 @@ export class MachinesService {
   }
 
   loadMachines(payload: Query<MachineFilter>) {
-    return this.http.post<PaginateDatasource<Machine>>(`${BASE_URL}/api/registry/machines`, payload);
+    return this.http.get<PaginateDatasource<Machine>>(`${BASE_URL}/api/registry/machines`);
   }
 
   loadAllMachines(payload: Query<object>) {

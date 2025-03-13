@@ -16,7 +16,7 @@ export class CustomersService {
     const newPayload = {
       ...payload,
       id: undefined,
-      addresses: payload.addresses?.map(p => ({ ...p, id: undefined })),
+      locations: payload.locations?.map(p => ({ ...p, id: undefined })),
     }
     return this.http.post<Customer>(`${BASE_URL}/api/registry/customers`, newPayload);
   }

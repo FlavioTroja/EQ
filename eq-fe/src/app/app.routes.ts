@@ -26,7 +26,7 @@ export const routes: Routes = [
   },
   {
     path: "home",
-    // canActivate: [ AuthGuard ],
+    canActivate: [ AuthGuard ],
     providers: [
     ],
     pathMatch: 'full',
@@ -40,7 +40,7 @@ export const routes: Routes = [
   },
   {
     path: "machines",
-    // canActivate: [ AuthGuard ],
+    canActivate: [ AuthGuard ],
     providers: [
       provideState("machine-manager", machineManagementReducers),
       provideEffects(MachinesEffects)
@@ -49,7 +49,7 @@ export const routes: Routes = [
   },
   {
     path: "verbals",
-    // canActivate: [ AuthGuard ],
+    canActivate: [ AuthGuard ],
     providers: [
       provideState("verbal-manager", verbalManagementReducers),
       provideEffects(VerbalsEffects)
@@ -58,7 +58,7 @@ export const routes: Routes = [
   },
   {
     path: "customers",
-    // canActivate: [ AuthGuard ],
+    canActivate: [ AuthGuard ],
     providers: [
       provideState("customer-manager", customerManagementReducers),
       provideEffects(CustomersEffects)
@@ -67,7 +67,7 @@ export const routes: Routes = [
   },
   {
     path: "users",
-    // canActivate: [ AuthGuard ],
+    canActivate: [ AuthGuard ],
     providers: [
       provideState("user-manager", userManagementReducers),
       provideEffects([UsersEffects, RoleNamesEffects])
@@ -76,7 +76,7 @@ export const routes: Routes = [
   },
   {
     path: "settings",
-    // canActivate: [ AuthGuard ],
+    canActivate: [ AuthGuard ],
     loadChildren: () => import("./pages/settings/settings.routing")
   },
   {
