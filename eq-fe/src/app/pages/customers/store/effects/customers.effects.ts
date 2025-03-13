@@ -5,11 +5,10 @@ import { catchError, concatMap, exhaustMap, map, of } from "rxjs";
 import * as CustomersActions from "../actions/customers.actions";
 import * as RouterActions from "../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
-import { AddressOnCustomerSection, Customer } from "../../../../models/Customer";
+import { LocationOnCustomerSection, Customer } from "../../../../models/Customer";
 import { getActiveCustomerChanges, getCustomerFilter } from "../selectors/customers.selectors";
 import * as UIActions from "../../../../core/ui/store/ui.actions";
 import { NOTIFICATION_LISTENER_TYPE } from "../../../../models/Notification";
-import { AddressesService } from "../../../../services/addresses.service";
 
 @Injectable({
   providedIn: 'root'
@@ -90,17 +89,6 @@ export class CustomersEffects  {
     })
   ));
 
-  getPlaceDetailEffect$ = createEffect(() => this.actions$.pipe(
-    ofType(CustomersActions.getPlaceDetail),
-    exhaustMap(({ placeId }) => this.addressesService.getAddressDetail(placeId)
-      .pipe(
-        map((address) => {
-          const { "formatted_address": remove, ...addressFixed } = address;
-          return CustomersActions.addressFormActiveChanges({changes: {...addressFixed} as AddressOnCustomerSection})
-        }),
-      ))
-  ));
-
   editCustomerFilterEffect$ = createEffect(() => this.actions$.pipe(
     ofType(CustomersActions.editCustomerFilter),
     concatMap(({ filters }) => [
@@ -123,7 +111,6 @@ export class CustomersEffects  {
   ));
 
   constructor(private actions$: Actions,
-              private addressesService: AddressesService,
               private customerService: CustomersService,
               private store: Store) {}
 }

@@ -6,7 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { getRouterData, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
 import {
-  AddressOnCustomerSection,
+  LocationOnCustomerSection,
   createCustomerPayload,
   PartialCustomer
 } from "../../../../models/Customer";
@@ -18,13 +18,15 @@ import { MatIconModule } from "@angular/material/icon";
 import { difference } from "../../../../../utils/utils";
 import { Subject } from "rxjs";
 import { MatSelectModule } from "@angular/material/select";
-import { CustomerAddressesSectionComponent } from "./components/customer-addresses-sections/customer-addresses-section.component";
+import {
+  CustomerLocationsSectionComponent
+} from "../../components/customer-locations-selections/customer-locations-section.component";
 
 
 @Component({
   selector: 'app-edit-customer',
   standalone: true,
-  imports: [ CommonModule, ReactiveFormsModule, InputComponent, MatIconModule, MatSelectModule, CustomerAddressesSectionComponent ],
+  imports: [ CommonModule, ReactiveFormsModule, InputComponent, MatIconModule, MatSelectModule, CustomerLocationsSectionComponent ],
   templateUrl: "edit-customer.component.html",
   styles: [``]
 })
@@ -44,7 +46,7 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   ));
 
   customerForm = this.fb.group({
-    name: [{ value: "", disabled: this.viewOnly() }, Validators.required],
+    name: [{ value: "", disabled: this.viewOnly() }, Validators.required ],
     fiscalCode: [{ value: "", disabled: this.viewOnly() }],
     vatNumber: [{ value: "", disabled: this.viewOnly() }],
     sdiNumber: [{ value: "", disabled: this.viewOnly() }],
@@ -52,18 +54,18 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
     pec: [{ value: "", disabled: this.viewOnly() }],
     phone: [{ value: "", disabled: this.viewOnly() }],
     note: [{ value: "", disabled: this.viewOnly() }],
-    addresses: [[{}]],
+    locations: [[{}]],
   });
 
   initFormValue: PartialCustomer = {};
-  deletedAddresses: AddressOnCustomerSection[] = [];
+  deletedLocations: LocationOnCustomerSection[] = [];
 
   get f() {
     return this.customerForm.controls;
   }
 
-  get addresses() {
-    return this.f.addresses.value?.filter(o => Object.keys(o).length > 0) as AddressOnCustomerSection[];
+  get locations() {
+    return this.f.locations.value?.filter(o => Object.keys(o).length > 0) as LocationOnCustomerSection[];
   }
 
   get isNewCustomer() {
@@ -71,7 +73,6 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log(this.isNewCustomer)
     if (!this.isNewCustomer) {
       this.store.dispatch(
         CustomerActions.getCustomer({ id: this.id() })
@@ -86,7 +87,7 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
 
         this.customerForm.patchValue(value);
 
-        this.loadAddresses(value.addresses);
+        this.loadLocations(value.locations);
 
         this.initFormValue = this.customerForm.value as PartialCustomer;
       });
@@ -95,9 +96,9 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
 
   }
 
-  loadAddresses(addresses: AddressOnCustomerSection[]) {
+  loadLocations(locations: LocationOnCustomerSection[]) {
     this.customerForm.patchValue({
-      addresses: []
+      locations: locations
     });
   }
 
@@ -112,9 +113,9 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
           ...difference(this.initFormValue, newState),
 
           // Array data
-          addresses: [
-            ...(newState.addresses || []),
-            ...this.deletedAddresses
+          locations: [
+            ...(newState.locations || []),
+            ...this.deletedLocations
           ]
         };
 
@@ -127,54 +128,45 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
     ).subscribe((changes: any) => this.store.dispatch(CustomerActions.customerActiveChanges({ changes })));
   }
 
-  onAddressAdd({ newAddress }: { newAddress: Partial<AddressOnCustomerSection> }) {
-    let currentAddresses = [ ...this.addresses ].map(address => ({
-      ...address,
-      billing: newAddress.billing ? false : address.billing,
-      defaultShipping: newAddress.defaultShipping ? false : address.defaultShipping
-    }));
+  onLocationAdd({ newLocation }: { newLocation: Partial<LocationOnCustomerSection> }) {
+    let currentLocations = [ ...this.locations ];
 
     this.customerForm.patchValue({
-      addresses: [
-        ...currentAddresses,
-        newAddress
+      locations: [
+        ...currentLocations,
+        newLocation
       ]
     });
   }
 
-  onRemoveAddress({ code }: { code: string }) {
-    const deleted = this.addresses.find((a) => a.code === code && a.id !== -1);
+  onRemoveLocation({ code }: { code: string }) {
+    const deleted = this.locations.find((a) => a.code === code && a.id !== -1);
     if(deleted) {
-      this.deletedAddresses.push({ ...deleted, toBeDisconnected: true });
+      this.deletedLocations.push({ ...deleted, toBeDisconnected: true });
     }
 
     this.customerForm.patchValue({
-      addresses: this.addresses.filter((a) => a.code !== code)
+      locations: this.locations.filter((a) => a.code !== code)
     });
   }
 
-  onAddressChangeData({ data }: { data: Partial<AddressOnCustomerSection> }) {
+  onLocationChangeData({ data }: { data: Partial<LocationOnCustomerSection> }) {
     this.customerForm.patchValue({
-      addresses: this.addresses.map((p , i) => {
+      locations: this.locations.map((p , i) => {
         if(p.code === data.code) {
           return {
             ...p,
             address: data.address ? data.address : p.address,
-            number: data.number ? data.number : p.number,
+            name: data.name ? data.name : p.name,
             city: data.city ? data.city : p.city,
-            country: data.country ? data.country : p.country,
-            note: data.note ? data.note : p.note,
+            code: data.code ? data.code : p.code,
+            departments: data.departments ? data.departments : p.departments,
             province: data.province ? data.province : p.province,
-            state: data.state ? data.state : p.state,
-            zipCode: data.zipCode ? data.zipCode : p.zipCode,
-            billing: data.billing ? data.billing : p.billing,
-            defaultShipping: data.defaultShipping ? data.defaultShipping : p.defaultShipping,
+            customerId: data.customerId ? data.customerId : p.customerId,
           }
         }
         return {
           ...p,
-          billing: data.billing ? false : p.billing,
-          defaultShipping: data.defaultShipping ? false : p.defaultShipping
         };
       })
     })

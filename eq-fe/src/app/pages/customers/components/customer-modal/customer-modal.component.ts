@@ -1,21 +1,19 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { InputComponent } from "../../../../../../components/input/input.component";
+import { InputComponent } from "../../../../components/input/input.component";
 import { MatSelectModule } from "@angular/material/select";
 import {
   Customer,
-  CustomerType,
-  customerTypeArray,
-} from "../../../../../../models/Customer";
+} from "../../../../models/Customer";
 import { MatDialogModule } from "@angular/material/dialog";
 import { debounceTime } from "rxjs/operators";
 import { Subject, takeUntil } from "rxjs";
 import { Store } from "@ngrx/store";
-import { AppState } from "../../../../../../app.config";
-import * as CustomersActions from "../../../../store/actions/customers.actions";
-import { getNewCustomerFormActiveChanges } from "../../../../store/selectors/customers.selectors";
-import { getFiscalCodeRegex, getPhoneNumberRegExp } from "../../../../../../../utils/regex";
+import { AppState } from "../../../../app.config";
+import * as CustomersActions from "../../store/actions/customers.actions";
+import { getNewCustomerFormActiveChanges } from "../../store/selectors/customers.selectors";
+import { getFiscalCodeRegex, getPhoneNumberRegExp } from "../../../../../utils/regex";
 import { MatIconModule } from "@angular/material/icon";
 
 @Component({
@@ -67,12 +65,12 @@ import { MatIconModule } from "@angular/material/icon";
 
           <div class="flex flex-col basis-1/2">
             <label class="text-md justify-left block px-3 py-0 font-medium">tipologia cliente</label>
-            <mat-select class="focus:outline-none p-3 border-input rounded-md w-full bg-foreground"
-              [formControl]="f.type"
-            >
-              <mat-option class="p-3 bg-white !italic">Nessun valore</mat-option>
-              <mat-option class="p-3 bg-white" *ngFor="let type of customerTypeArray" [value]="type.value">{{type.name}}</mat-option>
-            </mat-select>
+<!--            <mat-select class="focus:outline-none p-3 border-input rounded-md w-full bg-foreground"-->
+<!--              [formControl]="f.type"-->
+<!--            >-->
+<!--              <mat-option class="p-3 bg-white !italic">Nessun valore</mat-option>-->
+<!--              <mat-option class="p-3 bg-white" *ngFor="let type of customerTypeArray" [value]="type.value">{{type.name}}</mat-option>-->
+<!--            </mat-select>-->
           </div>
 
         </div>
@@ -100,7 +98,6 @@ import { MatIconModule } from "@angular/material/icon";
   styles: []
 })
 export class CustomerModalComponent implements OnInit, OnDestroy {
-  protected readonly customerTypeArray = customerTypeArray;
   private readonly maxNoteCharacters = 512;
 
   store: Store<AppState> = inject(Store);
@@ -116,7 +113,6 @@ export class CustomerModalComponent implements OnInit, OnDestroy {
     fiscalCode: ["", Validators.pattern(getFiscalCodeRegex()), !Validators.required],
     vatNumber: ["", Validators.maxLength(256)],
     sdiNumber: ["", Validators.maxLength(256)],
-    type: [CustomerType.PRIVATO, [Validators.required]],
     email: ["", [Validators.required, Validators.email]],
     pec: ["", Validators.maxLength(256)],
     phone: ["", Validators.pattern(getPhoneNumberRegExp())],

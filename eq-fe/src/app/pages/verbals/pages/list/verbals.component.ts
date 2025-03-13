@@ -16,7 +16,7 @@ import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import { of, Subject } from "rxjs";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { Verbal, VerbalTable, PartialVerbal } from "../../../../models/Verbal";
+import { Document, VerbalTable, PartialVerbal } from "../../../../models/Document";
 import { PaginateDatasource, Sort, TableButton } from "../../../../models/Table";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { selectRouteQueryParamParam } from "../../../../core/router/store/router.selectors";
@@ -64,7 +64,7 @@ export default class VerbalsComponent implements AfterViewInit, OnInit {
   store: Store<AppState> = inject(Store);
   subject = new Subject();
   dialog = inject(MatDialog);
-  verbalPaginate$ = of({ content: [] as Verbal[] } as PaginateDatasource<Verbal>);
+  verbalPaginate$ = of({ content: [] as Document[] } as PaginateDatasource<Document>);
 
   queryParams = toSignal(this.store.select(selectRouteQueryParamParam()));
 

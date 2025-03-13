@@ -1,6 +1,6 @@
 import { isNaN, isNil, omitBy, overSome } from "lodash-es";
 
-export interface Verbal {
+export interface Document {
     id: number;
     name: string;
     status: string;
@@ -10,9 +10,9 @@ export interface Verbal {
     expirationDate: string;
 }
 
-export type PartialVerbal = Partial<Verbal>;
+export type PartialVerbal = Partial<Document>;
 
-export function createVerbalPayload(verbal: any): Verbal {
+export function createVerbalPayload(verbal: any): Document {
     const verbalDTO = {
         name: verbal.name,
         status: verbal.status,
@@ -21,7 +21,7 @@ export function createVerbalPayload(verbal: any): Verbal {
         creationDate: verbal.creationDate,
         expirationDate: verbal.expirationDate,
     };
-    return <Verbal>omitBy(verbalDTO, overSome([isNil, isNaN]));
+    return <Document>omitBy(verbalDTO, overSome([isNil, isNaN]));
 }
 
 export interface VerbalTable {

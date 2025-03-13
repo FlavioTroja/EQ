@@ -1,6 +1,6 @@
 import { isNaN, isNil, omitBy, overSome } from "lodash-es";
 import { Section } from "../../global";
-import { Address } from "./Address";
+import { Location } from "./Location";
 
 export interface Customer {
   id: string,
@@ -44,7 +44,7 @@ export interface CustomerTable {
 
 export type CustomerDTO = Customer
 
-export type AddressOnCustomerSection = Partial<Address> & Section;
+export type LocationOnCustomerSection = Partial<Location> & Section;
 
 export interface CustomerFilter {
   value?: string,

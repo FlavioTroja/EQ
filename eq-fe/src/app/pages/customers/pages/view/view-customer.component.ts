@@ -11,7 +11,8 @@ import * as CustomersActions from "../../../customers/store/actions/customers.ac
 import { getCurrentCustomer } from "../../store/selectors/customers.selectors";
 import {
   CustomerLocationsSectionComponent
-} from "../edit/components/customer-locations-selections/customer-locations-section.component";
+} from "../../components/customer-locations-selections/customer-locations-section.component";
+import { LocationOnCustomerSection } from "../../../../models/Customer";
 
 @Component({
   selector: 'app-view-customer',
@@ -88,7 +89,7 @@ export default class ViewCustomerComponent implements OnInit {
   }
 
   get locations() {
-    return this.active()?.locations.filter(o => Object.keys(o).length > 0) as any[];
+    return this.active()?.locations.filter(o => Object.keys(o).length > 0) as LocationOnCustomerSection[];
   }
 
 }

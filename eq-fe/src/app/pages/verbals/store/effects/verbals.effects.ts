@@ -5,7 +5,7 @@ import { catchError, concatMap, exhaustMap, map, of } from "rxjs";
 import * as VerbalsActions from "../actions/verbals.actions";
 import * as RouterActions from "../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
-import { Verbal } from "../../../../models/Verbal";
+import { Document } from "../../../../models/Document";
 import { getActiveVerbalChanges } from "../selectors/verbals.selectors";
 import * as UIActions from "../../../../core/ui/store/ui.actions";
 import { NOTIFICATION_LISTENER_TYPE } from "../../../../models/Notification";
@@ -74,9 +74,9 @@ export class VerbalsEffects  {
     ]),
     exhaustMap(([_, changes]) => {
       if(isNaN(changes.id!)) {
-        return of(VerbalsActions.addVerbal({ verbal: changes as Verbal }));
+        return of(VerbalsActions.addVerbal({ verbal: changes as Document }));
       }
-      return this.verbalService.editVerbal(changes?.id!, changes as Verbal)
+      return this.verbalService.editVerbal(changes?.id!, changes as Document)
         .pipe(
           concatMap((verbal) => [
             VerbalsActions.editVerbalSuccess({ verbal }),

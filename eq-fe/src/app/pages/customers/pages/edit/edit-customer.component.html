@@ -69,12 +69,6 @@
       </div>
     </div>
 
-    <app-customer-addresses-section
-      [viewOnly]="viewOnly()"
-      [addressesArray]="addresses"
-      (onAddressAdd)="onAddressAdd($event)"
-      (onAddressChangeData)="onAddressChangeData($event)"
-      (onRemoveAddress)="onRemoveAddress($event)"
-    />
+    <app-customer-locations-section [viewOnly]="false" [locations]="locations"/>
   </div>
 </form>

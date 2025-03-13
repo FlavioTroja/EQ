@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { PartialCustomer, Customer, AddressOnCustomerSection } from "../../../../models/Customer";
+import { PartialCustomer, Customer, LocationOnCustomerSection } from "../../../../models/Customer";
 import { HttpError } from "../../../../models/Notification";
 import { Query } from "../../../../../global";
 import { PaginateDatasource } from "../../../../models/Table";
@@ -47,7 +47,7 @@ export const editCustomerFilterSuccess = createAction("[Customers] Edit customer
 
 export const clearCustomerFilter = createAction("[Customers] Edit customer filter");
 
-export const addressFormActiveChanges = createAction("[Customers] On address form change prop", props<{ changes: AddressOnCustomerSection }>());
+export const addressFormActiveChanges = createAction("[Customers] On address form change prop", props<{ changes: LocationOnCustomerSection }>());
 
 export const clearAddressFormActiveChanges = createAction("[Customers] Clear address form");
 

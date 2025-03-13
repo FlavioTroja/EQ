@@ -1,8 +1,13 @@
-import { Environment } from "./Environment";
+import { Department } from "./Department";
 
 export interface Location {
-  id: number,
+  id: string,
+  customerId: string,
   name: string,
   address: string,
-  environments: Environment[]
+  city: string,
+  province: string,
+  departments: Department[]
 }
+
+export type PartialLocation = Partial<Location>;
