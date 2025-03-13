@@ -1,5 +1,8 @@
 package it.overzoom.registry.security;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +46,26 @@ public class SecurityUtils {
         userDTO.setFirstName(jwt.getClaimAsString("given_name"));
         userDTO.setLastName(jwt.getClaimAsString("family_name"));
         userDTO.setEmail(jwt.getClaimAsString("email"));
+
+        Object resourceAccessObj = jwt.getClaim("resource_access");
+        if (resourceAccessObj instanceof Map) {
+            Map<?, ?> resourceAccess = (Map<?, ?>) resourceAccessObj;
+            Object eqProjectObj = resourceAccess.get("eq-project");
+            if (eqProjectObj instanceof Map) {
+                Map<?, ?> eqProject = (Map<?, ?>) eqProjectObj;
+                Object rolesObj = eqProject.get("roles");
+                if (rolesObj instanceof List<?>) {
+                    List<?> rolesList = (List<?>) rolesObj;
+                    List<String> rolesStringList = new ArrayList<>();
+                    for (Object role : rolesList) {
+                        if (role instanceof String) {
+                            rolesStringList.add((String) role);
+                        }
+                    }
+                    userDTO.setRoles(rolesStringList.toArray(new String[0]));
+                }
+            }
+        }
 
         return userDTO;
     }

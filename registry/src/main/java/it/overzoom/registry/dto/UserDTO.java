@@ -18,6 +18,7 @@ public class UserDTO {
     private String phoneNumber;
     private String level;
     private String photo;
+    private String[] roles;
 
     public String getId() {
         return id;
@@ -89,5 +90,13 @@ public class UserDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String[] roles) {
+        this.roles = roles;
     }
 }

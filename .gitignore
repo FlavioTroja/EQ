@@ -41,3 +41,7 @@ hs_err_*
 
 ### YARN ### 
 yarn.lock
+
+# FTONTEND
+.angular
+node_modules
