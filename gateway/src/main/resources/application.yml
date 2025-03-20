@@ -59,6 +59,8 @@ keycloak:
   admin:
     realm: master
     resource: admin-cli    
+    username: admin
+    password: admin
 
 eureka:
     client:
