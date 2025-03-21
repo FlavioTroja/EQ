@@ -58,6 +58,7 @@ public class SecurityConfig {
 
         http.authorizeExchange(exchange -> exchange
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                .pathMatchers(HttpMethod.POST, "/api/registry/users").permitAll()
                 .pathMatchers(
                         "/auth/**",
                         "/swagger-ui.html",

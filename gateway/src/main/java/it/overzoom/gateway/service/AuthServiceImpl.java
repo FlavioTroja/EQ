@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-public class AuthService {
+public class AuthServiceImpl {
 
     private final RestTemplate restTemplate;
 
@@ -35,7 +35,7 @@ public class AuthService {
     @Value("${keycloak.admin.resource}")
     private String adminClientId;
 
-    public AuthService() {
+    public AuthServiceImpl() {
         this.restTemplate = new RestTemplate();
     }
 

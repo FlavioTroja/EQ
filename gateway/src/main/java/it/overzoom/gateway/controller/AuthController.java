@@ -1,6 +1,8 @@
 package it.overzoom.gateway.controller;
 
+import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +22,10 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.overzoom.gateway.service.AuthService;
+import it.overzoom.gateway.feign.UserFeign;
+import it.overzoom.gateway.mapper.UserMapper;
+import it.overzoom.gateway.service.AuthServiceImpl;
+import jakarta.ws.rs.BadRequestException;
 
 @RestController
 @RequestMapping("/auth")
@@ -43,7 +48,10 @@ public class AuthController {
     }
 
     @Autowired
-    private AuthService authService;
+    private AuthServiceImpl authService;
+
+    @Autowired
+    private UserFeign userFeign;
 
     public static class LoginRequest {
         private String username;
@@ -152,16 +160,21 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, Object> registrationData) {
+    public ResponseEntity<?> register(@RequestBody Map<String, Object> registrationData)
+            throws BadRequestException, URISyntaxException {
 
         String registrationUrl = keycloakUrl + "/admin/realms/" + realm + "/users";
 
+        String uuid = UUID.randomUUID().toString();
+        registrationData.put("id", uuid);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(authService.getAdminAccessToken());
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(registrationData, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(registrationUrl, request, String.class);
+        userFeign.create(UserMapper.mapRegistrationDataToUserDto(registrationData));
+
         return ResponseEntity.status(response.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(response.getBody());
