@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserDTO> create(@Valid @RequestBody UserDTO userDTO)
+    public ResponseEntity<User> create(@Valid @RequestBody UserDTO userDTO)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save User : " + userDTO.toString());
         if (userDTO.getId() != null) {
@@ -62,7 +62,7 @@ public class UserController {
         }
         User user = UserMapper.toEntity(userDTO);
         user = userService.create(user);
-        return ResponseEntity.created(new URI("/api/users/" + userDTO.getId())).body(UserMapper.toDto(user));
+        return ResponseEntity.created(new URI("/api/users/" + userDTO.getId())).body(user);
     }
 
     @PutMapping("")

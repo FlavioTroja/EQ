@@ -20,6 +20,7 @@ public class SecurityConfig {
                 http.csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(authorize -> authorize
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/registry/users").permitAll()
                                                 .requestMatchers(
                                                                 "/registry/swagger-ui.html",
                                                                 "/registry/swagger-ui/**",
