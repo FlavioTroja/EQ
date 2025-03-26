@@ -129,6 +129,8 @@
     --soko-success-light: 236, 245, 240;
     --soko-draft: 127, 83, 222;
     --soko-draft-light: 236, 230, 250;
+    --soko-compile: 123, 124, 181;
+    --soko-compile-light: 233, 234, 255;
 
 
     --modal-remove-element: #E54F47;
@@ -348,8 +350,12 @@ select {
   background: #E6F3FA;
 }
 
-.black{
-  color: black;
+.custom-black{
+  color: #323A46;
+}
+
+.custom-bg-black{
+  background-color: #323A46;
 }
 
 .scale-200 {
@@ -651,6 +657,24 @@ select {
 
 .border-warning {
   border-color: rgb(var(--soko-warning));
+}
+
+//------------------------------------ compile
+.compile {
+  background-color: rgb(var(--soko-compile-light));
+  color: rgb(var(--soko-compile));
+}
+
+.icon-compile {
+  background-color: rgb(var(--soko-compile));
+}
+
+.text-compile {
+  color: rgb(var(--soko-compile));
+}
+
+.border-compile {
+  border-color: rgb(var(--soko-compile));
 }
 
 //------------------------------------ accent

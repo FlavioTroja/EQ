@@ -9,6 +9,10 @@ module.exports = {
       },
       width: {
         "160": "40rem"
+      },
+      borderRadius: {
+        "4xl": "30px",
+        "5xl": "35px"
       }
     },
   },

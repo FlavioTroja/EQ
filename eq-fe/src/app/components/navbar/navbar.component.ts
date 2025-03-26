@@ -11,6 +11,7 @@ import { getRouterData, getRouterNavigationId, selectCustomRouteParam } from "..
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { NavBarButton, NavBarButtonDialog } from "../../models/NavBar";
 import { Observable, of } from "rxjs";
+import { selectCustomNavbar } from "../../core/ui/store/ui.selectors";
 
 @Component({
   selector: 'app-navbar',
@@ -62,8 +63,9 @@ import { Observable, of } from "rxjs";
 })
 export class NavbarComponent {
   store: Store<AppState> = inject(Store);
-  routerData$ = toSignal(this.store.select(getRouterData));
+  routerData = toSignal(this.store.select(getRouterData));
   id = toSignal(this.store.select(selectCustomRouteParam("id")));
+  customNavbar = toSignal(this.store.select(selectCustomNavbar));
   navigationId: number | undefined;
   title: string = "";
   buttons: NavBarButton<any, any>[] = [];
@@ -79,28 +81,29 @@ export class NavbarComponent {
     ).subscribe(value => this.navigationId = value);
 
     effect(() => {
-      if (!this.routerData$()) {
+      if (!this.routerData()) {
         return;
       }
 
-      this.title = this.getCurrentTitle(this.routerData$()!["title"], +this.id());
-      this.buttons = this.routerData$()!["buttons"];
-      this.backPath = this.routerData$()!["backAction"];
+      this.title = !this.customNavbar()?.title ? this.getCurrentTitle(this.routerData()!["title"], this.id()) : this.customNavbar()!.title || "";
+      this.buttons = !this.customNavbar()?.buttons ? this.routerData()!["buttons"] : this.customNavbar()!.buttons;
 
-      if(this.routerData$()!["backActionSelector"]) {
-        this.store.select(this.routerData$()!["backActionSelector"][0]).subscribe(previousUrl => {
-          this.backPath = previousUrl ?? this.routerData$()!["backAction"];
+      this.backPath = this.routerData()!["backAction"];
+
+      if(this.routerData()!["backActionSelector"]) {
+        this.store.select(this.routerData()!["backActionSelector"][0]).subscribe(previousUrl => {
+          this.backPath = previousUrl ?? this.routerData()!["backAction"];
         })
       }
 
     });
   }
 
-  getCurrentTitle(curr: { default: string, other: string }, id: number) {
+  getCurrentTitle(curr: { default: string, other: string }, id: string): string {
     if (!curr?.other) {
       return curr?.default || "";
     }
-    if(isNaN(id)) {
+    if(id === 'new') {
       return curr.other;
     }
     return curr.default;

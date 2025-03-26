@@ -2,17 +2,17 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from "@ngrx/store";
 import { getAccessToken, getAuthError } from "../../../core/auth/store/auth.selectors";
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AppState } from "../../../app.config";
 import { MatIconModule } from "@angular/material/icon";
 
 import * as AuthActions from "../../../core/auth/store/auth.actions";
-import { LoginPayload } from "../../../models/Auth";
+import { LoginPayload, RegisterPayload } from "../../../models/Auth";
 import { InputComponent } from "../../../components/input/input.component";
 import * as RouterActions from "../../../core/router/store/router.actions";
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule, ReactiveFormsModule, InputComponent],
   template: `
@@ -21,11 +21,15 @@ import * as RouterActions from "../../../core/router/store/router.actions";
     <!--    </div>-->
 
     <div class="m-auto max-w-[20em] min-w-[10em] flex flex-col gap-4 py-28 items-center">
-      <div class="text-3xl font-extrabold">Accedi</div>
-      <form class="contents" [formGroup]="loginFormGroup" (ngSubmit)="login()">
+      <div class="text-3xl font-extrabold">Registrati</div>
+      <form class="contents" [formGroup]="registerFormGroup" (ngSubmit)="register()">
         <div class="w-full">
           <app-input [formControl]="f.username" formControlName="username" label="e-mail o nome utente"
                      id="username" type="text"/>
+        </div>
+        <div class="w-full">
+          <app-input [formControl]="f.cellphone" formControlName="cellphone" label="numero di telefono"
+                     id="cellphone" type="text"/>
         </div>
 
         <div class="w-full">
@@ -48,6 +52,26 @@ import * as RouterActions from "../../../core/router/store/router.actions";
           </div>
         </div>
 
+        <div class="w-full">
+          <label for="confirmPassword" class="text-md justify-left block px-3 py-0 font-medium"
+                 [ngClass]="f.confirmPassword.invalid && f.confirmPassword.dirty ? ('text-red-800') : ('text-gray-900')">conferma Password</label>
+
+          <div class="relative">
+            <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
+                   class="focus:outline-none p-3 rounded-md pr-12 w-full"
+                   [ngClass]="f.confirmPassword.invalid && f.confirmPassword.dirty ? ('border-input-error') : ('border-input')"
+                   formControlName="confirmPassword">
+            <button (click)="toggleChangePassword()" type="button"
+                    class="absolute end-1 rounded-lg text-sm px-4 py-3 items-center">
+              <mat-icon class="material-symbols-rounded">visibility{{ showConfirmPassword ? '_off' : '' }}</mat-icon>
+            </button>
+          </div>
+
+          <div *ngIf="f.password.invalid && f.password.dirty" class="px-3 py-1 text-xs text-red-800">
+            Il campo 'conferma password' è obbligatorio.
+          </div>
+        </div>
+
         <div *ngIf="!!error()" class="flex w-full rounded-lg bg-red-200 p-2 text-sm text-red-800" role="alert">
           <div class="flex flex-row gap-2 items-center">
             <mat-icon class="material-symbols-rounded-filled">warning</mat-icon>
@@ -56,24 +80,24 @@ import * as RouterActions from "../../../core/router/store/router.actions";
           </div>
         </div>
 
-        <button type="submit" [disabled]="loginFormGroup.invalid"
-                [ngClass]="{ 'opacity-50': loginFormGroup.invalid }"
+        <button type="submit" [disabled]="!this.passwordMatch"
+                [ngClass]="{ 'opacity-50': !this.passwordMatch }"
                 class="flex items-center rounded-full icon-accent px-12 py-3 font-extrabold text-white shadow-md hover:bg-cyan-950">
-          Entra
+          Registrami
           <mat-icon *ngIf="!isLoaded()" class="icon-size material-symbols-rounded-filled cursor-pointer animate-spin duration-700 ease-in-out">
             progress_activity
           </mat-icon>
         </button>
       </form>
       <div class="flex gap-2">
-        Non hai un'account? 
-        <div class="underline blue" (click)="goToRegister()">Registrati</div>
+        Hai già un'account?
+        <div class="underline blue" (click)="goToLogin()">Accedi</div>
       </div>
     </div>
   `,
   styles: [``]
 })
-export default class LoginComponent {
+export default class RegisterComponent {
 
   store: Store<AppState> = inject(Store);
   fb = inject(FormBuilder);
@@ -86,25 +110,39 @@ export default class LoginComponent {
     return (!this.loading());
   });
 
-  loginFormGroup = this.fb.group({
+  registerFormGroup = this.fb.group({
     username: ["", Validators.required],
-    password: ["", Validators.required]
+    cellphone: ["", Validators.required],
+    password: ["", Validators.required],
+    confirmPassword: ["", Validators.required]
   });
 
   showPassword = false;
+  showConfirmPassword = false;
 
-  get f() { return this.loginFormGroup.controls; }
+  get f() { return this.registerFormGroup.controls }
 
-  login () {
-    const payload = this.loginFormGroup.getRawValue() as LoginPayload;
-    this.store.dispatch(AuthActions.login(payload));
+  get passwordMatch(): boolean {
+    const password = this.f.password.value;
+    const confirmPassword = this.f.confirmPassword.value;
+
+    return password === confirmPassword;
+  }
+
+  register () {
+    const payload = this.registerFormGroup.getRawValue() as RegisterPayload;
+    this.store.dispatch(AuthActions.register(payload));
   }
 
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
-  goToRegister(): void {
-    this.store.dispatch(RouterActions.go({ path: ['auth/register'] }))
+  toggleChangePassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  goToLogin(): void {
+    this.store.dispatch(RouterActions.go({ path: ['auth/login'] }))
   }
 }

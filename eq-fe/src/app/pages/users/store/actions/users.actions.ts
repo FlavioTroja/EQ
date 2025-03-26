@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { PartialUser, RoleName, User, UserFilter } from "../../../../models/User";
+import { PartialUser, User, UserFilter } from "../../../../models/User";
 import { HttpError } from "../../../../models/Notification";
 import { Query } from "../../../../../global";
 import { PaginateDatasource } from "../../../../models/Table";
@@ -39,7 +39,5 @@ export const loadUsersSuccess = createAction("[Users] Load Success", props<{ use
 export const loadUsersFailed = createAction("[Users] Load Failed", props<{ error: HttpError }>());
 
 export const clearUserHttpError = createAction("[Users] Clear Http Error");
-
-export const getRolesNamesSuccess = createAction("[Users] Get roles names success", props<{ roleNames: RoleName[] }>());
 
 export const getRolesNamesFailed = createAction("[Users] Get roles names failed", props<{ error: HttpError }>());

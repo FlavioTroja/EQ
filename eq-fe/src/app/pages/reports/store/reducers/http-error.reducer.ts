@@ -1,23 +1,23 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import * as VerbalActions from "../actions/verbals.actions";
+import * as ReportActions from "../actions/reports.actions";
 import { HttpError } from "../../../../models/Notification";
 
 const initialState: Partial<HttpError> = {};
 
 const httpErrorReducer = createReducer(
   initialState,
-  on(VerbalActions.clearVerbalHttpError, (state, { }) => ({})),
+  on(ReportActions.clearReportHttpError, (state, { }) => ({})),
 
-  on(VerbalActions.loadVerbalsFailed, (state, { error }) => ({
+  on(ReportActions.loadReportsFailed, (state, { error }) => ({
     ...error
   })),
-  on(VerbalActions.getVerbalFailed, (state, { error }) => ({
+  on(ReportActions.getReportFailed, (state, { error }) => ({
     ...error
   })),
-  on(VerbalActions.editVerbalFailed, (state, { error }) => ({
+  on(ReportActions.editReportFailed, (state, { error }) => ({
     ...error
   })),
-  on(VerbalActions.deleteVerbalFailed, (state, { error }) => ({
+  on(ReportActions.deleteReportFailed, (state, { error }) => ({
     ...error
   }))
 );

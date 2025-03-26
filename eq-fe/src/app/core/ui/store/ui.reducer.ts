@@ -11,18 +11,17 @@ export interface SidebarState {
 }
 
 export interface NavbarState {
-  page: {
-    title: string,
-    buttons?: {
-      label: string,
-      iconName: string,
-      action: string
-    }[]
-  }
+  title?: string,
+  buttons?: {
+    label: string,
+    iconName: string,
+    action: string
+  }[]
 }
 
 export interface UIState {
   sidebar: SidebarState;
+  navbar: NavbarState;
   notifications: Notification[];
 }
 
@@ -31,11 +30,13 @@ export const initialState: UIState = {
     collapsed: false,
     expand: undefined
   },
+  navbar: {},
   notifications: []
 }
 
-const sidebarReducer = createReducer(
+const uiReducer = createReducer(
   initialState,
+  // sidebar
   on(UIActions.uiToggleSidebarCollapsed, (state) => ({
     ...state,
     sidebar: {
@@ -57,6 +58,25 @@ const sidebarReducer = createReducer(
       expand: expand ? { ...expand } : undefined
     },
   })),
+
+  // navbar
+  on(UIActions.setCustomNavbar, (state, { navbar }) => ({
+    ...state,
+    navbar
+  })),
+  on(UIActions.setPartialCustomNavbar, (state, { navbar }) => ({
+    ...state,
+    navbar: {
+      title: navbar.title || state.navbar.title,
+      buttons: navbar.buttons || state.navbar.buttons,
+    }
+  })),
+  on(UIActions.clearCustomNavbar, (state) => ({
+    ...state,
+    navbar: {}
+  })),
+
+  // notification
   on(UIActions.setUiNotification, (state, { notification }) => {
     const current = [ ...state.notifications ];
     current.push({
@@ -80,5 +100,5 @@ const sidebarReducer = createReducer(
 );
 
 export function reducer(state: UIState | undefined, action: Action) {
-  return sidebarReducer(state, action);
+  return uiReducer(state, action);
 }

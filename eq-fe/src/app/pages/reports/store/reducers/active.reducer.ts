@@ -1,32 +1,32 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import * as VerbalActions from "../actions/verbals.actions";
+import * as ReportActions from "../actions/reports.actions";
 import { Document } from "../../../../models/Document";
 import { ActiveEntity } from "../../../../../global";
 
 const initialState: Partial<ActiveEntity<Document>> = {};
 
-const activeVerbalReducer = createReducer(
+const activeReportReducer = createReducer(
   initialState,
-  on(VerbalActions.getVerbalSuccess, (state, { current }) => ({
+  on(ReportActions.getReportSuccess, (state, { current }) => ({
     current: current
   })),
-  on(VerbalActions.verbalActiveChanges, (state, { changes }) => ({
+  on(ReportActions.reportActiveChanges, (state, { changes }) => ({
     ...state,
     changes: { ...changes }
   })),
-  on(VerbalActions.editVerbalSuccess, (state, { verbal }) => ({
-    current: { ...verbal }
+  on(ReportActions.editReportSuccess, (state, { report }) => ({
+    current: { ...report }
   })),
-  on(VerbalActions.clearVerbalActive, (state) => ({
+  on(ReportActions.clearReportActive, (state) => ({
     changes: undefined,
     current: undefined
   })),
-  on(VerbalActions.loadVerbalsSuccess, (state) => ({
+  on(ReportActions.loadReportsSuccess, (state) => ({
     changes: undefined,
     current: undefined
   })),
 );
 
 export function reducer(state: Partial<ActiveEntity<Document>> | undefined, action: Action) {
-  return activeVerbalReducer(state, action)
+  return activeReportReducer(state, action)
 }

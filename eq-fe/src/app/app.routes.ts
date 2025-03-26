@@ -5,13 +5,12 @@ import { provideState } from "@ngrx/store";
 import { reducers as customerManagementReducers } from "./pages/customers/store/reducers";
 import { reducers as userManagementReducers } from "./pages/users/store/reducers";
 import { reducers as machineManagementReducers } from "./pages/machines/store/reducers";
-import { reducers as verbalManagementReducers } from "./pages/verbals/store/reducers";
+import { reducers as reportManagementReducers } from "./pages/reports/store/reducers";
 import { provideEffects } from "@ngrx/effects";
 import { CustomersEffects } from "./pages/customers/store/effects/customers.effects";
 import { UsersEffects } from "./pages/users/store/effects/users.effects";
-import { RoleNamesEffects } from "./pages/users/store/effects/roleNames.effects";
 import { MachinesEffects } from "./pages/machines/store/effects/machines.effects";
-import { VerbalsEffects } from "./pages/verbals/store/effects/verbals.effects";
+import { ReportsEffects } from "./pages/reports/store/effects/reports.effects";
 
 export const routes: Routes = [
   {
@@ -23,6 +22,11 @@ export const routes: Routes = [
     path: "auth/login",
     pathMatch: "full",
     loadComponent: () => import("./pages/auth/login/login.component"),
+  },
+  {
+    path: "auth/register",
+    pathMatch: "full",
+    loadComponent: () => import("./pages/auth/register/register.component"),
   },
   {
     path: "home",
@@ -48,13 +52,13 @@ export const routes: Routes = [
     loadChildren: () => import("./pages/machines/machines.routing")
   },
   {
-    path: "verbals",
+    path: "reports",
     canActivate: [ AuthGuard ],
     providers: [
-      provideState("verbal-manager", verbalManagementReducers),
-      provideEffects(VerbalsEffects)
+      provideState("report-manager", reportManagementReducers),
+      provideEffects(ReportsEffects)
     ],
-    loadChildren: () => import("./pages/verbals/verbals.routing")
+    loadChildren: () => import("./pages/reports/reports.routing")
   },
   {
     path: "customers",
@@ -70,7 +74,7 @@ export const routes: Routes = [
     canActivate: [ AuthGuard ],
     providers: [
       provideState("user-manager", userManagementReducers),
-      provideEffects([UsersEffects, RoleNamesEffects])
+      provideEffects(UsersEffects)
     ],
     loadChildren: () => import("./pages/users/users.routing")
   },

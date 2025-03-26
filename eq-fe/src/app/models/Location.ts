@@ -11,3 +11,8 @@ export interface Location {
 }
 
 export type PartialLocation = Partial<Location>;
+
+export interface LocationFilter {
+  customerId: string;
+  value?: string,
+}

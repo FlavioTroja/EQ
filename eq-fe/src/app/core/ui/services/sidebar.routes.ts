@@ -20,17 +20,25 @@ export const sidebarRoutes: RouteElement[] = [
   },
   {
     iconName: "description",
-    path: "/verbals",
+    path: "/reports",
     label: "Verbali",
-  },
-  {
-    iconName: "precision_manufacturing",
-    path: "/machines",
-    label: "Macchine"
   },
   {
     iconName: "group",
     path: "/customers",
     label: "Clienti",
+    isLast: true,
+  },
+  {
+    iconName: "precision_manufacturing",
+    path: "/machines",
+    label: "Macchine",
+    provideRoles: [ Roles.ADMIN ]
+  },
+  {
+    iconName: "engineering",
+    path: "/users",
+    label: "Utenti",
+    provideRoles: [ Roles.ADMIN ]
   },
 ];

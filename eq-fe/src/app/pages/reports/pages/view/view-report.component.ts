@@ -2,16 +2,16 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-view-verbal',
+    selector: 'app-view-report',
     standalone: true,
     template: `
     <div class="flex">
-      view verbal
+      view report
     </div>
   `,
     styles: [``],
   imports: [ CommonModule ]
 })
-export default class ViewVerbalComponent {
+export default class ViewReportComponent {
 
 }

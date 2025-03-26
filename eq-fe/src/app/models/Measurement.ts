@@ -2,9 +2,15 @@
 export interface Measurement {
   id: string,
   date: string,
-  key: string,
-  value: string,
+  name: string,
+  values: MeasurementValue[],
   sourceId: string,
 }
+
+export interface MeasurementValue {
+  value: string;
+  unitMeasure: string;
+}
+
 
 export type PartialMeasurement = Partial<Measurement>;

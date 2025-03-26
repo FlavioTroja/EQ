@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { Auth, LoginPayload } from "../../../models/Auth";
+import { Auth, LoginPayload, RegisterPayload } from "../../../models/Auth";
 
 const BASE_URL = environment.BASE_URL;
 const AUTH_KEY = "Authorization";
@@ -11,8 +11,11 @@ const AUTH_KEY = "Authorization";
 export class AuthService {
   http = inject(HttpClient);
 
-  login(payload: LoginPayload) {
+  register(payload: RegisterPayload) {
+    return this.http.post<Auth>(`${BASE_URL}/auth/register`, payload);
+  }
 
+  login(payload: LoginPayload) {
     return this.http.post<Auth>(`${BASE_URL}/auth/login`, payload);
   }
 

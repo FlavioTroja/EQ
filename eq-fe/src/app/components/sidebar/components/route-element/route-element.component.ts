@@ -49,22 +49,22 @@ import * as UIActions from "../../../../core/ui/store/ui.actions";
     <div *ngIf="route.isLast" class="bg-separator"></div>
   `,
   styles: [`
-  .icon-size {
-    font-size: 32px;
-    width: auto;
-    height: auto;
-  }
-  .bg-75 {
-    background-color: rgba(var(--foreground-color), 0.75);
-  }
+    .icon-size {
+      font-size: 32px;
+      width: auto;
+      height: auto;
+    }
+    .bg-75 {
+      background-color: rgba(var(--foreground-color), 0.75);
+    }
 
-  .bg-separator{
-    background-color: rgba(var(--primary-color), 0.1);
-    height: 2px;
-    border-radius: 999px;
-    width: 100%;
-    margin-top: 0.5rem;
-  }
+    .bg-separator{
+      background-color: rgba(var(--primary-color), 0.1);
+      height: 2px;
+      border-radius: 999px;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
   `]
 })
 export class RouteElementComponent {

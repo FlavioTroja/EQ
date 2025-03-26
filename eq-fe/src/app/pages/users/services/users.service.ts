@@ -30,7 +30,7 @@ export class UsersService {
   }
 
   loadUsers(payload: Query<UserFilter>) {
-    return this.http.post<PaginateDatasource<User>>(`${BASE_URL}/api/registry/users`, payload);
+    return this.http.get<PaginateDatasource<User>>(`${BASE_URL}/api/registry/users`);
   }
 
   loadAllUsers(payload: Query<UserFilter>) {

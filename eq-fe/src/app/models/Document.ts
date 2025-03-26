@@ -10,26 +10,26 @@ export interface Document {
     expirationDate: string;
 }
 
-export type PartialVerbal = Partial<Document>;
+export type PartialReport = Partial<Document>;
 
-export function createVerbalPayload(verbal: any): Document {
-    const verbalDTO = {
-        name: verbal.name,
-        status: verbal.status,
-        client: verbal.client,
-        machine: verbal.machine,
-        creationDate: verbal.creationDate,
-        expirationDate: verbal.expirationDate,
+export function createReportPayload(report: any): Document {
+    const reportDTO = {
+        name: report.name,
+        status: report.status,
+        client: report.client,
+        machine: report.machine,
+        creationDate: report.creationDate,
+        expirationDate: report.expirationDate,
     };
-    return <Document>omitBy(verbalDTO, overSome([isNil, isNaN]));
+    return <Document>omitBy(reportDTO, overSome([isNil, isNaN]));
 }
 
-export interface VerbalTable {
+export interface ReportTable {
     search?: string,
     pageIndex?: number,
     pageSize?: number
 }
 
-export interface VerbalFilter {
+export interface ReportFilter {
     value?: string,
 }
