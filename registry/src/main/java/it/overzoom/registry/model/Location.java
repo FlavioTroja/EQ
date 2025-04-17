@@ -24,6 +24,8 @@ public class Location {
 
     private String province;
 
+    private Integer completedDepartments;
+
     @DBRef
     private List<Department> departments;
 
@@ -81,6 +83,14 @@ public class Location {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public Integer getCompletedDepartments() {
+        return completedDepartments;
+    }
+
+    public void setCompletedDepartments(Integer completedDepartments) {
+        this.completedDepartments = completedDepartments;
     }
 
 }

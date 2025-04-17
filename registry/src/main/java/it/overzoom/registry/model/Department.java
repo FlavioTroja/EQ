@@ -18,6 +18,8 @@ public class Department {
     @Indexed
     private String locationId;
 
+    private Integer completedSources;
+
     @DBRef
     private List<Source> sources;
 
@@ -53,9 +55,18 @@ public class Department {
         this.sources = sources;
     }
 
+    public Integer getCompletedSources() {
+        return completedSources;
+    }
+
+    public void setCompletedSources(Integer completedSources) {
+        this.completedSources = completedSources;
+    }
+
     @Override
     public String toString() {
-        return "Department [id=" + id + ", name=" + name + ", locationId=" + locationId + ", sources=" + sources + "]";
+        return "Department [id=" + id + ", name=" + name + ", locationId=" + locationId + ", completedSources="
+                + completedSources + ", sources=" + sources + "]";
     }
 
 }
