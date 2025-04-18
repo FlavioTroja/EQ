@@ -1,15 +1,14 @@
 import { ActionReducerMap, createFeatureSelector } from "@ngrx/store";
 import { reducer as reportReducer } from "./reports.reducer";
 import { reducer as httpErrorReducer } from "./http-error.reducer";
-import { reducer as activeReducer } from "./active.reducer";
+import { customActiveReportState, reducer as activeReducer } from "./active.reducer";
 import { HttpError } from "../../../../models/Notification";
-import { Document } from "../../../../models/Document";
+import { Report } from "../../../../models/Report";
 import { PaginateDatasource } from "../../../../models/Table";
-import { ActiveEntity } from "../../../../../global";
 
 export interface ReportManagementState {
-  reports?: Partial<PaginateDatasource<Document>>;
-  active?: Partial<ActiveEntity<Document>>;
+  reports?: Partial<PaginateDatasource<Report>>;
+  active?: Partial<customActiveReportState>;
   httpError?: Partial<HttpError>;
 }
 

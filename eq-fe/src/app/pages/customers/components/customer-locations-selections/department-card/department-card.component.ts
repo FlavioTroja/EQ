@@ -5,7 +5,6 @@ import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { Department, PartialDepartment } from "../../../../../models/Department";
 import { CustomValidators } from "../../../../../services/custom-validators";
-import { Machine } from "../../../../../models/Machine";
 import { pairwise } from "rxjs";
 import { map } from "rxjs/operators";
 import { difference } from "../../../../../../utils/utils";
@@ -99,7 +98,7 @@ export class DepartmentCardComponent implements OnInit {
   initFormValue: PartialDepartment = {};
 
   departmentForm = this.fb.group({
-    id: [ -1 ],
+    id: [ '-1' ],
     name:[ "", Validators.required ],
     sources: [[{}], [CustomValidators.notEmpty] ],
   });
@@ -122,7 +121,7 @@ export class DepartmentCardComponent implements OnInit {
 
   initDepartmentForm(department?: Department) {
     this.departmentForm.patchValue({
-      id: department?.id ?? -1,
+      id: department?.id ?? '-1',
       name: department?.name ?? "",
       sources: department?.sources ?? []
     });

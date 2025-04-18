@@ -6,8 +6,10 @@ import * as RouterActions from "../../router/store/router.actions";
 import * as UserActions from "../../../pages/users/store/actions/users.actions";
 import * as SupplierActions from "../../../pages/suppliers/store/actions/suppliers.actions";
 import * as CustomerActions from "../../../pages/customers/store/actions/customers.actions";
+import * as ReportActions from "../../../pages/reports/store/actions/reports.actions";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { selectCustomRouteParam } from "../../router/store/router.selectors";
+import { getActiveReportLocationsDepartmentsLength } from "../../../pages/reports/store/selectors/reports.selectors";
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +17,28 @@ import { selectCustomRouteParam } from "../../router/store/router.selectors";
 export class NavbuttonService {
   store: Store<AppState> = inject(Store);
   id = toSignal(this.store.select(selectCustomRouteParam("id")));
+  departmentIndex = toSignal(this.store.select(selectCustomRouteParam("departmentIndex")));
+  departmentLength = toSignal(this.store.select(getActiveReportLocationsDepartmentsLength));
   url = signal(document.location.href);
 
   navbarButtonActions = [
     {
       actionName: NAVBAR_ACTION.SUPPLIER_SAVE,
       callback: () => this.store.dispatch(SupplierActions.editSupplier())
+    },
+    {
+      actionName: NAVBAR_ACTION.REPORT_SAVE,
+      callback: () => this.store.dispatch(ReportActions.editReport())
+    },
+    {
+      actionName: NAVBAR_ACTION.REPORT_COMPILE_FORWARD,
+      callback: () => (+this.departmentIndex()+1) < this.departmentLength()!
+        ? this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${ +this.departmentIndex()+1 }`] }))
+        : this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}`] }))
+    },
+    {
+      actionName: NAVBAR_ACTION.REPORT_COMPILE_BACKWARD,
+      callback: () => this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${ +this.departmentIndex()-1 }`] }))
     },
     {
       actionName: NAVBAR_ACTION.SUPPLIER_NAVIGATE_ON_MODIFY,

@@ -53,6 +53,12 @@
   color: rgb(var(--soko-accent)) !important;
 }
 
+.mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+  border-color: rgb(var(--soko-accent)) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
 /* Material Datepicker End */
 
 /* Material Filled */

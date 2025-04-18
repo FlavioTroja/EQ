@@ -1,10 +1,11 @@
 import { Source } from "./Source";
 
 export interface Department {
-  id: number,
+  id: string,
   name: string,
   locationId: string,
-  sources: Source[]
+  sources: Source[],
+  completedSources: number
 }
 
 export type PartialDepartment = Partial<Department>;

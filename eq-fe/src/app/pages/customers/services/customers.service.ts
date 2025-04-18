@@ -23,7 +23,7 @@ export class CustomersService {
   }
 
   getCustomer(id: string) {
-    return this.http.get<Customer>(`${BASE_URL}/api/registry/customers/${id}`, { params: { populate: "addresses" } });
+    return this.http.get<Customer>(`${BASE_URL}/api/registry/customers/${id}`, { params: { populate: "" } });
   }
 
   editCustomer(id: string, payload: PartialCustomer) {

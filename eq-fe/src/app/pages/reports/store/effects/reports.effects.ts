@@ -5,7 +5,7 @@ import { catchError, concatMap, exhaustMap, map, of } from "rxjs";
 import * as ReportsActions from "../actions/reports.actions";
 import * as RouterActions from "../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
-import { Document } from "../../../../models/Document";
+import { Report } from "../../../../models/Report";
 import { getActiveReportChanges } from "../selectors/reports.selectors";
 import * as UIActions from "../../../../core/ui/store/ui.actions";
 import { NOTIFICATION_LISTENER_TYPE } from "../../../../models/Notification";
@@ -73,10 +73,11 @@ export class ReportsEffects  {
       this.store.select(getActiveReportChanges)
     ]),
     exhaustMap(([_, changes]) => {
-      if(isNaN(changes.id!)) {
-        return of(ReportsActions.addReport({ report: changes as Document }));
+      console.log(changes)
+      if(changes?.id === "new") {
+        return of(ReportsActions.addReport({ report: changes as Report }));
       }
-      return this.reportService.editReport(changes?.id!, changes as Document)
+      return this.reportService.editReport(changes?.id!, changes as Report)
         .pipe(
           concatMap((report) => [
             ReportsActions.editReportSuccess({ report }),

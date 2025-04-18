@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NAVBAR_ACTION } from "../../models/NavBar";
+import { getActiveReportChanges } from "./store/selectors/reports.selectors";
 
 const routes: Routes = [
   {
@@ -26,7 +28,7 @@ const routes: Routes = [
         other: "Aggiungi Verbale"
       },
       buttons: [
-        // { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.REPORT_SAVE, selectors: { disabled: getActiveReportChanges } },
+        { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.REPORT_SAVE, selectors: { disabled: getActiveReportChanges } },
         // { label: "", iconName: "search", action: NAVBAR_ACTION.USERS_EDIT },
         // { label: "", iconName: "home", action: NAVBAR_ACTION.USERS_DELETE }
       ],
@@ -34,7 +36,7 @@ const routes: Routes = [
     }
   },
   {
-    path: ':id/compile/:id',
+    path: ':id/compile/:departmentIndex',
     loadComponent: () => import('./pages/compile/compile-departments.component'),
     data: {
       title: {
@@ -47,7 +49,7 @@ const routes: Routes = [
     }
   },
   {
-    path: ':id/compile/:id/:id',
+    path: ':id/compile/:departmentIndex/:machineIndex',
     loadComponent: () => import('./pages/compile/compile-machines.component'),
     data: {
       title: {
@@ -60,7 +62,7 @@ const routes: Routes = [
     }
   },
   {
-    path: ':id/compile/:id/:id/measurements',
+    path: ':id/compile/:departmentIndex/:machineIndex/measurements',
     loadComponent: () => import('./pages/compile/compile-measurements.component'),
     data: {
       title: {

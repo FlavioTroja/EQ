@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../components/button/button.component";
@@ -15,8 +15,8 @@ import { ButtonComponent } from "../../../components/button/button.component";
       <div class="flex justify-end items-center gap-1">
         <div class="flex border rounded-4xl h-9 px-3 select-none"
              [ngClass]="componentStyle+' border-'+componentStyle">
-          <div class="flex flex-row items-center">{{ '0' }}
-            <div class="flex items-center font-bold">/{{ '5' }}</div>
+          <div class="flex flex-row items-center" [ngClass]="{ 'font-bold': completedNumber===totalNumber }">{{ completedNumber || 0 }}
+            <div class="flex items-center font-bold">/{{ totalNumber || 0 }}</div>
           </div>
         </div>
         <app-button iconName="download_done" label="Compila" [bgColor]="componentStyle" [viewOnly]="viewOnly" (onClick)="click()"/>
@@ -33,6 +33,8 @@ import { ButtonComponent } from "../../../components/button/button.component";
 export class FillInContainerComponent {
   @Input({ required: true }) componentStyle: 'success' | 'accent' | 'compile' = 'accent';
   @Input({ required: false }) title?: string;
+  @Input({ required: false }) completedNumber?: number;
+  @Input({ required: false }) totalNumber?: number;
   /** shows a light version of the selected style as background, otherwise white */
   @Input({ required: false }) showBg: boolean = false;
   @Input({ required: false }) viewOnly: boolean = false;

@@ -2,6 +2,7 @@ import { Action, createReducer, on } from "@ngrx/store";
 import * as UIActions from "./ui.actions";
 import { Notification } from "../../../models/Notification";
 import { generateRandomCode } from "../../../../utils/utils";
+import { NavBarButton } from "../../../models/NavBar";
 
 export interface SidebarState {
   collapsed: boolean,
@@ -12,11 +13,7 @@ export interface SidebarState {
 
 export interface NavbarState {
   title?: string,
-  buttons?: {
-    label: string,
-    iconName: string,
-    action: string
-  }[]
+  buttons?: NavBarButton<any, any>[]
 }
 
 export interface UIState {
