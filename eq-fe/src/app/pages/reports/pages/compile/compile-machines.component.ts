@@ -1,4 +1,4 @@
-import { Component, effect, inject } from "@angular/core";
+import { Component, effect, inject, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CompileHeaderComponent, HeaderItem } from "../../components/compile-header.component";
 import { FillInContainerComponent } from "../../components/fill-in-container.component";
@@ -54,7 +54,7 @@ import { NAVBAR_ACTION } from "../../../../models/NavBar";
   ],
   styles: [``]
 })
-export default class CompileMachinesComponent {
+export default class CompileMachinesComponent implements OnDestroy {
   store: Store<AppState> = inject(Store);
   fb = inject(FormBuilder);
 
@@ -110,5 +110,9 @@ export default class CompileMachinesComponent {
 
   compileReport(measurementIndex: number): void {
     this.store.dispatch(RouterActions.go({ path: [`${this.path()}/measurements`] }));
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(UiActions.clearCustomNavbar());
   }
 }

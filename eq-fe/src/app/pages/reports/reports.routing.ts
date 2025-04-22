@@ -62,7 +62,7 @@ const routes: Routes = [
     }
   },
   {
-    path: ':id/compile/:departmentIndex/:sourceIndex/measurements',
+    path: ':id/compile/:departmentIndex/:sourceIndex/:measurementIndex',
     loadComponent: () => import('./pages/compile/compile-measurements.component'),
     data: {
       title: {
