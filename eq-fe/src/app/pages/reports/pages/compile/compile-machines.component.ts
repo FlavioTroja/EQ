@@ -8,13 +8,15 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { getRouterUrl, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
 import * as RouterActions from "../../../../core/router/store/router.actions";
+import * as UiActions from "../../../../core/ui/store/ui.actions";
 import { InputComponent } from "../../../../components/input/input.component";
 import {
-  getActiveDepartmentSources, getActiveSource
+  getActiveDepartmentSources, getActiveSource, getBackwardSource
 } from "../../store/selectors/reports.selectors";
 import { map } from "rxjs";
 import * as ReportActions from "../../store/actions/reports.actions";
 import { Measurement } from "../../../../models/Measurement";
+import { NAVBAR_ACTION } from "../../../../models/NavBar";
 
 @Component({
   selector: "app-compile-machine",
@@ -22,8 +24,8 @@ import { Measurement } from "../../../../models/Measurement";
   template: `
     <div class="flex flex-col gap-4">
       <app-compile-header componentStyle="compile"
-                          [items]="(sources$ | async) || []"
-                          [selectedItem]="(sources$ | async)?.at(0)"
+                          [items]="sources() || []"
+                          [selectedItem]="sources()?.at(this.sourceIndex())"
                           (headerClick)="changeSource($event)"/>
       <div class="flex flex-col gap-2">
         <div class="text-xl font-bold">INFORMAZIONI GENERALI</div>
@@ -34,7 +36,7 @@ import { Measurement } from "../../../../models/Measurement";
       </div>
       <div class="flex flex-col gap-2">
         <div class="text-xl font-bold">COMPILAZIONI</div>
-        <app-fill-in-container *ngFor="let measurement of ((currentSource$ | async)?.measurements || []), index as i"
+        <app-fill-in-container *ngFor="let measurement of (currentSource()?.measurements || []), index as i"
                                [completedNumber]="0"
                                [totalNumber]="0"
                                [title]="getMachineName(measurement)"
@@ -58,14 +60,14 @@ export default class CompileMachinesComponent {
 
   path = toSignal(this.store.select(getRouterUrl));
   sourceIndex = toSignal(this.store.select(selectCustomRouteParam("sourceIndex")));
+  currentSource = toSignal(this.store.select(getActiveSource));
 
-  sources$ = this.store.select(getActiveDepartmentSources)
+  sources = toSignal(this.store.select(getActiveDepartmentSources)
     .pipe(map(array => array.map(source => ({
       id: source.id,
       name: `${source.machine.name} ${source.sn}`,
       completed: !!(source.completedMeasurements - source.measurements?.length)
-    } as HeaderItem))));
-  currentSource$ = this.store.select(getActiveSource);
+    } as HeaderItem)))));
 
   productForm = this.fb.group({
     load: ["", Validators.required],
@@ -78,12 +80,28 @@ export default class CompileMachinesComponent {
 
   constructor() {
     effect(() => {
-      this.store.dispatch(ReportActions.updateCurrentSource({ sourceIndex: this.sourceIndex() }))
+      this.store.dispatch(ReportActions.updateCurrentSource({ sourceIndex: this.sourceIndex() }));
+      this.store.dispatch(UiActions.setCustomNavbar({ navbar: {
+          title: `${this.currentSource()?.machine?.name} ${this.currentSource()?.sn}`,
+          buttons: [
+            {
+              label: this.sources()?.at(+this.sourceIndex()+1)?.name || 'Fine',
+              iconName: 'arrow_forward',
+              action: NAVBAR_ACTION.REPORT_COMPILE_SOURCE_FORWARD,
+            },
+            {
+              label: '',
+              iconName: 'arrow_back',
+              action: NAVBAR_ACTION.REPORT_COMPILE_SOURCE_BACKWARD,
+              selectors: { disabled: getBackwardSource(+this.sourceIndex()) }
+            }
+          ]
+        }}))
     }, { allowSignalWrites: true });
   }
 
   changeSource(sourceIndex: number) {
-    this.store.dispatch(RouterActions.go({ path: [`${this.path()?.slice(0, -1)}${sourceIndex}`] }))
+    this.store.dispatch(RouterActions.go({ path: [`${this.path()?.split('/').slice(0, -1).join('/')}/${sourceIndex}`] }))
   }
 
   getMachineName(measurement: Measurement): string {

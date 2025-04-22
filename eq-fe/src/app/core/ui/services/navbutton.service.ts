@@ -9,7 +9,10 @@ import * as CustomerActions from "../../../pages/customers/store/actions/custome
 import * as ReportActions from "../../../pages/reports/store/actions/reports.actions";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { selectCustomRouteParam } from "../../router/store/router.selectors";
-import { getActiveReportLocationsDepartmentsLength } from "../../../pages/reports/store/selectors/reports.selectors";
+import {
+  getActiveDepartmentSourcesLength,
+  getActiveReportLocationsDepartmentsLength
+} from "../../../pages/reports/store/selectors/reports.selectors";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +22,8 @@ export class NavbuttonService {
   id = toSignal(this.store.select(selectCustomRouteParam("id")));
   departmentIndex = toSignal(this.store.select(selectCustomRouteParam("departmentIndex")));
   departmentLength = toSignal(this.store.select(getActiveReportLocationsDepartmentsLength));
+  sourceIndex = toSignal(this.store.select(selectCustomRouteParam("sourceIndex")));
+  sourceLength = toSignal(this.store.select(getActiveDepartmentSourcesLength));
   url = signal(document.location.href);
 
   navbarButtonActions = [
@@ -31,14 +36,24 @@ export class NavbuttonService {
       callback: () => this.store.dispatch(ReportActions.editReport())
     },
     {
-      actionName: NAVBAR_ACTION.REPORT_COMPILE_FORWARD,
+      actionName: NAVBAR_ACTION.REPORT_COMPILE_DEPARTMENT_FORWARD,
       callback: () => (+this.departmentIndex()+1) < this.departmentLength()!
         ? this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${ +this.departmentIndex()+1 }`] }))
         : this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}`] }))
     },
     {
-      actionName: NAVBAR_ACTION.REPORT_COMPILE_BACKWARD,
+      actionName: NAVBAR_ACTION.REPORT_COMPILE_DEPARTMENT_BACKWARD,
       callback: () => this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${ +this.departmentIndex()-1 }`] }))
+    },
+    {
+      actionName: NAVBAR_ACTION.REPORT_COMPILE_SOURCE_FORWARD,
+      callback: () => (+this.sourceIndex()+1) < this.sourceLength()!
+        ? this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${this.departmentIndex()}/${ +this.sourceIndex()+1 }`] }))
+        : this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${ this.departmentIndex() }`] }))
+    },
+    {
+      actionName: NAVBAR_ACTION.REPORT_COMPILE_SOURCE_BACKWARD,
+      callback: () => this.store.dispatch(RouterActions.go({ path: [`reports/${this.id()}/compile/${this.departmentIndex()}/${ +this.sourceIndex()-1 }`] }))
     },
     {
       actionName: NAVBAR_ACTION.SUPPLIER_NAVIGATE_ON_MODIFY,

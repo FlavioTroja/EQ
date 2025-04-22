@@ -1,5 +1,5 @@
 import {
-  Component,
+  Component, ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -23,12 +23,12 @@ export interface HeaderItem {
     <div class="grid rounded bg-foreground shadow"
          [ngClass]="componentStyle">
       <div #scrollContainer
-           class="flex items-center overflow-x-auto snap-x snap-mandatory scroll-smooth whitespace-nowrap no-scrollbar gap-2 px-2 pt-4">
+           class="flex items-center grow overflow-x-auto snap-x snap-mandatory scroll-smooth whitespace-nowrap no-scrollbar gap-2 px-2 pt-4">
         <span *ngFor="let item of items, index as i"
-              [id]="item.name+i"
+              [id]="item.id"
               class="whitespace-nowrap cursor-pointer select-none"
               [class.font-bold]="item.id === selectedItem?.id"
-              (click)="changeSelectedItem(item, i)">
+              (click)="changeSelectedItem(i)">
           {{ item.name }}
         </span>
         <span class="flex grow"></span>
@@ -37,7 +37,7 @@ export interface HeaderItem {
         <div *ngFor="let item of items, index as i"
              class="grow rounded-full h-1 cursor-pointer"
              [ngClass]="getBarClasses(item)"
-             (click)="changeSelectedItem(item, i)">
+             (click)="changeSelectedItem(i)">
         </div>
       </div>
     </div>
@@ -49,7 +49,7 @@ export interface HeaderItem {
   styles: [``]
 })
 export class CompileHeaderComponent implements OnChanges {
-  @ViewChild('scrollContainer') scrollContainer?: HTMLDivElement;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
   @Input({ required: false }) items: HeaderItem[] = [
     { id: '', name: 'Diagnostica 1', completed: false },
@@ -67,41 +67,39 @@ export class CompileHeaderComponent implements OnChanges {
 
   initialScrollWidth: number = 0;
 
-  changeSelectedItem(item: HeaderItem, index: number): void {
-    this.selectedItem = item;
+  changeSelectedItem(index: number): void {
     this.headerClick.emit(index);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const selectedItem = changes["selectedItem"];
-    console.log("onchange ",selectedItem);
+    const selectedItem = changes["selectedItem"]?.currentValue;
     if(!!selectedItem) {
-      // this.updateScrollContainer(`${selectedItem.name}`)
+      this.updateScrollContainer(selectedItem.id)
     }
-
   }
 
   updateScrollContainer(tabElementId: string): void {
     const tabElement = document.getElementById(tabElementId);
 
-    if (!!tabElement && !!this.scrollContainer) {
+    if (!!tabElement && !!this.scrollContainer.nativeElement) {
       //set the initial scroll width so we have a base for the padding
       if(!this.initialScrollWidth) {
-        this.initialScrollWidth = this.scrollContainer.scrollWidth;
+        this.initialScrollWidth = this.scrollContainer.nativeElement.scrollWidth;
       }
 
+      console.log(this.scrollContainer.nativeElement.offsetWidth)
       // ensure the padding is positive
-      const paddingRight = Math.max(this.scrollContainer.offsetWidth - (this.initialScrollWidth - (tabElement.offsetLeft - this.scrollContainer.offsetLeft - 18)), 0);
+      const paddingRight = Math.max(this.scrollContainer.nativeElement.offsetWidth - (this.initialScrollWidth - (tabElement.offsetLeft - this.scrollContainer.nativeElement.offsetLeft - 18)), 0);
       // get the max padding from the old and the new padding (for the smooth animation in case of a 'go to previous item')
-      this.scrollContainer.style.paddingRight = Math.max((this.scrollContainer.scrollWidth - this.initialScrollWidth), paddingRight) + 'px';
+      this.scrollContainer.nativeElement.style.paddingRight = Math.max((this.scrollContainer.nativeElement.scrollWidth - this.initialScrollWidth), paddingRight) + 'px';
       // scroll to the element offset (and keep some of the previous visible [the value that is hardcoded])
-      this.scrollContainer.scrollTo({
-        left: tabElement.offsetLeft - this.scrollContainer.offsetLeft - 18,
+      this.scrollContainer.nativeElement.scrollTo({
+        left: tabElement.offsetLeft - this.scrollContainer.nativeElement.offsetLeft - 18,
         behavior: 'smooth'
       });
       // set the padding to the real value for avoiding overscroll after the scroll animation end (in this case is 300ms)
       setTimeout(() => {
-        this.scrollContainer!.style.paddingRight = paddingRight + 'px';
+        this.scrollContainer.nativeElement.style.paddingRight = paddingRight + 'px';
       }, 300);
     }
   }

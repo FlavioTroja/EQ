@@ -71,12 +71,12 @@ export default class CompileDepartmentsComponent implements OnDestroy {
           {
             label: this.departments()?.at(+this.departmentIndex()+1)?.name || 'Fine',
             iconName: 'arrow_forward',
-            action: NAVBAR_ACTION.REPORT_COMPILE_FORWARD,
+            action: NAVBAR_ACTION.REPORT_COMPILE_DEPARTMENT_FORWARD,
           },
           {
             label: '',
             iconName: 'arrow_back',
-            action: NAVBAR_ACTION.REPORT_COMPILE_BACKWARD,
+            action: NAVBAR_ACTION.REPORT_COMPILE_DEPARTMENT_BACKWARD,
             selectors: { disabled: getBackwardDepartment(+this.departmentIndex()) }
           }
         ]
@@ -85,7 +85,7 @@ export default class CompileDepartmentsComponent implements OnDestroy {
   }
 
   changeDepartment(departmentIndex: number) {
-    this.store.dispatch(RouterActions.go({ path: [`${this.path()?.slice(0, -1)}${departmentIndex}`] }))
+    this.store.dispatch(RouterActions.go({ path: [`${this.path()?.split('/').slice(0, -1).join('/')}/${departmentIndex}`] }))
   }
 
   getMachineName(source: Source): string {

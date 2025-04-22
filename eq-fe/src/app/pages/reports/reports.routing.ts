@@ -45,11 +45,11 @@ const routes: Routes = [
       buttons: [
         // { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.REPORT_NAVIGATE_ON_MODIFY },
       ],
-      backAction: "-",
+      backAction: "^",
     }
   },
   {
-    path: ':id/compile/:departmentIndex/:machineIndex',
+    path: ':id/compile/:departmentIndex/:sourceIndex',
     loadComponent: () => import('./pages/compile/compile-machines.component'),
     data: {
       title: {
@@ -58,11 +58,11 @@ const routes: Routes = [
       buttons: [
         // { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.REPORT_NAVIGATE_ON_MODIFY },
       ],
-      backAction: "-",
+      backAction: "^",
     }
   },
   {
-    path: ':id/compile/:departmentIndex/:machineIndex/measurements',
+    path: ':id/compile/:departmentIndex/:sourceIndex/measurements',
     loadComponent: () => import('./pages/compile/compile-measurements.component'),
     data: {
       title: {
@@ -71,7 +71,7 @@ const routes: Routes = [
       buttons: [
         // { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.REPORT_NAVIGATE_ON_MODIFY },
       ],
-      backAction: "-",
+      backAction: "^",
     }
   },
   {
