@@ -1,3 +1,4 @@
+.env
 HELP.md
 .gradle
 build/
@@ -45,3 +46,7 @@ yarn.lock
 # FTONTEND
 .angular
 node_modules
+
+# AWS
+copilot
+

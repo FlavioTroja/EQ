@@ -50,7 +50,7 @@ public class ReportController {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
         }
         report.setLocationId(locationId);
-        report.setDate(LocalDateTime.now());
+        report.setCreationDate(LocalDateTime.now());
         report = reportService.create(report);
         return ResponseEntity.created(new URI("/api/reports/" + report.getId())).body(report);
     }

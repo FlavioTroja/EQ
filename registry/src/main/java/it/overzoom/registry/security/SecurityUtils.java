@@ -32,7 +32,7 @@ public class SecurityUtils {
                 .map(auth -> (Jwt) auth.getPrincipal())
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
 
-        var roles = jwt.getClaimAsStringList("roles");
+        List<String> roles = jwt.getClaimAsStringList("roles");
         return roles != null && roles.contains("admin");
     }
 
