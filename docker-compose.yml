@@ -41,7 +41,7 @@ services:
     ports:
       - "8765:8765"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://gatewaydb:5432/gateway
+      SPRING_DATASOURCE_URL: jdbc:postgresql://gatewaydb:5432/  
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: dev

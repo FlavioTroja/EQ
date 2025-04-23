@@ -59,4 +59,9 @@ public class MachineServiceImpl implements MachineService {
                 })
                 .map(this::create);
     }
+
+    @Override
+    public void delete(Machine machine) {
+        machineRepository.delete(machine);
+    }
 }

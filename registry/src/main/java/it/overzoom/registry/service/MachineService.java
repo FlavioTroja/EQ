@@ -20,4 +20,6 @@ public interface MachineService {
     Optional<Machine> update(Machine machine);
 
     Optional<Machine> partialUpdate(String id, Machine machine);
+
+    void delete(Machine machine);
 }
