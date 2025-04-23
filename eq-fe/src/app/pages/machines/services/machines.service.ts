@@ -20,16 +20,16 @@ export class MachinesService {
     return this.http.post<Machine>(`${BASE_URL}/api/registry/machines`, newPayload);
   }
 
-  getMachine(id: number,  params?: DefaultQueryParams) {
+  getMachine(id: string,  params?: DefaultQueryParams) {
     return this.http.get<Machine>(`${BASE_URL}/api/registry/machines/${id}`, { params: { ...params } });
   }
 
-  editMachine(id: number, payload: PartialMachine) {
+  editMachine(id: string, payload: PartialMachine) {
     const body = { ...payload, id: undefined };
     return this.http.patch<Machine>(`${BASE_URL}/api/registry/machines/${id}`, body);
   }
 
-  deleteMachine(id: number) {
+  deleteMachine(id: string) {
     return this.http.delete<Machine>(`${BASE_URL}/api/registry/machines/${id}`);
   }
 

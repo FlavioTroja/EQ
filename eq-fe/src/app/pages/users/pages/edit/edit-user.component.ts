@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import * as UserActions from "../../../users/store/actions/users.actions";
-import { PartialUser } from "../../../../models/User";
+import { PartialUser, Roles } from "../../../../models/User";
 import { difference } from "../../../../../utils/utils";
 import { getCurrentUser } from "../../store/selectors/users.selectors";
 import { getRouterData, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
@@ -67,7 +67,13 @@ import { MatDialogModule } from "@angular/material/dialog";
                    [ngClass]="f.roles.invalid && f.roles.dirty ? ('text-red-800') : ('text-gray-900')">
               ruoli
             </label>
-            <div class="w-full flex shadow-md bg-foreground text-gray-900 text-sm rounded-lg border-input focus:outline-none p-3 font-bold" [ngClass]="{'viewOnly' : viewOnly()}">
+            <div
+              class="w-full flex shadow-md bg-foreground text-gray-900 text-sm rounded-lg border-input focus:outline-none p-3 font-bold"
+              [ngClass]="{'viewOnly' : viewOnly()}">
+              <mat-select id="user-role" [multiple]="true" [formControl]="f.roles" placeholder="seleziona">
+                <mat-option *ngFor="let role of roles" [value]="role">{{ role }}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
 
@@ -118,6 +124,10 @@ export default class EditUserComponent implements OnInit, OnDestroy {
 
   get isNewUser() {
     return this.id() === "new";
+  }
+
+  get roles(): string[] {
+    return Object.keys(Roles);
   }
 
   ngOnInit() {

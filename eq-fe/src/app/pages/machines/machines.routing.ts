@@ -28,7 +28,7 @@ const routes: Routes = [
         other: "Aggiungi macchinario"
       },
       buttons: [
-        // { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.MACHINE_SAVE, selectors: { disabled: getActiveMachineChanges } },
+        { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.MACHINE_SAVE, selectors: { disabled: getActiveMachineChanges } },
         // { label: "", iconName: "search", action: NAVBAR_ACTION.USERS_EDIT },
         // { label: "", iconName: "home", action: NAVBAR_ACTION.USERS_DELETE }
       ],
@@ -43,7 +43,7 @@ const routes: Routes = [
         default: "Visualizza Macchinario"
       },
       buttons: [
-        // { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.MACHINE_NAVIGATE_ON_MODIFY },
+        { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.MACHINE_NAVIGATE_ON_MODIFY },
       ],
       backAction: "-",
     }
