@@ -1,51 +1,33 @@
 package it.overzoom.registry.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+
 import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.PaymentMethod;
 
-public class CustomerMapper {
+@Mapper(componentModel = "spring")
+public interface CustomerMapper {
 
-    public static CustomerDTO toDto(Customer customer) {
-        if (customer == null) {
-            return null;
-        }
-        CustomerDTO dto = new CustomerDTO();
-        dto.setId(customer.getId());
-        dto.setUserId(customer.getUserId());
-        dto.setName(customer.getName());
-        dto.setFiscalCode(customer.getFiscalCode());
-        dto.setVatCode(customer.getVatCode());
-        dto.setPec(customer.getPec());
-        dto.setSdi(customer.getSdi());
-        if (customer.getPaymentMethod() != null) {
-            dto.setPaymentMethod(customer.getPaymentMethod().toString());
-        }
-        dto.setEmail(customer.getEmail());
-        dto.setPhoneNumber(customer.getPhoneNumber());
-        dto.setNotes(customer.getNotes());
-        return dto;
+    @Mapping(source = "paymentMethod", target = "paymentMethod", qualifiedByName = "enumToString")
+    CustomerDTO toDto(Customer customer);
+
+    /**
+     * Ignoro locations perché CustomerDTO non le contiene
+     */
+    @Mapping(source = "paymentMethod", target = "paymentMethod", qualifiedByName = "stringToEnum")
+    @Mapping(target = "locations", ignore = true)
+    Customer toEntity(CustomerDTO dto);
+
+    @Named("enumToString")
+    default String enumToString(PaymentMethod pm) {
+        return pm != null ? pm.name() : null;
     }
 
-    public static Customer toEntity(CustomerDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        Customer customer = new Customer();
-        customer.setId(dto.getId());
-        customer.setUserId(dto.getUserId());
-        customer.setName(dto.getName());
-        customer.setFiscalCode(dto.getFiscalCode());
-        customer.setVatCode(dto.getVatCode());
-        customer.setPec(dto.getPec());
-        customer.setSdi(dto.getSdi());
-        if (dto.getPaymentMethod() != null) {
-
-            customer.setPaymentMethod(PaymentMethod.valueOf(dto.getPaymentMethod()));
-        }
-        customer.setEmail(dto.getEmail());
-        customer.setPhoneNumber(dto.getPhoneNumber());
-        customer.setNotes(dto.getNotes());
-        return customer;
+    @Named("stringToEnum")
+    default PaymentMethod stringToEnum(String pm) {
+        return pm != null ? PaymentMethod.valueOf(pm) : null;
     }
 }

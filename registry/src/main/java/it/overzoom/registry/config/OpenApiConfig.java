@@ -16,7 +16,7 @@ import io.swagger.v3.oas.models.servers.Server;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI userOpenAPI(
+    OpenAPI userOpenAPI(
             @Value("${openapi.service.title}") String serviceTitle,
             @Value("${openapi.service.version}") String serviceVersion,
             @Value("${openapi.service.url}") String url) {

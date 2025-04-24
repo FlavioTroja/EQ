@@ -15,4 +15,6 @@ public interface DepartmentRepository extends MongoRepository<Department, String
     Page<Department> findByLocationId(String locationId, Pageable pageable);
 
     List<Department> findByLocationId(String locationId);
+
+    List<Department> findByIdIn(List<String> ids);
 }

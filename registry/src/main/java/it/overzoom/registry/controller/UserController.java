@@ -38,17 +38,20 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @GetMapping("")
     public ResponseEntity<List<UserDTO>> findAll(
             Pageable pageable) {
         log.info("REST request to get a page of Users");
         Page<User> page = userService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent().stream().map(UserMapper::toDto).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(page.getContent().stream().map(userMapper::toDto).collect(Collectors.toList()));
     }
 
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getMyProfile() throws ResourceNotFoundException {
-        return userService.findByUserId(SecurityUtils.getCurrentUserId()).map(UserMapper::toDto)
+        return userService.findByUserId(SecurityUtils.getCurrentUserId()).map(userMapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
     }
@@ -60,7 +63,7 @@ public class UserController {
         if (userDTO.getId() != null) {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
         }
-        User user = UserMapper.toEntity(userDTO);
+        User user = userMapper.toEntity(userDTO);
         user = userService.create(user);
         return ResponseEntity.created(new URI("/api/users/" + userDTO.getId())).body(user);
     }
@@ -75,15 +78,15 @@ public class UserController {
         if (!userService.existsById(userDTO.getId())) {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
-        User user = UserMapper.toEntity(userDTO);
+        User user = userMapper.toEntity(userDTO);
         User updateUser = userService.update(user).orElseThrow(
                 () -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + user.getId()));
 
-        return ResponseEntity.ok().body(UserMapper.toDto(updateUser));
+        return ResponseEntity.ok().body(userMapper.toDto(updateUser));
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<UserDTO> partialUpdate(@PathVariable(value = "id") String id,
+    public ResponseEntity<UserDTO> partialUpdate(@PathVariable String id,
             @RequestBody UserDTO userDTO) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update User: " + userDTO.toString());
@@ -93,10 +96,10 @@ public class UserController {
         if (!userService.existsById(id)) {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
-        User user = UserMapper.toEntity(userDTO);
+        User user = userMapper.toEntity(userDTO);
         User updateUser = userService.partialUpdate(id, user)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
 
-        return ResponseEntity.ok().body(UserMapper.toDto(updateUser));
+        return ResponseEntity.ok().body(userMapper.toDto(updateUser));
     }
 }

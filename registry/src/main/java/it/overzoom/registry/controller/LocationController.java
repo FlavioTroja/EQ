@@ -38,7 +38,7 @@ public class LocationController {
     private LocationServiceImpl locationService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Location>> findCustomerId(@PathVariable(value = "customerId") String customerId,
+    public ResponseEntity<Page<Location>> findCustomerId(@PathVariable String customerId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Locations by customerId: " + customerId);
 
@@ -63,7 +63,7 @@ public class LocationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Location> create(@PathVariable(value = "customerId") String customerId,
+    public ResponseEntity<Location> create(@PathVariable String customerId,
             @Valid @RequestBody Location location)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Location : " + location.toString());
@@ -95,7 +95,7 @@ public class LocationController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Location> partialUpdate(@PathVariable(value = "id") String id,
+    public ResponseEntity<Location> partialUpdate(@PathVariable String id,
             @RequestBody Location location) throws BadRequestException, ResourceNotFoundException {
         log.info("REST request to partial update Location: " + location.toString());
         if (id == null) {

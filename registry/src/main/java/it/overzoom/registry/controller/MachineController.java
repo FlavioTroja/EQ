@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.overzoom.registry.dto.MachineDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.mapper.MachineMapper;
 import it.overzoom.registry.model.Machine;
 import it.overzoom.registry.service.MachineServiceImpl;
 import jakarta.validation.Valid;
@@ -33,6 +36,9 @@ public class MachineController {
     @Autowired
     private MachineServiceImpl machineService;
 
+    @Autowired
+    private MachineMapper machineMapper;
+
     @GetMapping("")
     public ResponseEntity<Page<Machine>> findAll(Pageable pageable) {
         log.info("REST request to get a page of Machines");
@@ -41,9 +47,9 @@ public class MachineController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Machine> findById(@PathVariable(value = "id") String locationId)
+    public ResponseEntity<MachineDTO> findById(@PathVariable("id") String machineId)
             throws ResourceNotFoundException {
-        return machineService.findById(locationId)
+        return machineService.findById(machineId).map(machineMapper::toDto)
                 .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Macchina non trovata."));
     }
 
@@ -75,7 +81,7 @@ public class MachineController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Machine> partialUpdate(@PathVariable(value = "id") String id,
+    public ResponseEntity<Machine> partialUpdate(@PathVariable String id,
             @RequestBody Machine machine) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update Machine: " + machine.toString());
@@ -89,5 +95,24 @@ public class MachineController {
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato con questo ID :: " + id));
 
         return ResponseEntity.ok().body(updateMachine);
+    }
+
+    /**
+     * DELETE /{id} : elimina la Machine con l'id specificato.
+     *
+     * @param id l'identificativo della Machine da eliminare
+     * @return ResponseEntity<Void> con status 204 (No Content) se eliminato,
+     *         oppure 404 (Not Found) se non esiste
+     * @throws ResourceNotFoundException se la Machine non viene trovata
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMachine(@PathVariable String id) throws ResourceNotFoundException {
+        log.info("REST request to delete Machine : {}", id);
+
+        Machine machine = machineService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Machine non trovata con id :: " + id));
+
+        machineService.delete(machine);
+        return ResponseEntity.noContent().build();
     }
 }

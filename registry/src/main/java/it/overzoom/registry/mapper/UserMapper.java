@@ -3,50 +3,59 @@ package it.overzoom.registry.mapper;
 import java.sql.Blob;
 import java.util.Base64;
 
+import javax.sql.rowset.serial.SerialBlob;
+
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+
 import it.overzoom.registry.dto.UserDTO;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.User;
 import it.overzoom.registry.security.SecurityUtils;
 
-public class UserMapper {
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    public static UserDTO toDto(User user) {
-        if (user == null) {
+    @Mapping(source = "photo", target = "photo", qualifiedByName = "blobToBase64")
+    UserDTO toDto(User user);
+
+    @Mapping(source = "photo", target = "photo", qualifiedByName = "stringToBlob")
+    User toEntity(UserDTO dto);
+
+    @Named("blobToBase64")
+    default String blobToBase64(Blob blob) {
+        if (blob == null)
             return null;
-        }
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setUserId(user.getUserId());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setLevel(user.getLevel());
-
-        Blob photoBlob = user.getPhoto();
-        if (photoBlob != null) {
-            try {
-                int blobLength = (int) photoBlob.length();
-                byte[] blobBytes = photoBlob.getBytes(1, blobLength);
-                String photoBase64 = Base64.getEncoder().encodeToString(blobBytes);
-                dto.setPhoto(photoBase64);
-            } catch (Exception e) {
-                dto.setPhoto(null);
-            }
-        }
         try {
-            return SecurityUtils.populateKeycloakFields(dto);
-        } catch (ResourceNotFoundException e) {
-            throw new RuntimeException(e);
+            int length = (int) blob.length();
+            byte[] bytes = blob.getBytes(1, length);
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            return null;
         }
     }
 
-    public static User toEntity(UserDTO dto) {
-        if (dto == null) {
+    @Named("stringToBlob")
+    default Blob stringToBlob(String base64) {
+        if (base64 == null)
+            return null;
+        try {
+            byte[] bytes = Base64.getDecoder().decode(base64);
+            return new SerialBlob(bytes);
+        } catch (Exception e) {
             return null;
         }
-        User user = new User();
-        user.setId(dto.getId());
-        user.setUserId(dto.getUserId());
-        user.setPhoneNumber(dto.getPhoneNumber());
-        user.setLevel(dto.getLevel());
-        return user;
+    }
+
+    @AfterMapping
+    default void populateKeycloak(User user, @MappingTarget UserDTO dto) {
+        try {
+            SecurityUtils.populateKeycloakFields(dto);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

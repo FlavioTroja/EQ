@@ -87,7 +87,7 @@ public class CustomerController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Customer> partialUpdate(@PathVariable(value = "id") String id,
+    public ResponseEntity<Customer> partialUpdate(@PathVariable String id,
             @RequestBody Customer customer) throws BadRequestException, ResourceNotFoundException {
         log.info("REST request to partial update Customer: " + customer.toString());
         if (id == null) {

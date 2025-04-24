@@ -48,18 +48,15 @@ public class SecurityUtils {
         userDTO.setEmail(jwt.getClaimAsString("email"));
 
         Object resourceAccessObj = jwt.getClaim("resource_access");
-        if (resourceAccessObj instanceof Map) {
-            Map<?, ?> resourceAccess = (Map<?, ?>) resourceAccessObj;
+        if (resourceAccessObj instanceof Map<?, ?> resourceAccess) {
             Object eqProjectObj = resourceAccess.get("eq-project");
-            if (eqProjectObj instanceof Map) {
-                Map<?, ?> eqProject = (Map<?, ?>) eqProjectObj;
+            if (eqProjectObj instanceof Map<?, ?> eqProject) {
                 Object rolesObj = eqProject.get("roles");
-                if (rolesObj instanceof List<?>) {
-                    List<?> rolesList = (List<?>) rolesObj;
+                if (rolesObj instanceof List<?> rolesList) {
                     List<String> rolesStringList = new ArrayList<>();
                     for (Object role : rolesList) {
-                        if (role instanceof String) {
-                            rolesStringList.add((String) role);
+                        if (role instanceof String string) {
+                            rolesStringList.add(string);
                         }
                     }
                     userDTO.setRoles(rolesStringList.toArray(new String[0]));

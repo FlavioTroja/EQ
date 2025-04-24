@@ -38,7 +38,7 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public Optional<Machine> update(Machine machine) {
-        return this.findById(machine.getId()).map(existingMachine -> {
+        return machineRepository.findById(machine.getId()).map(existingMachine -> {
             existingMachine.setName(machine.getName());
             existingMachine.setType(machine.getType());
             return existingMachine;
@@ -47,7 +47,7 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public Optional<Machine> partialUpdate(String id, Machine machine) {
-        return this.findById(id)
+        return machineRepository.findById(id)
                 .map(existingMachine -> {
                     if (machine.getName() != null) {
                         existingMachine.setName(machine.getName());

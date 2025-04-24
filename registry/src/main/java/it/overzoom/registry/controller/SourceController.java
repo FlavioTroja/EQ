@@ -46,7 +46,7 @@ public class SourceController {
     private SourceService sourceService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Source>> findDepartmentId(@PathVariable(value = "departmentId") String departmentId,
+    public ResponseEntity<Page<Source>> findDepartmentId(@PathVariable String departmentId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Sources by departmentId: " + departmentId);
 
@@ -74,7 +74,7 @@ public class SourceController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Source> create(@PathVariable(value = "departmentId") String departmentId,
+    public ResponseEntity<Source> create(@PathVariable String departmentId,
             @Valid @RequestBody Source source)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Source : " + source.toString());

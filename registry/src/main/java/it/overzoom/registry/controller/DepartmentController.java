@@ -41,7 +41,7 @@ public class DepartmentController {
     private DepartmentServiceImpl departmentService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Department>> findLocationId(@PathVariable(value = "locationId") String locationId,
+    public ResponseEntity<Page<Department>> findLocationId(@PathVariable String locationId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Departments by locationId: " + locationId);
 
@@ -67,7 +67,7 @@ public class DepartmentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Department> create(@PathVariable(value = "locationId") String locationId,
+    public ResponseEntity<Department> create(@PathVariable String locationId,
             @Valid @RequestBody Department department)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Department : " + department.toString());

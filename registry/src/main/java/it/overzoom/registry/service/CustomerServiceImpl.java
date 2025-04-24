@@ -1,14 +1,18 @@
 package it.overzoom.registry.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.mapper.CustomerMapper;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
@@ -33,6 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private CustomerMapper customerMapper;
 
     public boolean hasAccess(String customerId) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(customerId)
@@ -139,5 +146,41 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteById(String id) {
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CustomerDTO> findCustomersByMachine(String machineId) {
+        // 1. prendi tutti gli Source per quella machine
+        List<Source> sources = sourceRepository.findByMachine_Id(machineId);
+
+        // 2. estrai tutti i departmentId
+        Set<String> deptIds = sources.stream()
+                .map(Source::getDepartmentId)
+                .collect(Collectors.toSet());
+
+        if (deptIds.isEmpty()) {
+            return List.of();
+        }
+
+        // 3. prendi tutti i Department corrispondenti
+        List<Department> depts = departmentRepository.findByIdIn(List.copyOf(deptIds));
+
+        // 4. estrai tutti i locationId
+        Set<String> locIds = depts.stream()
+                .map(Department::getLocationId)
+                .collect(Collectors.toSet());
+
+        if (locIds.isEmpty()) {
+            return List.of();
+        }
+
+        // 5. cerca i Customer che hanno una location in quella lista
+        List<Customer> customers = customerRepository
+                .findDistinctByLocations_IdIn(List.copyOf(locIds));
+
+        // 6. mappa in DTO
+        return customers.stream()
+                .map(customerMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
