@@ -29,8 +29,8 @@ import { HyperPillComponent } from "../../../../components/pill/hyper-pill.compo
       </div>
       <div class="flex font-bold text-xl">IN POSSESSO DA</div>
       <div class="flex justify-start p-2 gap-10 bg-foreground rounded">
-        <app-hyper-pill iconName="person" [text]="'Jacopo Ortis'"/>
-        <app-hyper-pill iconName="distance" [text]="'Via F. D’Italia'"/>
+        <app-hyper-pill iconName="person" [text]="'Jacopo Ortis'" class="!cursor-default !pointer-events-none"/>
+        <app-hyper-pill iconName="distance" [text]="'Via F. D’Italia'" class="!cursor-default !pointer-events-none"/>
         <div class="flex gap-1">
           <div class="flex accent items-center px-2 py-1 gap-1 rounded">
             <mat-icon class="material-symbols-rounded">mail</mat-icon>

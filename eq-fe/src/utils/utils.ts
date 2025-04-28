@@ -75,3 +75,10 @@ export function checkArrayDifference(original: any[], current?: any[]): number {
 export function generateRandomCode(): string {
   return Math.random().toString(36).substring(2,7);
 }
+
+/** If the character length of the given string is over 16 characters the string gets truncated and is added ellipsis at the end
+ * @param str string to truncate
+ */
+export function truncatePillText(str: string) {
+  return str.length > 16 ? str.substring(0, 12) +'...' : str;
+}

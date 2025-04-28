@@ -4,6 +4,7 @@ export interface Machine {
     id: string;
     name: string;
     type: MachineType;
+    customers: any[];
     creationDate: string;
     expirationDate: string;
 }

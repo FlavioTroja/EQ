@@ -24,37 +24,26 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
 import { ModalComponent, ModalDialogData } from "../../../../components/modal/modal.component";
 import * as CustomerActions from "../../../customers/store/actions/customers.actions";
-import { createSortArray } from "../../../../../utils/utils";
+import { createSortArray, truncatePillText } from "../../../../../utils/utils";
 import { CustomerFilter, CustomerTable, PartialCustomer } from "../../../../models/Customer";
 import { MatIconModule } from "@angular/material/icon";
 import { selectRouteQueryParamParam } from "../../../../core/router/store/router.selectors";
 import { FilterElement, FilterOption } from "../../../../models/Filters";
 import { Query } from "../../../../../global";
 import { Subject } from "rxjs";
-import { FiltersComponent } from "../../../../components/filters/filters.component";
 import { Address } from "../../../../models/Address";
+import { HyperPillComponent } from "../../../../components/pill/hyper-pill.component";
 
 @Component({
   selector: 'app-list-customer',
   standalone: true,
-  imports: [ CommonModule, SearchComponent, TableComponent, TableSkeletonComponent, MatDialogModule, MatIconModule, FiltersComponent ],
+  imports: [ CommonModule, SearchComponent, TableComponent, TableSkeletonComponent, MatDialogModule, MatIconModule, HyperPillComponent ],
   template: `
     <div class="grid gap-3">
 
-      <div class="flex justify-between gap-2">
-
-        <div (click)="toggleFilter()"
-             [ngStyle]="{'background-color': expandFilter ? '#F2F2F2' : '#FFFFFF'}"
-             class="cursor-pointer w-10 rounded-md aspect-square flex font-bold shadow-md bg-foreground text-gray-900 text-sm focus:outline-none p-2">
-          <mat-icon *ngIf="!expandFilter" class="material-symbols-rounded">filter_list</mat-icon>
-          <mat-icon *ngIf="expandFilter" class="material-symbols-rounded">close</mat-icon>
-        </div>
-        <div class="grow">
-          <app-search [search]="search"/>
-        </div>
+      <div class="grow">
+        <app-search [search]="search"/>
       </div>
-
-      <app-filters [showFilter]="expandFilter" [filterTabs]="filterTabs" />
 
       <div *ngIf="customerPaginate$ | async as customerPaginate else skeleton">
         <app-table
@@ -73,6 +62,34 @@ import { Address } from "../../../../models/Address";
         <h1>{{ row.name }}</h1>
       </div>
     </ng-template>
+    
+    <ng-template #locationRow let-row>
+      <div class="flex gap-2">
+        <div class="flex flex-col justify-center" *ngIf="!!row?.locations?.at(0)?.address">
+          <app-hyper-pill iconName="distance" [text]="truncatePillText(row?.locations?.at(0)?.address)" class="!cursor-default !pointer-events-none"/>
+        </div>
+        <div class="flex flex-col justify-center">
+          <div class="flex bg-gray-100 font-bold self-center border rounded-full px-2 py-1" *ngIf="row.locations.length > 1">
+            +{{ row.locations.length-1 }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    
+    <ng-template #contactRow let-row>
+      <div class="flex flex-col justify-center">
+        <div class="flex flex-row gap-1">
+          <div class="flex accent items-center px-2 py-1 gap-1 rounded" *ngIf="!!row?.email">
+            <mat-icon class="material-symbols-rounded">mail</mat-icon>
+            {{ row?.email }}
+          </div>
+          <div class="flex accent items-center px-2 py-1 gap-1 rounded" *ngIf="!!row?.phoneNumber">
+            <mat-icon class="material-symbols-rounded">call</mat-icon>
+            {{ row?.phoneNumber }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
 
     <ng-template #skeleton>
       <app-table-skeleton [columns]="columns"/>
@@ -81,8 +98,9 @@ import { Address } from "../../../../models/Address";
   styles: []
 })
 export default class ListCustomerComponent implements OnInit, AfterViewInit {
-
   @ViewChild("nameRow") nameRow: TemplateRef<any> | undefined;
+  @ViewChild("locationRow") locationRow: TemplateRef<any> | undefined;
+  @ViewChild("contactRow") contactRow: TemplateRef<any> | undefined;
 
   store: Store<AppState> = inject(Store);
   customerPaginate$ = this.store.select(getCustomersPaginate);
@@ -131,6 +149,20 @@ export default class ListCustomerComponent implements OnInit, AfterViewInit {
           header: 'Nome',
           template: this.nameRow,
           width: "15rem",
+          sortable: true
+        },
+        {
+          columnDef: 'location',
+          header: 'Sedi collegate',
+          template: this.locationRow,
+          width: "20rem",
+          sortable: true
+        },
+        {
+          columnDef: 'contact',
+          header: 'Contatto',
+          template: this.contactRow,
+          width: "30rem",
           sortable: true
         },
       ];
@@ -313,4 +345,5 @@ export default class ListCustomerComponent implements OnInit, AfterViewInit {
   }
 
 
+  protected readonly truncatePillText = truncatePillText;
 }
