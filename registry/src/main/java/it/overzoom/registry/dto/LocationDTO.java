@@ -1,11 +1,17 @@
 package it.overzoom.registry.dto;
 
+import java.util.List;
+
+import jakarta.validation.constraints.NotNull;
+
 public class LocationDTO {
 
     private String id;
 
+    @NotNull
     private String customerId;
 
+    @NotNull
     private String name;
 
     private String address;
@@ -15,6 +21,8 @@ public class LocationDTO {
     private String province;
 
     private Integer completedDepartments;
+
+    private List<DepartmentDTO> departments;
 
     public String getId() {
         return id;
@@ -72,4 +80,11 @@ public class LocationDTO {
         this.completedDepartments = completedDepartments;
     }
 
+    public List<DepartmentDTO> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<DepartmentDTO> departments) {
+        this.departments = departments;
+    }
 }

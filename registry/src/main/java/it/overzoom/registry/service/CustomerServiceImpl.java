@@ -1,5 +1,7 @@
 package it.overzoom.registry.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.LocationRepository;
 import it.overzoom.registry.repository.SourceRepository;
 import it.overzoom.registry.security.SecurityUtils;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -45,6 +48,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private LocationMapper locationMapper;
+
+    @Autowired
+    private LocationService locationService;
 
     public boolean hasAccess(String customerId) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(customerId)
@@ -95,11 +101,12 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByUserId(userId, pageable)
                 .map(customerMapper::toDto)
                 .map(dto -> {
-                    List<LocationDTO> locDtos = locationRepository
-                            .findByCustomerId(dto.getId())
-                            .stream()
-                            .map(locationMapper::toDto)
-                            .collect(Collectors.toList());
+                    List<LocationDTO> locDtos;
+                    try {
+                        locDtos = locationService.findByCustomerId(dto.getId());
+                    } catch (ResourceNotFoundException | BadRequestException e) {
+                        locDtos = Collections.emptyList();
+                    }
                     dto.setLocations(locDtos);
                     return dto;
                 });
@@ -108,6 +115,32 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean existsById(String id) {
         return customerRepository.existsById(id);
+    }
+
+    @Override
+    @Transactional
+    public CustomerDTO createOrUpdate(CustomerDTO dto) {
+        Customer customer = customerMapper.toEntity(dto);
+        customer.setLocations(Collections.emptyList());
+
+        customer = customerRepository.save(customer);
+
+        List<Location> linked = new ArrayList<>();
+        for (LocationDTO locDto : dto.getLocations()) {
+            Location loc;
+            if (locDto.getId() == null) {
+                loc = locationMapper.toEntity(locDto);
+                loc.setCustomerId(customer.getId());
+            } else {
+                loc = locationService.update(loc);
+            }
+            linked.add(locationRepository.save(loc));
+        }
+
+        customer.setLocations(linked);
+        customer = customerRepository.save(customer);
+
+        return customerMapper.toDto(customer);
     }
 
     @Override

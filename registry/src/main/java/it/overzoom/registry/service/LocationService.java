@@ -1,15 +1,15 @@
 package it.overzoom.registry.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 
+import it.overzoom.registry.dto.LocationDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Location;
 
 public interface LocationService {
 
-        Page<Location> findByCustomerId(String customerId, Pageable pageable)
+        List<LocationDTO> findByCustomerId(String customerId)
                         throws ResourceNotFoundException, BadRequestException;
 
         Location findById(String id) throws ResourceNotFoundException, BadRequestException;

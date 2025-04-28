@@ -3,12 +3,12 @@ package it.overzoom.registry.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.dto.LocationDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.mapper.LocationMapper;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
@@ -28,12 +28,15 @@ public class LocationServiceImpl implements LocationService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private LocationMapper locationMapper;
+
     @Override
-    public Page<Location> findByCustomerId(String customerId, Pageable pageable)
+    public List<LocationDTO> findByCustomerId(String customerId)
             throws ResourceNotFoundException, BadRequestException {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
-        return locationRepository.findByCustomerId(customer.getId(), pageable);
+        return locationRepository.findByCustomerId(customer.getId()).map(locationMapper::toDto);
     }
 
     @Override
@@ -66,7 +69,8 @@ public class LocationServiceImpl implements LocationService {
 
         existingLocation.setName(location.getName());
         existingLocation.setAddress(location.getAddress());
-
+        existingLocation.setCity(location.getCity());
+        existingLocation.setProvince(location.getProvince());
         return this.create(existingLocation);
     }
 

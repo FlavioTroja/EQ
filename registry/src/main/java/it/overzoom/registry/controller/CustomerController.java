@@ -24,7 +24,7 @@ import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.security.SecurityUtils;
-import it.overzoom.registry.service.CustomerServiceImpl;
+import it.overzoom.registry.service.CustomerService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -34,7 +34,7 @@ public class CustomerController {
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
     @Autowired
-    private CustomerServiceImpl customerService;
+    private CustomerService customerService;
 
     @GetMapping("")
     public ResponseEntity<Page<CustomerDTO>> findAll(Pageable pageable) throws ResourceNotFoundException {

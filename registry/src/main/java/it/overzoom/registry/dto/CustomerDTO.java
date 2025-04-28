@@ -2,10 +2,14 @@ package it.overzoom.registry.dto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotNull;
+
 public class CustomerDTO {
 
     private String id;
+    @NotNull
     private String userId;
+    @NotNull
     private String name;
     private String fiscalCode;
     private String vatCode;
