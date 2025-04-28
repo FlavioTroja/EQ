@@ -2,6 +2,7 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.overzoom.registry.dto.LocationDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Location;
@@ -38,7 +40,7 @@ public class LocationController {
     private LocationServiceImpl locationService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Location>> findCustomerId(@PathVariable String customerId,
+    public ResponseEntity<List<LocationDTO>> findCustomerId(@PathVariable String customerId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Locations by customerId: " + customerId);
 
@@ -46,8 +48,8 @@ public class LocationController {
             throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
         }
 
-        Page<Location> page = locationService.findByCustomerId(customerId, pageable);
-        return ResponseEntity.ok().body(page);
+        List<LocationDTO> list = locationService.findByCustomerId(customerId);
+        return ResponseEntity.ok().body(list);
     }
 
     @GetMapping("/{id}")

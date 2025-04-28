@@ -36,7 +36,10 @@ public class LocationServiceImpl implements LocationService {
             throws ResourceNotFoundException, BadRequestException {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
-        return locationRepository.findByCustomerId(customer.getId()).map(locationMapper::toDto);
+        return locationRepository.findByCustomerId(customer.getId())
+                .stream()
+                .map(locationMapper::toDto)
+                .toList();
     }
 
     @Override

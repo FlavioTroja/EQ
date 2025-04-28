@@ -24,8 +24,6 @@ public interface CustomerService {
 
     CustomerDTO update(Customer customer) throws ResourceNotFoundException, BadRequestException;
 
-    CustomerDTO createOrUpdate(CustomerDTO dto);
-
     CustomerDTO partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException;
 
@@ -33,5 +31,5 @@ public interface CustomerService {
 
     boolean hasAccess(String customerId) throws ResourceNotFoundException;
 
-    List<CustomerDTO> findCustomersByMachine(String machineId);
+    //List<CustomerDTO> findCustomersByMachine(String machineId);
 }

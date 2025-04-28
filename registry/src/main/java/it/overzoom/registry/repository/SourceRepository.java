@@ -15,6 +15,4 @@ public interface SourceRepository extends MongoRepository<Source, String> {
     Page<Source> findByDepartmentId(String departmentId, Pageable pageable);
 
     List<Source> findByDepartmentId(String departmentId);
-
-    List<Source> findByMachine_Id(String machineId);
 }

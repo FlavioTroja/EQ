@@ -21,8 +21,8 @@ public class Source {
     @Indexed
     private String departmentId;
 
-    @DBRef
-    private Machine machine;
+    @Indexed
+    private String machineId;
 
     private Integer completedMeasurements;
 
@@ -61,12 +61,11 @@ public class Source {
         this.departmentId = departmentId;
     }
 
-    public Machine getMachine() {
-        return machine;
+    public String getMachineId() {
+        return machineId;
     }
-
-    public void setMachine(Machine machine) {
-        this.machine = machine;
+    public void setMachineId(String machineId) {
+        this.machineId = machineId;
     }
 
     public List<Measurement> getMeasurements() {
@@ -83,13 +82,6 @@ public class Source {
 
     public void setCompletedMeasurements(Integer completedMeasurements) {
         this.completedMeasurements = completedMeasurements;
-    }
-
-    @Override
-    public String toString() {
-        return "Source [id=" + id + ", sn=" + sn + ", expirationDate=" + expirationDate + ", departmentId="
-                + departmentId + ", machine=" + machine + ", completedMeasurements=" + completedMeasurements
-                + ", measurements=" + measurements + "]";
     }
 
 }

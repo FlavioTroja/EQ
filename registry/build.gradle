@@ -50,9 +50,7 @@ dependencyManagement {
 }
 
 tasks.withType(JavaCompile).configureEach {
-  options.annotationProcessorPath = configurations.annotationProcessor
-  // abilitiamo la verbose di MapStruct per vedere l’errore preciso
-  options.compilerArgs += ['-Amapstruct.verbose=true']
+    options.annotationProcessorPath = configurations.annotationProcessor
 }
 
 tasks.named('test') {
