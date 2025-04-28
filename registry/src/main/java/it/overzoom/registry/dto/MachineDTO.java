@@ -8,7 +8,7 @@ public class MachineDTO {
 
     private String name;
 
-    private List<CustomerDTO> constomers;
+    private List<CustomerDTO> customers;
 
     public String getId() {
         return id;
@@ -26,11 +26,11 @@ public class MachineDTO {
         this.name = name;
     }
 
-    public List<CustomerDTO> getConstomers() {
-        return constomers;
+    public List<CustomerDTO> getCustomers() {
+        return customers;
     }
 
-    public void setConstomers(List<CustomerDTO> constomers) {
-        this.constomers = constomers;
+    public void setCustomers(List<CustomerDTO> customers) {
+        this.customers = customers;
     }
 }

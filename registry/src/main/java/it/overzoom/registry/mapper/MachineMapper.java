@@ -22,12 +22,12 @@ public abstract class MachineMapper {
     @Autowired
     protected CustomerMapper customerMapper;
 
-    @Mapping(target = "constomers", ignore = true)
+    @Mapping(target = "customers", ignore = true)
     public abstract MachineDTO toDto(Machine machine);
 
     @AfterMapping
     protected void enrichWithCustomers(Machine machine, @MappingTarget MachineDTO dto) {
         List<CustomerDTO> customers = customerService.findCustomersByMachine(machine.getId());
-        dto.setConstomers(customers);
+        dto.setCustomers(customers);
     }
 }

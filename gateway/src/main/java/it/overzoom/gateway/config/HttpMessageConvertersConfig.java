@@ -10,7 +10,6 @@ public class HttpMessageConvertersConfig {
 
     @Bean
     public HttpMessageConverters messageConverters() {
-        // Aggiungi qui altri converter se necessario
         return new HttpMessageConverters(new MappingJackson2HttpMessageConverter());
     }
 }

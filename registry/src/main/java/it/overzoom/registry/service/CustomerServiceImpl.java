@@ -10,9 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.overzoom.registry.dto.CustomerDTO;
+import it.overzoom.registry.dto.LocationDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.mapper.CustomerMapper;
+import it.overzoom.registry.mapper.LocationMapper;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
@@ -41,6 +43,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerMapper customerMapper;
 
+    @Autowired
+    private LocationMapper locationMapper;
+
     public boolean hasAccess(String customerId) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
@@ -48,12 +53,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<Customer> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable);
+    public Page<CustomerDTO> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable)
+                .map(customerMapper::toDto)
+                .map(dto -> {
+                    List<LocationDTO> locDtos = locationRepository
+                            .findByCustomerId(dto.getId())
+                            .stream()
+                            .map(locationMapper::toDto)
+                            .collect(Collectors.toList());
+                    dto.setLocations(locDtos);
+                    return dto;
+                });
     }
 
     @Override
-    public Customer findById(String id) throws ResourceNotFoundException {
+    public CustomerDTO findById(String id) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
 
@@ -61,7 +76,7 @@ public class CustomerServiceImpl implements CustomerService {
         locations.forEach(this::populateLocationData);
         customer.setLocations(locations);
 
-        return customer;
+        return customerMapper.toDto(customer);
     }
 
     private void populateLocationData(Location location) {
@@ -76,8 +91,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<Customer> findByUserId(String userId, Pageable pageable) {
-        return customerRepository.findByUserId(userId, pageable);
+    public Page<CustomerDTO> findByUserId(String userId, Pageable pageable) {
+        return customerRepository.findByUserId(userId, pageable)
+                .map(customerMapper::toDto)
+                .map(dto -> {
+                    List<LocationDTO> locDtos = locationRepository
+                            .findByCustomerId(dto.getId())
+                            .stream()
+                            .map(locationMapper::toDto)
+                            .collect(Collectors.toList());
+                    dto.setLocations(locDtos);
+                    return dto;
+                });
     }
 
     @Override
@@ -86,13 +111,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer create(Customer customer) {
-        return customerRepository.save(customer);
+    public CustomerDTO create(Customer customer) {
+        return customerMapper.toDto(customerRepository.save(customer));
     }
 
     @Override
-    public Customer update(Customer customer) throws ResourceNotFoundException, BadRequestException {
-        Customer existingCustomer = this.findById(customer.getId());
+    public CustomerDTO update(Customer customer) throws ResourceNotFoundException, BadRequestException {
+        Customer existingCustomer = customerRepository.findById(customer.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
 
         existingCustomer.setName(customer.getName());
         existingCustomer.setFiscalCode(customer.getFiscalCode());
@@ -108,9 +134,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer partialUpdate(String id, Customer customer)
+    public CustomerDTO partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException {
-        Customer existingCustomer = this.findById(customer.getId());
+        Customer existingCustomer = customerRepository.findById(customer.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
+
         if (customer.getName() != null) {
             existingCustomer.setName(customer.getName());
         }
@@ -150,10 +178,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDTO> findCustomersByMachine(String machineId) {
-        // 1. prendi tutti gli Source per quella machine
         List<Source> sources = sourceRepository.findByMachine_Id(machineId);
 
-        // 2. estrai tutti i departmentId
         Set<String> deptIds = sources.stream()
                 .map(Source::getDepartmentId)
                 .collect(Collectors.toSet());
@@ -162,10 +188,8 @@ public class CustomerServiceImpl implements CustomerService {
             return List.of();
         }
 
-        // 3. prendi tutti i Department corrispondenti
         List<Department> depts = departmentRepository.findByIdIn(List.copyOf(deptIds));
 
-        // 4. estrai tutti i locationId
         Set<String> locIds = depts.stream()
                 .map(Department::getLocationId)
                 .collect(Collectors.toSet());
@@ -174,11 +198,9 @@ public class CustomerServiceImpl implements CustomerService {
             return List.of();
         }
 
-        // 5. cerca i Customer che hanno una location in quella lista
         List<Customer> customers = customerRepository
                 .findDistinctByLocations_IdIn(List.copyOf(locIds));
 
-        // 6. mappa in DTO
         return customers.stream()
                 .map(customerMapper::toDto)
                 .collect(Collectors.toList());

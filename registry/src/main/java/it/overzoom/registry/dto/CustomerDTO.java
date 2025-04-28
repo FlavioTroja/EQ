@@ -1,5 +1,7 @@
 package it.overzoom.registry.dto;
 
+import java.util.List;
+
 public class CustomerDTO {
 
     private String id;
@@ -13,6 +15,7 @@ public class CustomerDTO {
     private String email;
     private String phoneNumber;
     private String notes;
+    List<LocationDTO> locations;
 
     public String getId() {
         return id;
@@ -100,5 +103,13 @@ public class CustomerDTO {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<LocationDTO> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<LocationDTO> locations) {
+        this.locations = locations;
     }
 }

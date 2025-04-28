@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
@@ -36,28 +37,28 @@ public class CustomerController {
     private CustomerServiceImpl customerService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Customer>> findAll(Pageable pageable) throws ResourceNotFoundException {
+    public ResponseEntity<Page<CustomerDTO>> findAll(Pageable pageable) throws ResourceNotFoundException {
         log.info("REST request to get a page of Customers");
-        Page<Customer> page = !SecurityUtils.isAdmin()
+        Page<CustomerDTO> page = !SecurityUtils.isAdmin()
                 ? customerService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
                 : customerService.findAll(pageable);
         return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> findById(@PathVariable("id") String customerId)
+    public ResponseEntity<CustomerDTO> findById(@PathVariable("id") String customerId)
             throws ResourceNotFoundException, BadRequestException {
 
         if (!customerService.hasAccess(customerId)) {
             throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
         }
 
-        Customer customer = customerService.findById(customerId);
+        CustomerDTO customer = customerService.findById(customerId);
         return ResponseEntity.ok(customer);
     }
 
     @PostMapping("")
-    public ResponseEntity<Customer> create(@Valid @RequestBody Customer customer)
+    public ResponseEntity<CustomerDTO> create(@Valid @RequestBody Customer customer)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Customer : " + customer.toString());
         if (customer.getId() != null) {
@@ -66,12 +67,12 @@ public class CustomerController {
         if (!SecurityUtils.isAdmin()) {
             customer.setUserId(SecurityUtils.getCurrentUserId());
         }
-        customer = customerService.create(customer);
-        return ResponseEntity.created(new URI("/api/registry/customers/" + customer.getId())).body(customer);
+        CustomerDTO saveCustomer = customerService.create(customer);
+        return ResponseEntity.created(new URI("/api/registry/customers/" + saveCustomer.getId())).body(saveCustomer);
     }
 
     @PutMapping("")
-    public ResponseEntity<Customer> update(@Valid @RequestBody Customer customer)
+    public ResponseEntity<CustomerDTO> update(@Valid @RequestBody Customer customer)
             throws BadRequestException, ResourceNotFoundException {
         log.info("REST request to update Customer: " + customer.toString());
         if (customer.getId() == null) {
@@ -81,13 +82,13 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Customer updateCustomer = customerService.update(customer);
+        CustomerDTO updateCustomer = customerService.update(customer);
 
         return ResponseEntity.ok().body(updateCustomer);
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Customer> partialUpdate(@PathVariable String id,
+    public ResponseEntity<CustomerDTO> partialUpdate(@PathVariable String id,
             @RequestBody Customer customer) throws BadRequestException, ResourceNotFoundException {
         log.info("REST request to partial update Customer: " + customer.toString());
         if (id == null) {
@@ -97,7 +98,7 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        Customer updateCustomer = customerService.partialUpdate(id, customer);
+        CustomerDTO updateCustomer = customerService.partialUpdate(id, customer);
 
         return ResponseEntity.ok().body(updateCustomer);
     }

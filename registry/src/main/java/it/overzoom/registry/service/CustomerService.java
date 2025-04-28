@@ -12,19 +12,19 @@ import it.overzoom.registry.model.Customer;
 
 public interface CustomerService {
 
-    Page<Customer> findAll(Pageable pageable);
+    Page<CustomerDTO> findAll(Pageable pageable);
 
-    Customer findById(String id) throws ResourceNotFoundException, BadRequestException;
+    CustomerDTO findById(String id) throws ResourceNotFoundException, BadRequestException;
 
-    Page<Customer> findByUserId(String userId, Pageable pageable);
+    Page<CustomerDTO> findByUserId(String userId, Pageable pageable);
 
     boolean existsById(String id);
 
-    Customer create(Customer customer);
+    CustomerDTO create(Customer customer);
 
-    Customer update(Customer customer) throws ResourceNotFoundException, BadRequestException;
+    CustomerDTO update(Customer customer) throws ResourceNotFoundException, BadRequestException;
 
-    Customer partialUpdate(String id, Customer customer)
+    CustomerDTO partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException;
 
     void deleteById(String id);

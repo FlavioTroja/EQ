@@ -12,6 +12,7 @@ import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
+import it.overzoom.registry.repository.CustomerRepository;
 import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.LocationRepository;
 
@@ -25,12 +26,13 @@ public class LocationServiceImpl implements LocationService {
     private DepartmentRepository departmentRepository;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerRepository customerRepository;
 
     @Override
     public Page<Location> findByCustomerId(String customerId, Pageable pageable)
             throws ResourceNotFoundException, BadRequestException {
-        Customer customer = customerService.findById(customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
         return locationRepository.findByCustomerId(customer.getId(), pageable);
     }
 
@@ -52,7 +54,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location create(Location location) throws ResourceNotFoundException, BadRequestException {
-        Customer customer = customerService.findById(location.getCustomerId());
+        Customer customer = customerRepository.findById(location.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
         location.setCustomerId(customer.getId());
         return locationRepository.save(location);
     }
