@@ -247,7 +247,20 @@ public class CustomerServiceImpl implements CustomerService {
             return List.of();
         }
 
-        List<Customer> customers = customerRepository.findDistinctByLocationIds(new ArrayList<>(locIds));
+        List<Location> locs = locationRepository.findByIdIn(List.copyOf(locIds));
+
+        Set<String> custIds = locs.stream()
+                .map(Location::getCustomerId)
+                .collect(Collectors.toSet());
+
+        if (custIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<Customer> customers = customerRepository.findByIdIn(List.copyOf(custIds));
+        if (customers.isEmpty()) {
+            return List.of();
+        }
 
         return customers.stream()
                 .map(customerMapper::toDto)

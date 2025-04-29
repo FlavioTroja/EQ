@@ -15,4 +15,6 @@ public interface LocationRepository extends MongoRepository<Location, String> {
         Page<Location> findByCustomerId(String customerId, Pageable pageable);
 
         List<Location> findByCustomerId(String customerId);
+
+        List<Location> findByIdIn(List<String> ids);
 }
