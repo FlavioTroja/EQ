@@ -1,34 +1,70 @@
 package it.overzoom.registry.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.dto.CustomerDTO;
+import it.overzoom.registry.dto.DepartmentDTO;
 import it.overzoom.registry.dto.LocationDTO;
+import it.overzoom.registry.dto.SourceDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.mapper.CustomerMapper;
+import it.overzoom.registry.mapper.DepartmentMapper;
+import it.overzoom.registry.mapper.LocationMapper;
+import it.overzoom.registry.mapper.SourceMapper;
 import it.overzoom.registry.model.Customer;
+import it.overzoom.registry.model.Department;
+import it.overzoom.registry.model.Location;
+import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.CustomerRepository;
+import it.overzoom.registry.repository.DepartmentRepository;
+import it.overzoom.registry.repository.LocationRepository;
+import it.overzoom.registry.repository.SourceRepository;
 import it.overzoom.registry.security.SecurityUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final LocationService locationService;
+    private final CustomerRepository customerRepository;
+    private final LocationRepository locationRepository;
+    private final DepartmentRepository departmentRepository;
+    private final SourceRepository sourceRepository;
 
-    @Autowired
-    private CustomerMapper customerMapper;
+    private final CustomerMapper customerMapper;
+    private final LocationMapper locationMapper;
+    private final DepartmentMapper departmentMapper;
+    private final SourceMapper sourceMapper;
 
-
-    @Autowired
-    private LocationService locationService;
+    public CustomerServiceImpl(
+            CustomerRepository customerRepository,
+            LocationRepository locationRepository,
+            DepartmentRepository departmentRepository,
+            SourceRepository sourceRepository,
+            CustomerMapper customerMapper,
+            LocationMapper locationMapper,
+            LocationService locationService,
+            DepartmentMapper departmentMapper,
+            SourceMapper sourceMapper) {
+        this.customerRepository = customerRepository;
+        this.locationRepository = locationRepository;
+        this.departmentRepository = departmentRepository;
+        this.sourceRepository = sourceRepository;
+        this.customerMapper = customerMapper;
+        this.locationMapper = locationMapper;
+        this.locationService = locationService;
+        this.departmentMapper = departmentMapper;
+        this.sourceMapper = sourceMapper;
+    }
 
     public boolean hasAccess(String customerId) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(customerId)
@@ -78,6 +114,54 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO create(Customer customer) {
         return customerMapper.toDto(customerRepository.save(customer));
+    }
+
+    @Override
+    @Transactional
+    public CustomerDTO createWithNested(CustomerDTO dto) {
+        // 1) Customer base senza DBRef
+        Customer customer = customerMapper.toEntity(dto);
+        customer.setLocations(Collections.emptyList());
+        customer = customerRepository.save(customer);
+
+        // 2) Location
+        List<Location> savedLocs = new ArrayList<>();
+        for (LocationDTO locDto : dto.getLocations()) {
+            locDto.setCustomerId(customer.getId());
+            Location loc = locationMapper.toEntity(locDto);
+            loc.setDepartments(Collections.emptyList());
+            loc = locationRepository.save(loc);
+
+            // 3) Department
+            List<Department> savedDeps = new ArrayList<>();
+            for (DepartmentDTO depDto : locDto.getDepartments()) {
+                depDto.setLocationId(loc.getId());
+                Department dep = departmentMapper.toEntity(depDto);
+                dep.setSources(Collections.emptyList());
+                dep = departmentRepository.save(dep);
+
+                // 4) Source
+                List<Source> savedSrcs = new ArrayList<>();
+                for (SourceDTO srcDto : depDto.getSources()) {
+                    srcDto.setDepartmentId(dep.getId());
+                    Source src = sourceMapper.toEntity(srcDto);
+                    savedSrcs.add(sourceRepository.save(src));
+                }
+                // ricollego i Source al Department
+                dep.setSources(savedSrcs);
+                savedDeps.add(departmentRepository.save(dep));
+            }
+            // ricollego i Department alla Location
+            loc.setDepartments(savedDeps);
+            savedLocs.add(locationRepository.save(loc));
+        }
+
+        // 5) ricollego le Location al Customer
+        customer.setLocations(savedLocs);
+        customer = customerRepository.save(customer);
+
+        // 6) restituisco il DTO completo di tutti gli ID
+        return customerMapper.toDto(customer);
     }
 
     @Override
@@ -141,33 +225,32 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(id);
     }
 
-    // @Override
-    // public List<CustomerDTO> findCustomersByMachine(String machineId) {
-    //     List<Source> sources = sourceRepository.findByMachine_Id(machineId);
+    @Override
+    public List<CustomerDTO> findCustomersByMachine(String machineId) {
+        List<Source> sources = sourceRepository.findByMachineId(machineId);
 
-    //     Set<String> deptIds = sources.stream()
-    //             .map(Source::getDepartmentId)
-    //             .collect(Collectors.toSet());
+        Set<String> deptIds = sources.stream()
+                .map(Source::getDepartmentId)
+                .collect(Collectors.toSet());
 
-    //     if (deptIds.isEmpty()) {
-    //         return List.of();
-    //     }
+        if (deptIds.isEmpty()) {
+            return List.of();
+        }
 
-    //     List<Department> depts = departmentRepository.findByIdIn(List.copyOf(deptIds));
+        List<Department> depts = departmentRepository.findByIdIn(List.copyOf(deptIds));
 
-    //     Set<String> locIds = depts.stream()
-    //             .map(Department::getLocationId)
-    //             .collect(Collectors.toSet());
+        Set<String> locIds = depts.stream()
+                .map(Department::getLocationId)
+                .collect(Collectors.toSet());
 
-    //     if (locIds.isEmpty()) {
-    //         return List.of();
-    //     }
+        if (locIds.isEmpty()) {
+            return List.of();
+        }
 
-    //     List<Customer> customers = customerRepository
-    //             .findDistinctByLocations_IdIn(List.copyOf(locIds));
+        List<Customer> customers = customerRepository.findDistinctByLocationIds(new ArrayList<>(locIds));
 
-    //     return customers.stream()
-    //             .map(customerMapper::toDto)
-    //             .collect(Collectors.toList());
-    // }
+        return customers.stream()
+                .map(customerMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

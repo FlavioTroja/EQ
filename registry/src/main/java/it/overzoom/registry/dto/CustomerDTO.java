@@ -1,5 +1,6 @@
 package it.overzoom.registry.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 public class CustomerDTO {
 
     private String id;
-    @NotNull
     private String userId;
     @NotNull
     private String name;
@@ -19,7 +19,7 @@ public class CustomerDTO {
     private String email;
     private String phoneNumber;
     private String notes;
-    List<LocationDTO> locations;
+    List<LocationDTO> locations = new ArrayList<>();
 
     public String getId() {
         return id;

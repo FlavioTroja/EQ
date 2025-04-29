@@ -1,5 +1,6 @@
 package it.overzoom.registry.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.dto.CustomerDTO;
+import it.overzoom.registry.dto.MachineDTO;
+import it.overzoom.registry.mapper.MachineMapper;
 import it.overzoom.registry.model.Machine;
 import it.overzoom.registry.repository.MachineRepository;
 
@@ -16,14 +20,26 @@ public class MachineServiceImpl implements MachineService {
     @Autowired
     private MachineRepository machineRepository;
 
+    @Autowired
+    private CustomerServiceImpl customerService;
+
+    @Autowired
+    private MachineMapper machineMapper;
+
     @Override
     public Page<Machine> findAll(Pageable pageable) {
         return machineRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<Machine> findById(String id) {
-        return machineRepository.findById(id);
+    public Optional<MachineDTO> findById(String id) {
+        return machineRepository.findById(id)
+                .map(machine -> {
+                    MachineDTO dto = machineMapper.toDto(machine);
+                    List<CustomerDTO> customers = customerService.findCustomersByMachine(id);
+                    dto.setCustomers(customers);
+                    return dto;
+                });
     }
 
     @Override
@@ -61,7 +77,7 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
-    public void delete(Machine machine) {
-        machineRepository.delete(machine);
+    public void delete(String id) {
+        machineRepository.deleteById(id);
     }
 }

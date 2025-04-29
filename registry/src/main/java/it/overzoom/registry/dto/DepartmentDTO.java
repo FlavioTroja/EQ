@@ -1,5 +1,6 @@
 package it.overzoom.registry.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ public class DepartmentDTO {
 
     private Integer completedSources;
 
-    private List<SourceDTO> sources;
+    private List<SourceDTO> sources = new ArrayList<>();
 
     public String getId() {
         return id;

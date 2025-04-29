@@ -1,6 +1,9 @@
 package it.overzoom.registry.dto;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import it.overzoom.registry.model.TypeMachine;
 
 public class MachineDTO {
 
@@ -8,7 +11,9 @@ public class MachineDTO {
 
     private String name;
 
-    private List<CustomerDTO> customers;
+    private TypeMachine type;
+
+    private List<CustomerDTO> customers = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -32,5 +37,13 @@ public class MachineDTO {
 
     public void setCustomers(List<CustomerDTO> customers) {
         this.customers = customers;
+    }
+
+    public TypeMachine getType() {
+        return type;
+    }
+
+    public void setType(TypeMachine type) {
+        this.type = type;
     }
 }

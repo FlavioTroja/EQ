@@ -32,8 +32,19 @@ public class SecurityUtils {
                 .map(auth -> (Jwt) auth.getPrincipal())
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
 
-        List<String> roles = jwt.getClaimAsStringList("roles");
-        return roles != null && roles.contains("admin");
+        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
+
+        if (resourceAccess != null) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> clientMap = (Map<String, Object>) resourceAccess.get("eq-project");
+            if (clientMap != null) {
+                @SuppressWarnings("unchecked")
+                List<String> roles = (List<String>) clientMap.get("roles");
+                return roles != null && roles.contains("admin");
+            }
+        }
+
+        return false;
     }
 
     public static UserDTO populateKeycloakFields(UserDTO userDTO) throws ResourceNotFoundException {

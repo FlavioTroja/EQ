@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import it.overzoom.registry.dto.MachineDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
-import it.overzoom.registry.mapper.MachineMapper;
 import it.overzoom.registry.model.Machine;
 import it.overzoom.registry.service.MachineServiceImpl;
 import jakarta.validation.Valid;
@@ -36,9 +35,6 @@ public class MachineController {
     @Autowired
     private MachineServiceImpl machineService;
 
-    @Autowired
-    private MachineMapper machineMapper;
-
     @GetMapping("")
     public ResponseEntity<Page<Machine>> findAll(Pageable pageable) {
         log.info("REST request to get a page of Machines");
@@ -49,7 +45,7 @@ public class MachineController {
     @GetMapping("/{id}")
     public ResponseEntity<MachineDTO> findById(@PathVariable("id") String machineId)
             throws ResourceNotFoundException {
-        return machineService.findById(machineId).map(machineMapper::toDto)
+        return machineService.findById(machineId)
                 .map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Macchina non trovata."));
     }
 
@@ -109,10 +105,11 @@ public class MachineController {
     public ResponseEntity<Void> deleteMachine(@PathVariable String id) throws ResourceNotFoundException {
         log.info("REST request to delete Machine : {}", id);
 
-        Machine machine = machineService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Machine non trovata con id :: " + id));
+        if (machineService.existsById(id) == false) {
+            throw new ResourceNotFoundException("Macchina non trovata con id :: " + id);
+        }
 
-        machineService.delete(machine);
+        machineService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

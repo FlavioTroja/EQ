@@ -1,5 +1,6 @@
 package it.overzoom.registry.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.overzoom.registry.model.Customer;
@@ -8,9 +9,9 @@ import it.overzoom.registry.model.Measurement;
 
 public class ReportDTO {
 
-    private List<Measurement> prospectMeasurements;
+    private List<Measurement> prospectMeasurements = new ArrayList<>();
 
-    private List<Measurement> lastMeasurements;
+    private List<Measurement> lastMeasurements = new ArrayList<>();
 
     private Location location;
 

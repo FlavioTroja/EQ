@@ -1,5 +1,6 @@
 package it.overzoom.registry.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class SourceDTO {
 
     private Integer completedMeasurements;
 
-    private List<MeasurementDTO> measurements;
+    private List<MeasurementDTO> measurements = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -75,6 +76,7 @@ public class SourceDTO {
     public String getMachineId() {
         return machineId;
     }
+
     public void setMachineId(String machineId) {
         this.machineId = machineId;
     }

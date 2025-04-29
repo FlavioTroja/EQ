@@ -57,18 +57,18 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
-    @PostMapping("")
-    public ResponseEntity<CustomerDTO> create(@Valid @RequestBody Customer customer)
+    @PostMapping
+    public ResponseEntity<CustomerDTO> create(@Valid @RequestBody CustomerDTO dto)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
-        log.info("REST request to save Customer : " + customer.toString());
-        if (customer.getId() != null) {
+        log.info("REST request to save Customer : {}", dto);
+        if (dto.getId() != null) {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
         }
-        if (!SecurityUtils.isAdmin()) {
-            customer.setUserId(SecurityUtils.getCurrentUserId());
-        }
-        CustomerDTO saveCustomer = customerService.create(customer);
-        return ResponseEntity.created(new URI("/api/registry/customers/" + saveCustomer.getId())).body(saveCustomer);
+        dto.setUserId(SecurityUtils.getCurrentUserId());
+        CustomerDTO result = customerService.createWithNested(dto);
+        return ResponseEntity
+                .created(new URI("/api/registry/customers/" + result.getId()))
+                .body(result);
     }
 
     @PutMapping("")

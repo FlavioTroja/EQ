@@ -25,9 +25,9 @@ public abstract class MachineMapper {
     @Mapping(target = "customers", ignore = true)
     public abstract MachineDTO toDto(Machine machine);
 
-    // @AfterMapping
-    // protected void enrichWithCustomers(Machine machine, @MappingTarget MachineDTO dto) {
-    //     List<CustomerDTO> customers = customerService.findCustomersByMachine(machine.getId());
-    //     dto.setCustomers(customers);
-    // }
+    @AfterMapping
+    protected void enrichWithCustomers(Machine machine, @MappingTarget MachineDTO dto) {
+        List<CustomerDTO> customers = customerService.findCustomersByMachine(machine.getId());
+        dto.setCustomers(customers);
+    }
 }
