@@ -1,0 +1,26 @@
+server:
+    port: 8082
+
+spring:
+    application:
+        name: document
+
+openapi:
+    service:
+        title: document doc
+        version: 1.0.0
+        url: http://localhost:8765
+
+springdoc:
+    api-docs:
+        path: /document/api-docs
+    swagger-ui:
+        path: /document/swagger-ui.html  
+        operationsSorter: method            
+
+eureka:
+    client:
+        service-url:
+            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    instance:
+        prefer-ip-address: true           

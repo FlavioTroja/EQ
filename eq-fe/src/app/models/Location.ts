@@ -1,0 +1,13 @@
+import { Department } from "./Department";
+
+export interface Location {
+  id: string,
+  customerId: string,
+  name: string,
+  address: string,
+  city: string,
+  province: string,
+  departments: Department[]
+}
+
+export type PartialLocation = Partial<Location>;

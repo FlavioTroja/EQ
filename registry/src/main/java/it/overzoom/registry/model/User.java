@@ -1,13 +1,10 @@
 package it.overzoom.registry.model;
 
-import java.util.List;
+import java.sql.Blob;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 
 @Document(collection = "user")
 public class User {
@@ -18,19 +15,11 @@ public class User {
     @Indexed
     private String userId;
 
-    private String name;
-
-    @Email
-    private String email;
-
     private String phoneNumber;
 
-    private List<String> customers;
+    private Blob photo;
 
-    private List<String> roles;
-
-    @NotNull
-    private UserType type;
+    private String level;
 
     public String getId() {
         return id;
@@ -38,22 +27,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhoneNumber() {
@@ -64,30 +37,6 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<String> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<String> customers) {
-        this.customers = customers;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
-    public UserType getType() {
-        return type;
-    }
-
-    public void setType(UserType type) {
-        this.type = type;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -96,10 +45,26 @@ public class User {
         this.userId = userId;
     }
 
+    public Blob getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Blob photo) {
+        this.photo = photo;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
-        return "User [id=" + id + ", userId=" + userId + ", name=" + name + ", email=" + email + ", phoneNumber="
-                + phoneNumber + ", customers=" + customers + ", roles=" + roles + ", type=" + type + "]";
+        return "User [id=" + id + ", userId=" + userId + ", phoneNumber=" + phoneNumber + ", photo=" + photo
+                + ", level=" + level + "]";
     }
 
 }

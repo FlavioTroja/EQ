@@ -1,16 +1,16 @@
 services:
   eurekaserver:
     build:
-      context: .
-      dockerfile: eurekaserver/docker/Dockerfile
+      context: ./eurekaserver
+      dockerfile: Dockerfile
     image: eurekaserver:latest
     container_name: eurekaserver
     restart: always
     ports:
       - "8761:8761"
     environment:
-      - EUREKA_CLIENT_REGISTER-WITH-EUREKA=false
-      - EUREKA_CLIENT_FETCH-REGISTRY=false  
+      EUREKA_CLIENT_REGISTER-WITH-EUREKA: false
+      EUREKA_CLIENT_FETCH-REGISTRY: false  
     networks:
       - eq_net
 
@@ -33,19 +33,20 @@ services:
 
   gateway:
     build:
-      context: .
-      dockerfile: gateway/docker/Dockerfile
+      context: ./gateway
+      dockerfile: Dockerfile
     image: gateway:latest
     container_name: gateway
     restart: always
     ports:
       - "8765:8765"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://gatewaydb:5432/gateway
+      SPRING_DATASOURCE_URL: jdbc:postgresql://gatewaydb:5432/  
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: dev
       EUREKA_URI: http://eurekaserver:8761/eureka
+      KEYCLOAK_URI: http://keycloak:8080
     depends_on:
       eurekaserver:
         condition: service_started
@@ -93,8 +94,8 @@ services:
 
   registry:
     build:
-      context: .
-      dockerfile: registry/docker/Dockerfile
+      context: ./registry
+      dockerfile: Dockerfile
     image: registry:latest
     container_name: registry
     restart: always
@@ -108,6 +109,7 @@ services:
       SPRING_DATA_MONGODB_PASSWORD: secr3t
       SPRING_DATA_MONGODB_DATABASE: registry
       EUREKA_URI: http://eurekaserver:8761/eureka
+      KEYCLOAK_URI: http://keycloak:8080
     depends_on:
       eurekaserver:
         condition: service_started
@@ -135,8 +137,8 @@ services:
 
   calendar:
     build:
-      context: .
-      dockerfile: calendar/docker/Dockerfile
+      context: ./calendar
+      dockerfile: Dockerfile
     image: calendar:latest
     container_name: calendar
     restart: always
@@ -156,6 +158,24 @@ services:
         condition: service_started
     networks:
       - eq_net
+
+  document:
+    build:
+      context: ./document
+      dockerfile: Dockerfile
+    image: document:latest
+    container_name: document
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_URI: http://eurekaserver:8761/eureka
+    depends_on:
+      eurekaserver:
+        condition: service_started
+    networks:
+      - eq_net    
 
 networks:
   eq_net:

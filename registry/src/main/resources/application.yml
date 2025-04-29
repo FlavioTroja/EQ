@@ -8,7 +8,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://localhost:5050/realms/EQ    
+                    issuer-uri: ${KEYCLOAK_URI:http://localhost:5050}/realms/EQ
     data:
         mongodb:
             authentication-database: admin
@@ -19,18 +19,22 @@ spring:
             username: admin
             auto-index-creation: true
 
-management:
-    endpoint:
-        health:
-            show-details: WHEN_AUTHORIZED
-    endpoints:
-        web:
-            exposure:
-                include: "*"
+openapi:
+    service:
+        title: registry doc
+        version: 1.0.0
+        url: http://localhost:8765
+
+springdoc:
+    api-docs:
+        path: /registry/api-docs
+    swagger-ui:
+        path: /registry/swagger-ui.html  
+        operationsSorter: method            
 
 eureka:
     client:
         service-url:
             defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
     instance:
-        prefer-ip-address: true
+        prefer-ip-address: true   

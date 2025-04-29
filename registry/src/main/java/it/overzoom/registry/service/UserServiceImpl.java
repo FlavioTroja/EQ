@@ -33,16 +33,14 @@ public class UserServiceImpl implements UserService {
     }
 
     public User create(User user) {
-
         return userRepository.save(user);
     }
 
     public Optional<User> update(User user) {
         return this.findById(user.getId()).map(existingUser -> {
-            existingUser.setName(user.getName());
-            existingUser.setEmail(user.getEmail());
             existingUser.setPhoneNumber(user.getPhoneNumber());
-            existingUser.setRoles(user.getRoles());
+            existingUser.setLevel(user.getLevel());
+            existingUser.setPhoto(user.getPhoto());
             return existingUser;
         }).map(this::create);
     }
@@ -50,14 +48,17 @@ public class UserServiceImpl implements UserService {
     public Optional<User> partialUpdate(String id, User user) {
         return this.findById(id)
                 .map(existingUser -> {
-                    if (user.getName() != null) {
-                        existingUser.setName(user.getName());
+                    if (user.getUserId() != null) {
+                        existingUser.setUserId(user.getUserId());
                     }
-                    if (user.getEmail() != null) {
-                        existingUser.setEmail(user.getEmail());
+                    if (user.getLevel() != null) {
+                        existingUser.setLevel(user.getLevel());
                     }
                     if (user.getPhoneNumber() != null) {
                         existingUser.setPhoneNumber(user.getPhoneNumber());
+                    }
+                    if (user.getPhoto() != null) {
+                        existingUser.setPhoto(user.getPhoto());
                     }
 
                     return existingUser;
