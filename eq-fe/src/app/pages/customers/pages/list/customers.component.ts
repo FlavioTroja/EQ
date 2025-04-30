@@ -69,8 +69,8 @@ import { HyperPillComponent } from "../../../../components/pill/hyper-pill.compo
           <app-hyper-pill iconName="distance" [text]="truncatePillText(row?.locations?.at(0)?.address)" class="!cursor-default !pointer-events-none"/>
         </div>
         <div class="flex flex-col justify-center">
-          <div class="flex bg-gray-100 font-bold self-center border rounded-full px-2 py-1" *ngIf="row.locations.length > 1">
-            +{{ row.locations.length-1 }}
+          <div class="flex bg-gray-100 font-bold self-center border rounded-full px-2 py-1" *ngIf="row.locations?.length > 1">
+            +{{ row.locations?.length-1 }}
           </div>
         </div>
       </div>

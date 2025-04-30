@@ -9,15 +9,12 @@ import { ClipboardModule } from "@angular/cdk/clipboard";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import * as CustomersActions from "../../../customers/store/actions/customers.actions";
 import { getCurrentCustomer } from "../../store/selectors/customers.selectors";
-import {
-  CustomerLocationsSectionComponent
-} from "../../components/customer-locations-selections/customer-locations-section.component";
 import { LocationOnCustomerSection } from "../../../../models/Customer";
 
 @Component({
   selector: 'app-view-customer',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, CustomerLocationsSectionComponent],
+  imports: [CommonModule, MatIconModule, ClipboardModule, MatTooltipModule],
   template: `
     <div class="flex flex-col gap-2" *ngIf="active() as customer">
       <div class="bg-white default-shadow p-2 rounded-md">
@@ -64,14 +61,13 @@ import { LocationOnCustomerSection } from "../../../../models/Customer";
         </div>
       </div>
 
-      <div class="flex flex-col text-xl font-extrabold uppercase px-2">
-        statistiche
+<!--      <app-customer-locations-section-->
+<!--        [viewOnly]="true"-->
+<!--        [locations]="locations"-->
+<!--      />-->
+      <div class="flex" *ngFor="let location of locations">
+        {{ location.name }}
       </div>
-
-      <app-customer-locations-section
-        [viewOnly]="true"
-        [locations]="locations"
-      />
     </div>
   `,
   styles: [``]
