@@ -81,18 +81,27 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO findById(String customerId) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(customerId)
-            .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato"));
+
         CustomerDTO dto = customerMapper.toDto(customer);
-        
-        dto.getLocations().forEach(locDto -> {
-            List<Department> depts = departmentRepository.findByLocationId(locDto.getId());
-            List<DepartmentDTO> deptDtos = depts.stream()
-                .map(departmentMapper::toDto)
+
+        List<LocationDTO> locDtos = locationRepository
+                .findByCustomerId(customerId)
+                .stream()
+                .map(locationMapper::toDto)
                 .collect(Collectors.toList());
+        dto.setLocations(locDtos);
+
+        locDtos.forEach(locDto -> {
+            List<DepartmentDTO> deptDtos = departmentRepository
+                    .findByLocationId(locDto.getId())
+                    .stream()
+                    .map(departmentMapper::toDto)
+                    .collect(Collectors.toList());
             locDto.setDepartments(deptDtos);
             locDto.setCompletedDepartments(deptDtos.size());
         });
-        
+
         return dto;
     }
 
