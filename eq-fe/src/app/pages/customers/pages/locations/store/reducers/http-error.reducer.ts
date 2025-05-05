@@ -1,6 +1,6 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import * as LocationActions from "../actions/locations.actions";
-import { HttpError } from "../../../../models/Notification";
+import { HttpError } from "../../../../../../models/Notification";
 
 const initialState: Partial<HttpError> = {};
 

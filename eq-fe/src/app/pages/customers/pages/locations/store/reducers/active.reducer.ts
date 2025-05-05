@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import * as LocationActions from "../actions/locations.actions";
-import { Location } from "../../../../models/Location";
-import { ActiveEntity } from "../../../../../global";
+import { Location } from "../../../../../../models/Location";
+import { ActiveEntity } from "../../../../../../../global";
 
 const initialState: Partial<ActiveEntity<Location>> = {};
 

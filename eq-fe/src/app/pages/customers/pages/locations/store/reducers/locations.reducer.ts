@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import * as LocationsActions from "../actions/locations.actions";
-import { Location } from "../../../../models/Location";
-import { PaginateDatasource } from "../../../../models/Table";
+import { Location } from "../../../../../../models/Location";
+import { PaginateDatasource } from "../../../../../../models/Table";
 
 
 const initialState: Partial<PaginateDatasource<Location>> = {}

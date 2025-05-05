@@ -76,9 +76,10 @@ export function generateRandomCode(): string {
   return Math.random().toString(36).substring(2,7);
 }
 
-/** If the character length of the given string is over 16 characters the string gets truncated and is added ellipsis at the end
+/** If the character length of the given string is over 16 characters (or customizable) the string gets truncated and is added ellipsis at the end
  * @param str string to truncate
+ * @param maxLength default value 16
  */
-export function truncatePillText(str: string) {
-  return str.length > 16 ? str.substring(0, 12) +'...' : str;
+export function truncatePillText(str: string, maxLength: number = 16) {
+  return str.length > maxLength ? str.substring(0, maxLength-4) +'...' : str;
 }

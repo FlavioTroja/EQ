@@ -1,8 +1,8 @@
 import { createAction, props } from "@ngrx/store";
-import { PartialLocation, Location } from "../../../../models/Location";
-import { HttpError } from "../../../../models/Notification";
-import { DefaultQueryParams, Query } from "../../../../../global";
-import { PaginateDatasource } from "../../../../models/Table";
+import { PartialLocation, Location } from "../../../../../../models/Location";
+import { HttpError } from "../../../../../../models/Notification";
+import { DefaultQueryParams, Query } from "../../../../../../../global";
+import { PaginateDatasource } from "../../../../../../models/Table";
 
 export const addLocation = createAction("[Locations] Add", props<{ location: PartialLocation }>());
 export const addLocationSuccess = createAction("[Locations] Add location Success", props<{ location: Location }>());

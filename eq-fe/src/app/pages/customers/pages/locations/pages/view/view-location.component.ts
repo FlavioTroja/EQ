@@ -1,14 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from "@ngrx/store";
-import { AppState } from "../../../../app.config";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
 import { MatIconModule } from "@angular/material/icon";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import * as LocationsActions from "../../../locations/store/actions/locations.actions";
 import { getCurrentLocation } from "../../store/selectors/locations.selectors";
+import { AppState } from "../../../../../../app.config";
+import { selectCustomRouteParam } from "../../../../../../core/router/store/router.selectors";
 
 @Component({
   selector: 'app-view-location',
