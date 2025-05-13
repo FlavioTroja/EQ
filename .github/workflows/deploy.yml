@@ -18,7 +18,8 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
+          chmod 700 ~/.ssh
+          
       - name: Pull & build on server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -28,8 +29,13 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
-            cd /home/manager/eq
+            echo "Adding the server to known_hosts on production server..."
+            mkdir -p /home/manager/.ssh
+            ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> /home/manager/.ssh/known_hosts
+            chmod 700 /home/manager/.ssh
+            
             echo "Pull latest from origin/main..."
+            cd /home/manager/eq
             git fetch --all
             git reset --hard origin/main
 
