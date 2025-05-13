@@ -14,12 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Add server to known_hosts
-        run: |
-          mkdir -p /home/manager/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> /home/manager/.ssh/known_hosts
-          chmod 700 /home/manager/.ssh
-
       - name: Pull & build on server
         uses: appleboy/ssh-action@v0.1.7
         with:
