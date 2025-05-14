@@ -83,6 +83,23 @@ services:
     networks:
       - eq_net
 
+  keycloakdb:
+    image: postgres
+    container_name: keycloakdb
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5470:5432"
+    volumes:
+      - keycloakdb:/data/postgres  
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+      POSTGRES_DB: keycloak
+    networks:
+      - eq_net
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.2
     container_name: keycloak
@@ -91,7 +108,7 @@ services:
       - "5050:8080"
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://gatewaydb:5432/gateway
+      KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
       KC_DB_SCHEMA: public
@@ -99,9 +116,9 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     command: start-dev --http-port=8080 --hostname-strict=false
     depends_on:
-      - gatewaydb
+      - keycloakdb
     networks:
-      - eq_net 
+      - eq_net
 
   registrydb:
     image: mongo
@@ -228,3 +245,4 @@ volumes:
   gatewaydb:
   registrydb:
   calendardb:
+  keycloakdb:
