@@ -14,6 +14,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Deploy on VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: radpro.it
+          username: manager
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 1022
+          script: sh ~/eq/build.sh
+
       - name: Git Pull on VPS
         uses: appleboy/ssh-action@master
         with:
