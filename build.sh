@@ -31,9 +31,9 @@ for service in "${services[@]}"; do
 done
 
 # Build frontend Angular
-if [ -d "eq-fe" ]; then
+if [ -d "frontend" ]; then
   log "La cartella 'frontend' è presente. Avvio build Angular..."
-  cd eq-fe || { log "Impossibile entrare nella cartella frontend."; exit 1; }
+  cd frontend || { log "Impossibile entrare nella cartella frontend."; exit 1; }
 
   if [ -f "package.json" ]; then
     npm install --silent
