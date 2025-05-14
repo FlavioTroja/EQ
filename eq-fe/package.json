@@ -12,9 +12,6 @@
     "validate": "npm ls",
     "start-host": "ng serve --host 0.0.0.0 --disable-host-check --port 4200"
   },
-  "pre-commit": [
-    "patch-version"
-  ],
   "private": true,
   "dependencies": {
     "@angular/animations": "^16.2.0",

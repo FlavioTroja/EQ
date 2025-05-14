@@ -46,6 +46,7 @@ yarn.lock
 # FTONTEND
 .angular
 node_modules
+dist
 
 # AWS
 !copilot/
