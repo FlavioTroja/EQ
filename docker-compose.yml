@@ -100,6 +100,8 @@ services:
     image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     restart: always
+    ports:
+      - "5050:8080"
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
@@ -108,6 +110,7 @@ services:
       KC_DB_SCHEMA: public
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: secr3t
+    command: start --http-port=8080 --hostname-strict=false
     depends_on:
       - keycloakdb
     networks:
