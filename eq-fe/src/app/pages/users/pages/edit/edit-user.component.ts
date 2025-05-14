@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import * as UserActions from "../../../users/store/actions/users.actions";
-import { findRoleLabel, PartialUser } from "../../../../models/User";
+import { PartialUser, Roles } from "../../../../models/User";
 import { difference } from "../../../../../utils/utils";
 import { getCurrentUser } from "../../store/selectors/users.selectors";
 import { getRouterData, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
@@ -17,7 +17,6 @@ import { FileService } from "../../../../components/upload-image/services/file.s
 import { concatMap, map, mergeMap, of, Subject, takeUntil, pairwise } from "rxjs";
 import { FileUploadComponent } from "../../../../components/upload-image/file-upload.component";
 import { MatDialogModule } from "@angular/material/dialog";
-import { getRoleNames } from "../../store/selectors/roleNames.selectors";
 
 @Component({
   selector: 'app-edit-user',
@@ -53,16 +52,6 @@ import { getRoleNames } from "../../store/selectors/roleNames.selectors";
 
             </div>
           </div>
-
-          <div *ngIf="viewOnly() && (roleNames$ | async) as roleNames">
-              <div>
-                <div class="text-4xl pt-6 pb-4 font-extrabold"> {{ userForm.getRawValue().username }} </div>
-                <div class="text-2xl pb-2"> {{ userForm.getRawValue().email }} </div>
-              </div>
-              <div class="flex gap-2">
-                <div *ngFor="let role of userForm.getRawValue().roles" class="whitespace-nowrap bg-gray-100 text-sm px-2 py-1 rounded">{{ findRoleLabel(roleNames, role) }}</div>
-              </div>
-          </div>
         </div>
         <div *ngIf="!viewOnly()" class="grid gap-3" [ngClass]="isNewUser ? ('grid-cols-2') : ('grid-cols-3')">
           <div>
@@ -78,9 +67,12 @@ import { getRoleNames } from "../../store/selectors/roleNames.selectors";
                    [ngClass]="f.roles.invalid && f.roles.dirty ? ('text-red-800') : ('text-gray-900')">
               ruoli
             </label>
-            <div class="w-full flex shadow-md bg-foreground text-gray-900 text-sm rounded-lg border-input focus:outline-none p-3 font-bold" [ngClass]="{'viewOnly' : viewOnly()}">
+            <div
+              class="w-full flex shadow-md bg-foreground text-gray-900 text-sm rounded-lg border-input focus:outline-none p-3 font-bold"
+              [ngClass]="{'viewOnly' : viewOnly()}">
               <mat-select id="user-role" [multiple]="true" [formControl]="f.roles" placeholder="seleziona">
-                <mat-option *ngFor="let role of roleNames$ | async as roles" [value]="role.name">{{ role.label }}</mat-option>
+                <mat-option *ngFor="let role of roles" [value]="role">{{ role }}
+                </mat-option>
               </mat-select>
             </div>
           </div>
@@ -104,7 +96,6 @@ export default class EditUserComponent implements OnInit, OnDestroy {
   fb = inject(FormBuilder);
   store: Store<AppState> = inject(Store);
   imageService = inject(FileService);
-  roleNames$ = this.store.select(getRoleNames);
 
   subject = new Subject();
 
@@ -135,6 +126,10 @@ export default class EditUserComponent implements OnInit, OnDestroy {
     return this.id() === "new";
   }
 
+  get roles(): string[] {
+    return Object.keys(Roles);
+  }
+
   ngOnInit() {
 
     if (!this.isNewUser) {
@@ -153,7 +148,7 @@ export default class EditUserComponent implements OnInit, OnDestroy {
         this.initFormValue = value as PartialUser;
         this.userForm.patchValue({
           ...value,
-          roles: ((value as PartialUser).roles ?? []).map((r) => r.roleName)
+          roles: ((value as PartialUser).roles ?? [])
         });
       });
 
@@ -224,5 +219,4 @@ export default class EditUserComponent implements OnInit, OnDestroy {
     this.store.dispatch(UserActions.clearUserHttpError());
   }
 
-  protected readonly findRoleLabel = findRoleLabel;
 }

@@ -9,7 +9,7 @@ import { AppState } from "../../../../app.config";
 import { getUsersPaginate } from "../../store/selectors/users.selectors";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { Sort, Table, TableButton } from "../../../../models/Table";
-import { findRoleLabel, PartialUser, User } from "../../../../models/User";
+import { PartialUser, User } from "../../../../models/User";
 import * as RouterActions from "../../../../core/router/store/router.actions";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -18,7 +18,6 @@ import { ModalComponent, ModalDialogData } from "../../../../components/modal/mo
 import * as UserActions from "../../../users/store/actions/users.actions";
 import { createSortArray } from "../../../../../utils/utils";
 import { ShowImageComponent } from "../../../../components/show-image/show-image.component";
-import { getRoleNames } from "../../store/selectors/roleNames.selectors";
 
 @Component({
   selector: 'app-list-user',
@@ -46,11 +45,7 @@ import { getRoleNames } from "../../store/selectors/roleNames.selectors";
     </ng-template>
 
     <ng-template #rolesRow let-row>
-      <div class="flex flex-wrap gap-1" *ngIf="(roleNames$ | async) as roleNames">
-        <div class="gap-1" *ngFor="let role of row.roles">
-          <span class="whitespace-nowrap bg-gray-100 text-sm me-2 px-2.5 py-0.5 rounded">{{ findRoleLabel(roleNames, role.roleName) }}</span>
-        </div>
-      </div>
+      {{ row.roles }}
     </ng-template>
 
     <ng-template #contactRow let-row>
@@ -75,7 +70,6 @@ export default class UsersComponent {
   @ViewChild("rolesRow") rolesRow: TemplateRef<any> | undefined;
 
   store: Store<AppState> = inject(Store);
-  roleNames$ = this.store.select(getRoleNames);
   userPaginate$ = this.store.select(getUsersPaginate);
   dialog = inject(MatDialog);
 
@@ -203,5 +197,4 @@ export default class UsersComponent {
     });
   }
 
-  protected readonly findRoleLabel = findRoleLabel;
 }

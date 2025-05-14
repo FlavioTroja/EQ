@@ -16,10 +16,19 @@ import { GradientBlurComponent } from "./components/gradient-blur/gradient-blur.
 import { ModalButton } from "./models/Button";
 import { MobileNavbarComponent } from "./components/sidebar/mobile-navbar.component";
 import { uiSetSidebarCollapseState } from "./core/ui/store/ui.actions";
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
+import { MomentDateAdapter } from "@angular/material-moment-adapter";
+import {
+  CUSTOM_DATE_FORMAT
+} from "./components/date-interval-selector/custom-date-modules/custom-date-adapter.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMAT }
+  ],
   imports: [
     CommonModule,
     RouterOutlet,

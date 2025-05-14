@@ -25,6 +25,17 @@ import { MatDialogModule } from "@angular/material/dialog";
         </button>
       </div>
 
+      <!-- weekdays -->
+      <div class="calendar-grid">
+        <div class="flex font-bold justify-center">{{ _isDesktop ? 'Lunedì' : 'Lun' }}</div>
+        <div class="flex font-bold justify-center">{{ _isDesktop ? 'Martedì' : 'Mar' }}</div>
+        <div class="flex font-bold justify-center">{{ _isDesktop ? 'Mercoledì' : 'Mer' }}</div>
+        <div class="flex font-bold justify-center">{{ _isDesktop ? 'Giovedì' : 'Gio' }}</div>
+        <div class="flex font-bold justify-center">{{ _isDesktop ? 'Venerdì' : 'Ven' }}</div>
+        <div class="flex font-bold justify-center">{{ _isDesktop ? 'Sabato' : 'Sab' }}</div>
+        <div class="flex font-bold justify-center text-error">{{ _isDesktop ? 'Domenica' : 'Dom' }}</div>
+      </div>
+      
       <!-- cells -->
       <div class="calendar-grid">
         <div *ngFor="let day of daysInMonth; let i = index">
@@ -32,7 +43,7 @@ import { MatDialogModule } from "@angular/material/dialog";
             [cellNumber]="day.day"
             [selected]="day.isSelected"
             [holiday]="(i+1) % 7 === 0"
-            [ngClass]="{'opacity-0 pointer-events-none cursor-default': !day.day}"
+            [ngClass]="{'hidden pointer-events-none cursor-default': !day.day}"
             (selectedEvent)="cleanSelectedDays(i, day.day, $event)"
             [cellExtraContent]="template"
           />
@@ -64,6 +75,7 @@ export class EventCalendarComponent implements OnInit, OnDestroy {
   daysInMonth!: { day: number, isSelected: boolean }[];
 
   private _destroyed = new Subject<void>();
+  readonly _isDesktop: boolean = window.innerWidth >= 900;
 
   constructor() {
     this.date = DateTime.now();

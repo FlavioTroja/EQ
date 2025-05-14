@@ -21,6 +21,17 @@ export class AuthEffects  {
     ])
   ));
 
+  registerEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthActions.register),
+    exhaustMap(({ username, password, confirmPassword, cellphone }) => this.authService.register({ username, password, confirmPassword, cellphone })
+      .pipe(
+        map(auth => AuthActions.registerSuccess({ auth: auth })),
+        catchError((err) => {
+          return of(AuthActions.registerFailed(err))
+        })
+      ))
+  ));
+
   loginEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.login),
     exhaustMap(({ username, password }) => this.authService.login({ username, password })
@@ -39,7 +50,7 @@ export class AuthEffects  {
       ProfileActions.loadProfile(),
       RouterActions.go({ path: ["home"] })
     ])
-  ))
+  ));
 
   logoutEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.logout),
@@ -48,7 +59,7 @@ export class AuthEffects  {
       RouterActions.go({ path: [""] }),
       AuthActions.logoutSuccess()
     ])
-  ))
+  ));
   constructor(private actions$: Actions,
               private authService: AuthService) {}
 }

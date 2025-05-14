@@ -13,8 +13,6 @@ const routes: Routes = [
       },
       buttons: [
         { label: "Nuovo", iconName: "add", navigate: "/customers/new" },
-        // { label: "", iconName: "search", action: NAVBAR_ACTION.USERS_EDIT },
-        // { label: "", iconName: "home", action: NAVBAR_ACTION.USERS_DELETE }
       ]
     }
   },
@@ -29,8 +27,6 @@ const routes: Routes = [
       },
       buttons: [
         { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.CUSTOMER_SAVE, selectors: { disabled: getActiveCustomerChanges } },
-        // { label: "", iconName: "search", action: NAVBAR_ACTION.USERS_EDIT },
-        // { label: "", iconName: "home", action: NAVBAR_ACTION.USERS_DELETE }
       ],
       backAction: "-",
     }
@@ -41,6 +37,33 @@ const routes: Routes = [
     data: {
       title: {
         default: "Visualizza cliente",
+      },
+      buttons: [
+        { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.CUSTOMER_NAVIGATE_ON_MODIFY },
+      ],
+      backAction: "-",
+    }
+  },
+  {
+    path: ':customerId/locations/:locationId',
+    loadComponent: () => import('./pages/locations/pages/edit/edit-location.component'),
+    data: {
+      title: {
+        default: "Modifica sede",
+        other: "Aggiungi sede"
+      },
+      buttons: [
+        { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.CUSTOMER_SAVE, selectors: { disabled: getActiveCustomerChanges } },
+      ],
+      backAction: "-",
+    }
+  },
+  {
+    path: ':customerId/locations/:locationId/view',
+    loadComponent: () => import('./pages/locations/pages/view/view-location.component'),
+    data: {
+      title: {
+        default: "Visualizza Sede",
       },
       buttons: [
         { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.CUSTOMER_NAVIGATE_ON_MODIFY },

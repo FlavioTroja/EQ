@@ -13,8 +13,8 @@ import { ProfileState, reducer as profileReducer } from "./core/profile/store/pr
 import { AuthEffects } from "./core/auth/store/auth.effects";
 import { AuthState, reducer as authReducer } from "./core/auth/store/auth.reducer";
 import { AuthInterceptor } from "./core/auth/services/auth.interceptor";
-import { SidebarEffects } from "./core/ui/store/ui.effects";
-import { reducer as sidebarReducer, UIState } from "./core/ui/store/ui.reducer";
+import { UIEffects } from "./core/ui/store/ui.effects";
+import { reducer as uiReducer, UIState } from "./core/ui/store/ui.reducer";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
@@ -33,7 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([AuthInterceptor])),
     provideStore({
       auth: authReducer,
-      ui: sidebarReducer,
+      ui: uiReducer,
       profile: profileReducer,
       router: routerReducer,
     }, {
@@ -54,7 +54,7 @@ export const appConfig: ApplicationConfig = {
       RouterEffects,
       ProfileEffects,
       AuthEffects,
-      SidebarEffects,
+      UIEffects,
     ]),
     { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
   ]

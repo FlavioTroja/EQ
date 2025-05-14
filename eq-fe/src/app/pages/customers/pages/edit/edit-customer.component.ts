@@ -69,7 +69,7 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   }
 
   get isNewCustomer() {
-    return this.id() === "new" || !this.id();
+    return this.id() === "new";
   }
 
   ngOnInit() {
@@ -119,7 +119,6 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
           ]
         };
 
-        console.log("changes",diff)
         return createCustomerPayload(diff);
       }),
       map((changes: any) => Object.keys(changes).length !== 0 && !this.customerForm.invalid ? { ...changes, id: this.id() } : {}),

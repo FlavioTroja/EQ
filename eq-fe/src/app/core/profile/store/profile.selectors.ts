@@ -23,19 +23,16 @@ export const getProfileAvatarUrl = createSelector(
 
 export const getProfileUserRoleNames = createSelector(
   getProfile,
-  (state: ProfileState) => state.user?.roles?.map(r => r.roleName) || []
+  (state: ProfileState) => state.user?.roles || []
 );
 
-export const disabledByRolesSelector = (disabledRoles: Roles[]) =>
-  createSelector(
-    getProfile,
-    (state?: ProfileState) => {
-      if (state?.user.roles?.some(role => role.roleName === Roles.OVERZOOM)) {
-        return true;
-      }
-      return !state?.user.roles?.some(
-        role => disabledRoles.includes(role.roleName) && role.isActive
-      );
+export const disabledByRolesSelector = (disabledRoles: Roles[]) => createSelector(
+  getProfile,
+  (state?: ProfileState) => {
+    if(state?.user.roles?.includes(Roles.OVERZOOM)) {
+      return true;
     }
-  );
+    return !state?.user.roles?.some((role) => disabledRoles?.includes(role));
+  }
+);
 

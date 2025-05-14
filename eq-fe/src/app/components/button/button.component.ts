@@ -16,11 +16,14 @@ import { TooltipOpts } from "../../../global";
     <div class="flex gap-1 items-center bg-foreground rounded-full px-4 py-2 default-shadow-hover cursor-pointer"
          (click)="click()"
          [ngClass]="{
-         'opacity-50 pointer-events-none' : disabled,
+         'opacity-50 pointer-events-none' : (viewOnly || disabled),
+         'text-white': !!bgColor,
          'bg-foreground': bgColor === '',
          'remove-element': bgColor === 'remove',
          'confirm-element': bgColor === 'confirm',
-         'accent': bgColor === 'success'
+         'icon-success': bgColor === 'success',
+         'icon-accent': bgColor === 'accent',
+         'icon-compile': bgColor === 'compile',
          }"
          [matTooltip]="tooltipOpts?.text || ''"
          [matTooltipPosition]="tooltipOpts?.position || 'below'"
@@ -30,7 +33,7 @@ import { TooltipOpts } from "../../../global";
       <mat-icon *ngIf="isLoading" class="icon-size material-symbols-rounded cursor-pointer animate-spin">
         progress_activity
       </mat-icon>
-      <div *ngIf="label" class="font-bold">{{ label }}</div>
+      <div *ngIf="label" class="font-bold select-none">{{ label }}</div>
     </div>
   `,
   styles: [`
@@ -52,6 +55,7 @@ export class ButtonComponent implements OnChanges {
     disabled?: MemoizedSelector<any, any>,
     isLoading?: MemoizedSelector<any, any>
   } | undefined;
+  @Input({ required: false }) viewOnly: boolean = false;
   @Input({ required: false }) label: string = "";
   @Input({ required: false }) bgColor: string = "";
   @Input({ required: false }) tooltipOpts?: TooltipOpts;

@@ -2,20 +2,25 @@ import { UIState } from "./ui.reducer";
 import { AppState } from "../../../app.config";
 import { createSelector } from "@ngrx/store";
 
-export const selectSidebar = (state: AppState) => state.ui;
+export const uiState = (state: AppState) => state.ui;
 
 export const selectUISidebarCollapsed = createSelector(
-  selectSidebar,
+  uiState,
   (state: UIState) => state.sidebar.collapsed
 );
 
 export const selectUISidebarExpandedPath = createSelector(
-  selectSidebar,
+  uiState,
   (state: UIState) => state.sidebar.expand?.path
 );
 
+export const selectCustomNavbar = createSelector(
+  uiState,
+  (state: UIState) => state.navbar
+);
+
 export const selectUINotification = createSelector(
-  selectSidebar,
+  uiState,
   (state: UIState) => state.notifications
 );
 

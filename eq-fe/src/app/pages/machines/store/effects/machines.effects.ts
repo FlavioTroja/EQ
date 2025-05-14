@@ -73,7 +73,7 @@ export class MachinesEffects  {
       this.store.select(getActiveMachineChanges)
     ]),
     exhaustMap(([_, changes]) => {
-      if(isNaN(changes.id!)) {
+      if(changes.id! === "new") {
         return of(MachinesActions.addMachine({ machine: changes as Machine }));
       }
       return this.machineService.editMachine(changes?.id!, changes as Machine)

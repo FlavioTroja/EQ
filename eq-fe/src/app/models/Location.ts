@@ -7,7 +7,13 @@ export interface Location {
   address: string,
   city: string,
   province: string,
-  departments: Department[]
+  departments: Department[],
+  completedDepartments: number
 }
 
 export type PartialLocation = Partial<Location>;
+
+export interface LocationFilter {
+  customerId: string;
+  value?: string,
+}

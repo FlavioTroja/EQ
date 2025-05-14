@@ -5,7 +5,7 @@ import { Actions } from "@ngrx/effects";
 @Injectable({
   providedIn: 'root'
 })
-export class SidebarEffects {
+export class UIEffects {
   constructor(private actions$: Actions) {}
 
   // extendSidebar$ = createEffect(() => this.actions$.pipe(

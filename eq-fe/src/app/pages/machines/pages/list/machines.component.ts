@@ -13,7 +13,7 @@ import { SearchComponent } from "../../../../components/search/search.component"
 import { TableComponent } from "../../../../components/table/table.component";
 import { TableSkeletonComponent } from "../../../../components/skeleton/table-skeleton.component";
 import { PaginateDatasource, Sort, TableButton } from "../../../../models/Table";
-import { PartialMachine, MachineTable, Machine } from "../../../../models/Machine";
+import { PartialMachine, MachineTable, Machine, getLabelFromMachineType } from "../../../../models/Machine";
 import * as RouterActions from "../../../../core/router/store/router.actions";
 import { FormControl } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
@@ -53,7 +53,13 @@ import { getMachinesPaginate } from "../../store/selectors/machines.selectors";
     </ng-template>
 
     <ng-template #nameRow let-row>
-      <div class="flex flex-col justify-center">{{ row?.name }}</div>
+      <div class="flex self-center gap-2">
+        <div class="flex flex-col justify-center">{{ row?.name }}</div>
+        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gray-100 fit-content border" *ngIf="!!row.type">
+          <mat-icon class="material-symbols-rounded">category</mat-icon>
+          {{ getLabelFromMachineType[row.type] }}
+        </div>
+      </div>
     </ng-template>
   `,
   styles: [``],
@@ -94,7 +100,7 @@ export default class MachinesComponent implements AfterViewInit, OnInit {
           columnDef: 'name',
           header: 'Nome',
           template: this.nameRow,
-          width: "15rem",
+          width: "35rem",
           sortable: true
         },
       ];
@@ -212,4 +218,6 @@ export default class MachinesComponent implements AfterViewInit, OnInit {
       value[0] = (evt?.direction === "asc" || evt?.direction === "desc" ? evt : {} as Sort);
     });
   }
+
+  protected readonly getLabelFromMachineType = getLabelFromMachineType;
 }
