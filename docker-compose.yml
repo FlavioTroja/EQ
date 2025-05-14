@@ -101,7 +101,7 @@ services:
       - eq_net
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.1.2
+    image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     restart: always
     ports:
