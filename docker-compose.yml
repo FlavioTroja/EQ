@@ -114,7 +114,7 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: false
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: secr3t
-    command: start --http-port=8080 --hostname-url=https://radpro.it --hostname-strict=false --hostname-strict-https=false --optimized
+    command: start --http-port=8080 --hostname=radpro.it --hostname-strict=false --hostname-strict-https=false --optimized
     depends_on:
       - keycloakdb
     networks:
