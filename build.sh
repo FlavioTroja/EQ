@@ -30,27 +30,6 @@ for service in "${services[@]}"; do
   fi
 done
 
-# Build frontend Angular
-if [ -d "frontend" ]; then
-  log "La cartella 'frontend' è presente. Avvio build Angular..."
-  cd frontend || { log "Impossibile entrare nella cartella frontend."; exit 1; }
-
-  if [ -f "package.json" ]; then
-    npm install --silent
-    ng build --configuration production
-    if [ $? -eq 0 ]; then
-      log "Build Angular completata con successo."
-    else
-      log "Errore durante la build Angular."
-    fi
-  else
-    log "File package.json non trovato nella cartella frontend."
-  fi
-  cd ..
-else
-  log "La cartella 'frontend' non è presente. Skip build."
-fi
-
 # Build Docker
 log "Costruisco i container Docker..."
 docker compose build
