@@ -13,3 +13,12 @@ export interface ModalButton<T, Q> extends Button {
     disabled: MemoizedSelector<T, Q>,
   }
 }
+
+export interface BottomSheetButton<T, Q> extends Button {
+  onClick: () => any  | void,
+  valueToEmit?: boolean,
+  selectors?: {
+    disabled: MemoizedSelector<T, Q>,
+  }
+}
+

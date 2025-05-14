@@ -68,6 +68,6 @@
       </div>
     </div>
 
-    <app-customer-locations-section [viewOnly]="false" [locations]="locations"/>
+    <app-customer-locations-section *ngIf="!isNewCustomer" [locations]="locations" />
   </div>
 </form>

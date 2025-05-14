@@ -11,23 +11,16 @@ import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { getRouterUrl, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
+import { SectionHeaderComponent } from "../../../../components/section-header/section-header.component";
 
 @Component({
   selector: 'app-customer-locations-section',
   standalone: true,
-  imports: [ CommonModule, MatIconModule, LocationCardComponent, ReactiveFormsModule ],
+  imports: [ CommonModule, MatIconModule, LocationCardComponent, ReactiveFormsModule, SectionHeaderComponent ],
   template: `
 
     <div class="flex flex-col gap-2">
-      <div class="flex text-xl font-bold w-full justify-between">
-        Sedi
-        <div *ngIf="!viewOnly">
-          <button class="focus:outline-none rounded-full w-full border-input bg-foreground flex items-center"
-                  (click)="addNewLocation()">
-            <mat-icon class="align-to-center icon-size material-symbols-rounded scale-75">add</mat-icon>
-          </button>
-        </div>
-      </div>
+      <app-section-header title="Sedi" [viewOnly]="viewOnly" (btnAdd)="addNewLocation()" />
       <div>
         <div class="flex flex-col w-full gap-2.5">
           <app-location-card
@@ -45,8 +38,8 @@ import { getRouterUrl, selectCustomRouteParam } from "../../../../core/router/st
   `]
 })
 export class CustomerLocationsSectionComponent {
-  @Input({ required: true }) viewOnly = false;
   @Input({ required: true }) locations: LocationOnCustomerSection[] = [];
+  @Input({ required: false }) viewOnly = false;
 
   fb = inject(FormBuilder);
   store: Store<AppState> = inject(Store);
