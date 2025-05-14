@@ -13,7 +13,7 @@ services:
     command: /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"  
     networks:
       - eq_net   
-      
+
   certbot:
     image: certbot/certbot
     container_name: certbot
@@ -90,17 +90,18 @@ services:
     ports:
       - "5050:8080"
     environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://gatewaydb:5432/gateway
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
-    command: start-dev
+      KC_DB_SCHEMA: public
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    command: start-dev --http-port=8080 --hostname-strict=false --init
     depends_on:
       - gatewaydb
     networks:
-      - eq_net    
+      - eq_net 
 
   registrydb:
     image: mongo
