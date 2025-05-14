@@ -47,6 +47,9 @@ yarn.lock
 .angular
 node_modules
 dist
+.yarn
+yarn-error.log
+
 
 # AWS
 !copilot/
