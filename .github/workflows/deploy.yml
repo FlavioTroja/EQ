@@ -34,8 +34,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
-          source: ./frontend/dist
-          target: /home/manager/eq/frontend/dist
+          source: frontend/dist/soko-fe/*
+          target: /home/manager/eq/frontend/dist/
           rm: true
 
       - name: Git Pull on VPS
