@@ -53,4 +53,5 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
+          working-directory: ~/eq
           script: bash ~/eq/build.sh
