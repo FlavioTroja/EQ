@@ -15,11 +15,16 @@ import { PartialLocation } from "../../../../../../models/Location";
 import { difference } from "../../../../../../../utils/utils";
 import { getCurrentLocation } from "../../store/selectors/locations.selectors";
 import { InputComponent } from "../../../../../../components/input/input.component";
+import { MatBottomSheet } from "@angular/material/bottom-sheet";
+import { SectionHeaderComponent } from "../../../../../../components/section-header/section-header.component";
+import {
+  LocationDepartmentsSectionComponent
+} from "../../components/location-departments-selections/location-departments-section.component";
 
 @Component({
   selector: 'app-edit-location',
   standalone: true,
-  imports: [ CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, ReactiveFormsModule, InputComponent ],
+  imports: [ CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, ReactiveFormsModule, InputComponent, SectionHeaderComponent, LocationDepartmentsSectionComponent ],
   template: `
     <form [formGroup]="locationForm">
       <div class="flex flex-col gap-2">
@@ -65,6 +70,7 @@ import { InputComponent } from "../../../../../../components/input/input.compone
                       formControlName="note"></textarea>
           </div>
         </div>
+        <app-location-departments-section />
       </div>
     </form>
   `,
@@ -73,9 +79,9 @@ import { InputComponent } from "../../../../../../components/input/input.compone
 export default class EditLocationComponent implements OnInit {
 
   store: Store<AppState> = inject(Store);
-  subject = new Subject();
-
   fb = inject(FormBuilder);
+
+  subject = new Subject();
 
   active$ = this.store.select(getCurrentLocation)
     .pipe(takeUntilDestroyed());

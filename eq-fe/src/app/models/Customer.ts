@@ -9,12 +9,27 @@ export interface Customer {
   vatNumber: string,
   pec: string,
   sdi: string,
-  paymentMethod: string[],
+  paymentMethod: PaymentMethod,
   email: string,
   phone: number,
   note?: number,
   locations: Location[]
 }
+
+export enum PaymentMethod {
+  CASH = "CASH",
+  BANK_CHECK = "BANK_CHECK",
+  BANCK_DRAFT = "BANCK_DRAFT",
+  BANK_TRANSFER = "BANK_TRANSFER" ,
+  BANK_STATEMENT = "BANK_STATEMENT",
+  CREDIT_CARD = "CREDIT_CARD",
+  RIBA_30 = "RIBA_30",
+  RIBA_60 = "RIBA_60",
+  RIBA_90 = "RIBA_90",
+  RIBA_30_60 = "RIBA_30_60",
+  RIBA_30_60_90 = "RIBA_30_60_90"
+}
+// "CASH""BANK_CHECK""BANCK_DRAFT""BANK_TRANSFER""BANK_STATEMENT""CREDIT_CARD""RIBA_30""RIBA_60""RIBA_90""RIBA_30_60""RIBA_30_60_90"
 
 export type PartialCustomer = Partial<Customer>;
 
