@@ -53,6 +53,7 @@ yarn-error.log
 # NGINX e CERTBOT
 nginx
 certbot
+init-letsencrypt.sh
 
 # AWS
 !copilot/
