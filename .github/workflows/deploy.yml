@@ -33,6 +33,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
           source: frontend/dist/soko-fe/*
+          strip_components: 3
           target: /home/manager/eq/frontend/dist/
           rm: true
 
