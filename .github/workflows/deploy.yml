@@ -21,10 +21,14 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd frontend
+          npm install
 
       - name: Build
-        run: yarn build --c production
+        run: |
+          cd frontend
+          yarn build --c production
 
       - name: Upload dist on VPS
         uses: appleboy/scp-action@v0.1.4
