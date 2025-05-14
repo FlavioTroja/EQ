@@ -97,7 +97,7 @@ services:
       KC_DB_SCHEMA: public
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-    command: start-dev --http-port=8080 --hostname-strict=false --init
+    command: start-dev --http-port=8080 --hostname-strict=false
     depends_on:
       - gatewaydb
     networks:
