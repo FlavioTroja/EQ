@@ -177,6 +177,20 @@ services:
     networks:
       - eq_net    
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend:latest
+    container_name: frontend
+    restart: always
+    ports:
+      - "4200:80"
+    depends_on:
+      - gateway
+    networks:
+      - eq_net
+
 networks:
   eq_net:
     driver: bridge
