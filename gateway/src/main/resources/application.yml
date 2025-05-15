@@ -14,12 +14,33 @@ spring:
             show-sql: true    
     security:
         oauth2:
+            client:
+                registration:
+                    cognito:
+                        client-id: ${COGNITO_CLIENT_ID}
+                        client-secret: ${COGNITO_CLIENT_SECRET}
+                        authorization-grant-type: authorization_code
+                        redirect-uri: "https://api.radpro.it/login/oauth2/code/cognito"
+                        scope:
+                        - openid
+                        - email
+                        - profile
+                provider:
+                    cognito:
+                        authorization-uri: ${COGNITO_DOMAIN}/oauth2/authorize
+                        token-uri:         ${COGNITO_DOMAIN}/oauth2/token
+                        user-info-uri:     ${COGNITO_DOMAIN}/oauth2/userInfo
+                        jwk-set-uri:       https://cognito-idp.eu-central-1.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json
             resourceserver:
                 jwt:
-                    issuer-uri: ${KEYCLOAK_URI:http://localhost:5050}/realms/EQ
+                    jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/${COGNITO_USER_POOL_ID}/.well-known/jwks.json
+            
+
 
     cloud:
         gateway:
+            default-filters:
+                - TokenRelay
             discovery:
                 locator:
                     enabled: true    
@@ -33,7 +54,7 @@ spring:
                     predicates[0]: Path=/api/document/** , /document/api-docs       
                     uri: lb://DOCUMENT                                
 
-
+ 
 openapi:
     service:
         title: gateway doc
@@ -59,16 +80,6 @@ springdoc:
           name: Registry Microservice
         - url: /document/api-docs
           name: Document Microservice  
-
-keycloak:
-  auth-server-url: ${KEYCLOAK_URI:http://localhost:5050}
-  realm: EQ
-  resource: eq-project
-  admin:
-    realm: master
-    resource: admin-cli    
-    username: admin
-    password: admin
 
 eureka:
     client:
