@@ -140,6 +140,7 @@
 
 
     --modal-remove-element: #E54F47;
+    --mat-bottom-sheet-container-background-color: #FFFFFF;
 
     // dark mode theme
     //--primary-color: 242, 242, 242;
@@ -227,6 +228,15 @@ fill-width {
   height: -webkit-stretch;
   height: stretch;
   height: 100%;
+}
+
+// Bottom Sheet BG
+.backdropPanelClassForBottomSheet {
+  width: 100%;
+  max-height: 90%;
+  background: transparent !important;
+  display: flex;
+  justify-content: center;
 }
 
 // Remove right arrow from input number
