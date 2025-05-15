@@ -1,7 +1,7 @@
-import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
-import { Auth, LoginPayload, RegisterPayload } from "../../../models/Auth";
+import { Auth, RegisterPayload } from "../../../models/Auth";
 
 const BASE_URL = environment.BASE_URL;
 const AUTH_KEY = "Authorization";
@@ -15,8 +15,21 @@ export class AuthService {
     return this.http.post<Auth>(`${BASE_URL}/auth/register`, payload);
   }
 
-  login(payload: LoginPayload) {
-    return this.http.post<Auth>(`${BASE_URL}/auth/login`, payload);
+   /**
+   * Avvia il flusso OIDC Authorization Code:
+   * Spring Security esporrà /oauth2/authorization/cognito
+   * che reindirizza alla Hosted UI di Cognito.
+   */
+   login(): void {
+    window.location.href = `${BASE_URL}/oauth2/authorization/cognito`;
+  }
+
+  /**
+   * Logout: Spring Security esporrà /logout
+   * (oppure personalizza in SecurityConfig il logoutSuccessUrl).
+   */
+  logout(): void {
+    window.location.href = `${BASE_URL}/logout`;
   }
 
   saveAuth(auth: Auth) {

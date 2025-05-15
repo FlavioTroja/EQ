@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from "@ngrx/effects";
-import * as AuthActions from "./auth.actions";
 import { catchError, exhaustMap, filter, map, of, tap } from "rxjs";
-import { AuthService } from "../services/auth.service";
 import * as ProfileActions from "../../profile/store/profile.actions";
 import * as RouterActions from "../../router/store/router.actions";
+import { AuthService } from "../services/auth.service";
+import * as AuthActions from "./auth.actions";
 
 @Injectable({
   providedIn: 'root'
@@ -32,16 +32,23 @@ export class AuthEffects  {
       ))
   ));
 
-  loginEffect$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthActions.login),
-    exhaustMap(({ username, password }) => this.authService.login({ username, password })
-      .pipe(
-        map(auth => AuthActions.loginSuccess({ auth: auth })),
-        catchError((err) => {
-          return of(AuthActions.loginFailed(err))
-        })
-      ))
-  ));
+  // Login → redirect a Cognito (no dispatch di altre azioni)
+  loginRedirect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.login),
+      tap(() => this.authService.login())
+    ),
+    { dispatch: false }
+  );
+
+  // Logout → redirect al logout handler di Spring
+  logoutRedirect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.logout),
+      tap(() => this.authService.logout())
+    ),
+    { dispatch: false }
+  );
 
   loginSuccessEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.loginSuccess),
