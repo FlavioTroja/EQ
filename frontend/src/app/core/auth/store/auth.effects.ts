@@ -32,23 +32,16 @@ export class AuthEffects  {
       ))
   ));
 
-  // Login → redirect a Cognito (no dispatch di altre azioni)
-  loginRedirect$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.login),
-      tap(() => this.authService.login())
-    ),
-    { dispatch: false }
-  );
-
-  // Logout → redirect al logout handler di Spring
-  logoutRedirect$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.logout),
-      tap(() => this.authService.logout())
-    ),
-    { dispatch: false }
-  );
+  loginEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthActions.login),
+    exhaustMap(({ username, password }) => this.authService.login({ username, password })
+      .pipe(
+        map(auth => AuthActions.loginSuccess({ auth: auth })),
+        catchError((err) => {
+          return of(AuthActions.loginFailed(err))
+        })
+      ))
+  ));
 
   loginSuccessEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.loginSuccess),

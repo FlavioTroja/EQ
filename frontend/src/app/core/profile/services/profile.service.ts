@@ -4,6 +4,7 @@ import { PartialUser } from "../../../models/User";
 import { environment } from "../../../../environments/environment";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../app.config";
+import { of } from "rxjs";
 
 const BASE_URL = environment.BASE_URL;
 @Injectable({
@@ -15,6 +16,7 @@ export class ProfileService {
 
   load() {
     return this.http.get<PartialUser>(`${BASE_URL}/api/registry/users/profile`);
+    // return of({})
   }
 
   edit(user: PartialUser) {

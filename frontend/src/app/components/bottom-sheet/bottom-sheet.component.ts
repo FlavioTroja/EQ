@@ -12,11 +12,11 @@ export interface BottomSheetDialogData {
 }
 
 @Component({
-  selector: 'app-modal',
+  selector: 'app-bottom-sheet',
   standalone: true,
   imports: [CommonModule, MatBottomSheetModule, ButtonComponent],
   template: `
-    <div class="p-2.5 flex flex-col justify-between min-h-[14em] min-w-[28em]">
+    <div class="flex flex-col grow justify-between bg-white p-2.5">
       <div class="flex flex-col gap-2">
         <div class="font-bold text-xl capitalize">
             {{ data.title }}
@@ -42,6 +42,20 @@ export interface BottomSheetDialogData {
     
   `]
 })
+/**
+ *
+ * uses "dismiss" instead of "close" as closing action
+ *
+ * - __--mat-bottom-sheet-container-background-color__ refers to the main body of the bottom sheet
+ *
+ * - __panelClass__ requires a SINGLE css class applied to it,
+ *    so you have to have a custom class instead of using multiple tailwind classes,
+ *    it refers to the backpanel where the main body of the bottom sheet appears,
+ *    if you hide it in any way it WILL hide the main body too,
+ *    __best way to "remove" it is by using transparent as bg-color & set
+ *    the var "--mat-bottom-sheet-container-background-color" to the color of your liking__
+ *
+ */
 export class BottomSheetComponent {
   constructor(
     public bottomSheetRef: MatBottomSheetRef<BottomSheetComponent>,
