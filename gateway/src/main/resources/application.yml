@@ -1,5 +1,7 @@
 server:
     port: 8765
+    servlet:
+        context-path: /api
 
 spring:
     application:
@@ -20,7 +22,7 @@ spring:
                         client-id: ${COGNITO_CLIENT_ID}
                         client-secret: ${COGNITO_CLIENT_SECRET}
                         authorization-grant-type: authorization_code
-                        redirect-uri: "https://api.radpro.it/login/oauth2/code/cognito"
+                        redirect-uri: "https://radpro.it/api/login/oauth2/code/cognito"
                         scope:
                         - openid
                         - email
