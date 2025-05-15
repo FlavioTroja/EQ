@@ -14,19 +14,14 @@ public class SecurityConfig {
         @Bean
         public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
                 http
-                                .csrf(csrf -> csrf.disable())
-                                .cors(Customizer.withDefaults())
-                                .authorizeExchange(authz -> authz
-                                                .pathMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                                .pathMatchers("/login**", "/oauth2/**").permitAll()
+                                .csrf().disable()
+                                .cors(Customizer.withDefaults()) // rilegge il bean CorsWebFilter che hai appena
+                                                                 // definito
+                                .authorizeExchange(ex -> ex
+                                                .pathMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
+                                                .permitAll()
                                                 .anyExchange().authenticated())
-                                // abilita il login OIDC
-                                .oauth2Login(Customizer.withDefaults())
-                                // abilita il client OAuth2 (per TokenRelay)
-                                .oauth2Client(Customizer.withDefaults())
-                                // abilita il resource server (JWT valida)
                                 .oauth2ResourceServer(rs -> rs.jwt(Customizer.withDefaults()));
-
                 return http.build();
         }
 }
