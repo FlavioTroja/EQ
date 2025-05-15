@@ -77,7 +77,7 @@ public class MachineController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Machine> partialUpdate(@PathVariable String id,
+    public ResponseEntity<Machine> partialUpdate(@PathVariable("id") String id,
             @RequestBody Machine machine) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update Machine: " + machine.toString());
@@ -102,7 +102,7 @@ public class MachineController {
      * @throws ResourceNotFoundException se la Machine non viene trovata
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMachine(@PathVariable String id) throws ResourceNotFoundException {
+    public ResponseEntity<Void> deleteMachine(@PathVariable("id") String id) throws ResourceNotFoundException {
         log.info("REST request to delete Machine : {}", id);
 
         if (machineService.existsById(id) == false) {

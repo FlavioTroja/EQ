@@ -34,7 +34,7 @@ public class MeasurementController {
     private MeasurementServiceImpl measurementService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Measurement>> findBySourceId(@PathVariable String sourceId,
+    public ResponseEntity<Page<Measurement>> findBySourceId(@PathVariable("id") String sourceId,
             Pageable pageable) {
         log.info("REST request to get a page of Measurements");
         Page<Measurement> page = measurementService.findBySourceId(sourceId, pageable);
@@ -42,7 +42,7 @@ public class MeasurementController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Measurement> create(@PathVariable String sourceId,
+    public ResponseEntity<Measurement> create(@PathVariable("id") String sourceId,
             @Valid @RequestBody Measurement measurement)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Measurement : " + measurement.toString());
@@ -56,7 +56,7 @@ public class MeasurementController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Measurement> partialUpdate(@PathVariable String id,
+    public ResponseEntity<Measurement> partialUpdate(@PathVariable("id") String id,
             @RequestBody Measurement measurement) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update Measurement: " + measurement.toString());

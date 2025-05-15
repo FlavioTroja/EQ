@@ -8,7 +8,8 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: ${KEYCLOAK_URI:http://localhost:5050}/realms/EQ
+                    issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ezfmvZVI2
+
     data:
         mongodb:
             authentication-database: admin

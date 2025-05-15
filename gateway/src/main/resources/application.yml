@@ -4,14 +4,6 @@ server:
 spring:
     application:
         name: gateway 
-    datasource:
-        url: jdbc:postgresql://${GATEWAYDB_HOST:gatewaydb}:${GATEWAYDB_PORT:5432}/${GATEWAYDB_DB_NAME:gateway}
-        username: ${GATEWAYDB_USER:postgres}
-        password: ${GATEWAYDB_PASSWORD:postgres}
-    jpa:
-        hibernate:
-            ddl-auto: update
-            show-sql: true    
     security:
         oauth2:
             resourceserver:

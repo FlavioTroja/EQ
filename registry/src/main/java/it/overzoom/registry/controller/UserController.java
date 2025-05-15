@@ -86,7 +86,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<UserDTO> partialUpdate(@PathVariable String id,
+    public ResponseEntity<UserDTO> partialUpdate(@PathVariable("id") String id,
             @RequestBody UserDTO userDTO) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update User: " + userDTO.toString());

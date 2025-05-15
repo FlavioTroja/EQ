@@ -34,7 +34,7 @@ public class ReportController {
     private ReportServiceImpl reportService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Report>> findByLocationId(@PathVariable String locationId,
+    public ResponseEntity<Page<Report>> findByLocationId(@PathVariable("id") String locationId,
             Pageable pageable) {
         log.info("REST request to get a page of Reports");
         Page<Report> page = reportService.findByLocationId(locationId, pageable);
@@ -42,7 +42,7 @@ public class ReportController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Report> create(@PathVariable String locationId,
+    public ResponseEntity<Report> create(@PathVariable("id") String locationId,
             @Valid @RequestBody Report report)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Report : " + report.toString());
@@ -56,7 +56,7 @@ public class ReportController {
     }
 
     @GetMapping("/prepare")
-    public ResponseEntity<ReportDTO> prepare(@PathVariable String locationId)
+    public ResponseEntity<ReportDTO> prepare(@PathVariable("id") String locationId)
             throws ResourceNotFoundException {
         log.info("REST request to prepare ReportDTO for location: {}", locationId);
         ReportDTO reportDTO = reportService.prepare(locationId);

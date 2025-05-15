@@ -42,23 +42,6 @@ services:
     networks:
       - eq_net
 
-  gatewaydb:
-    image: postgres
-    container_name: gatewaydb
-    restart: always
-    shm_size: 128mb
-    ports:
-      - "5465:5432"
-    volumes:
-      - gatewaydb:/data/postgres  
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /data/postgres
-      POSTGRES_DB: gateway
-    networks:
-      - eq_net
-
   gateway:
     build:
       context: ./gateway
@@ -69,15 +52,10 @@ services:
     ports:
       - "8765:8765"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://gatewaydb:5432/  
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: dev
       EUREKA_URI: http://eurekaserver:8761/eureka
     depends_on:
       eurekaserver:
-        condition: service_started
-      gatewaydb:
         condition: service_started
     networks:
       - eq_net
