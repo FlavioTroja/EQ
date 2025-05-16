@@ -4,8 +4,9 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
-  username: string,
-  cellphone: string,
+  name: string,
+  surname: string,
+  email: string,
   password: string,
   confirmPassword: string
 }

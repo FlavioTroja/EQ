@@ -23,7 +23,7 @@ export class AuthEffects  {
 
   registerEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.register),
-    exhaustMap(({ username, password, confirmPassword, cellphone }) => this.authService.register({ username, password, confirmPassword, cellphone })
+    exhaustMap(({ name, surname, email, password, confirmPassword }) => this.authService.register({ name, surname, email, password, confirmPassword })
       .pipe(
         map(auth => AuthActions.registerSuccess({ auth: auth })),
         catchError((err) => {

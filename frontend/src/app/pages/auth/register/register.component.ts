@@ -2,12 +2,12 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from "@ngrx/store";
 import { getAccessToken, getAuthError } from "../../../core/auth/store/auth.selectors";
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AppState } from "../../../app.config";
 import { MatIconModule } from "@angular/material/icon";
 
 import * as AuthActions from "../../../core/auth/store/auth.actions";
-import { LoginPayload, RegisterPayload } from "../../../models/Auth";
+import { RegisterPayload } from "../../../models/Auth";
 import { InputComponent } from "../../../components/input/input.component";
 import * as RouterActions from "../../../core/router/store/router.actions";
 
@@ -24,17 +24,21 @@ import * as RouterActions from "../../../core/router/store/router.actions";
       <div class="text-3xl font-extrabold">Registrati</div>
       <form class="contents" [formGroup]="registerFormGroup" (ngSubmit)="register()">
         <div class="w-full">
-          <app-input [formControl]="f.username" formControlName="username" label="e-mail o nome utente"
-                     id="username" type="text"/>
+          <app-input [formControl]="f.name" formControlName="name" label="Nome"
+                     id="name" type="text"/>
         </div>
         <div class="w-full">
-          <app-input [formControl]="f.cellphone" formControlName="cellphone" label="numero di telefono"
-                     id="cellphone" type="text"/>
+          <app-input [formControl]="f.surname" formControlName="surname" label="Cognome"
+                     id="surname" type="text"/>
+        </div>
+        <div class="w-full">
+          <app-input [formControl]="f.email" formControlName="email" label="Email"
+                     id="email" type="text"/>
         </div>
 
         <div class="w-full">
           <label for="password" class="text-md justify-left block px-3 py-0 font-medium"
-                 [ngClass]="f.password.invalid && f.password.dirty ? ('text-red-800') : ('text-gray-900')">password</label>
+                 [ngClass]="f.password.invalid && f.password.dirty ? ('text-red-800') : ('text-gray-900')">Password</label>
 
           <div class="relative">
             <input [type]="showPassword ? 'text' : 'password'" id="password"
@@ -54,7 +58,7 @@ import * as RouterActions from "../../../core/router/store/router.actions";
 
         <div class="w-full">
           <label for="confirmPassword" class="text-md justify-left block px-3 py-0 font-medium"
-                 [ngClass]="f.confirmPassword.invalid && f.confirmPassword.dirty ? ('text-red-800') : ('text-gray-900')">conferma Password</label>
+                 [ngClass]="f.confirmPassword.invalid && f.confirmPassword.dirty ? ('text-red-800') : ('text-gray-900')">Conferma Password</label>
 
           <div class="relative">
             <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
@@ -111,8 +115,9 @@ export default class RegisterComponent {
   });
 
   registerFormGroup = this.fb.group({
-    username: ["", Validators.required],
-    cellphone: ["", Validators.required],
+    name: ["", Validators.required],
+    surname: ["", Validators.required],
+    email: ["", Validators.required],
     password: ["", Validators.required],
     confirmPassword: ["", Validators.required]
   });
