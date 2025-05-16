@@ -35,15 +35,18 @@ public class AuthController {
     private final String clientId;
     private final String clientSecret;
     private final UserFeign userFeign;
+    private final String userPoolId;
 
     public AuthController(CognitoIdentityProviderClient cognito,
             @Value("${COGNITO_CLIENT_ID}") String clientId,
             @Value("${COGNITO_CLIENT_SECRET}") String clientSecret,
+            @Value("${COGNITO_USER_POOL_ID}") String userPoolId,
             UserFeign userFeign) {
         this.cognito = cognito;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.userFeign = userFeign;
+        this.userPoolId = userPoolId;
     }
 
     public static class LoginRequest {
@@ -108,13 +111,20 @@ public class AuthController {
             // Prendi l'UUID unico Cognito (userSub)
             String userSub = signUpResponse.userSub();
 
+            // assegna l’utente al gruppo ROLE_USER di default
+            cognito.adminAddUserToGroup(builder -> builder
+                    .userPoolId(userPoolId)
+                    .username(req.email)
+                    .groupName("ROLE_USER")
+                    .build());
+
             // Costruisci il DTO per il microservizio registry
             UserDto userDto = new UserDto();
             userDto.setUserId(userSub);
             userDto.setEmail(req.email);
             userDto.setFirstName(req.name);
             userDto.setLastName(req.surname);
-            // puoi settare altri campi se vuoi, come ruoli o phoneNumber ecc.
+            userDto.setRoles(new String[] { "ROLE_USER" });
 
             // Chiama il microservizio registry tramite Feign per salvare l'utente
             ResponseEntity<UserDto> responseFromRegistry = userFeign.create(userDto);
