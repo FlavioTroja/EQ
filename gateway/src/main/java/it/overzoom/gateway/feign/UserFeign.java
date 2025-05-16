@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import it.overzoom.gateway.dto.UserDto;
 import jakarta.ws.rs.BadRequestException;
 
-@FeignClient(name = "registry", url = "localhost:8765")
+@FeignClient(name = "registry", url = "registry:8080")
 public interface UserFeign {
 
     @PostMapping("/api/registry/users")

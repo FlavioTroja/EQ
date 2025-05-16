@@ -1,7 +1,5 @@
 package it.overzoom.gateway.dto;
 
-import java.util.Arrays;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,8 +7,6 @@ public class UserDto {
 
     private String id;
     private String userId;
-    @NotNull
-    private String username;
     @Email
     private String email;
     @NotNull
@@ -36,14 +32,6 @@ public class UserDto {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {
@@ -100,13 +88,6 @@ public class UserDto {
 
     public void setRoles(String[] roles) {
         this.roles = roles;
-    }
-
-    @Override
-    public String toString() {
-        return "UserDto [id=" + id + ", userId=" + userId + ", username=" + username + ", email=" + email
-                + ", firstName=" + firstName + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber + ", level="
-                + level + ", photo=" + photo + ", roles=" + Arrays.toString(roles) + "]";
     }
 
 }

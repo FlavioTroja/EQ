@@ -16,7 +16,6 @@ import it.overzoom.registry.model.User;
 public interface UserMapper {
 
     @Mapping(source = "photo", target = "photo", qualifiedByName = "blobToBase64")
-    @Mapping(target = "username", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(target = "firstName", ignore = true)
     @Mapping(target = "lastName", ignore = true)

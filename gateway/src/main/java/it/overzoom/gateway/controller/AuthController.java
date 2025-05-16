@@ -14,11 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.overzoom.gateway.dto.UserDto;
+import it.overzoom.gateway.feign.UserFeign;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowType;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthenticationResultType;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.InitiateAuthRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.InitiateAuthResponse;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.InvalidPasswordException;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpResponse;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExistsException;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,19 +34,29 @@ public class AuthController {
     private final CognitoIdentityProviderClient cognito;
     private final String clientId;
     private final String clientSecret;
+    private final UserFeign userFeign;
 
-    public AuthController(
-            CognitoIdentityProviderClient cognito,
+    public AuthController(CognitoIdentityProviderClient cognito,
             @Value("${COGNITO_CLIENT_ID}") String clientId,
-            @Value("${COGNITO_CLIENT_SECRET}") String clientSecret) {
+            @Value("${COGNITO_CLIENT_SECRET}") String clientSecret,
+            UserFeign userFeign) {
         this.cognito = cognito;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+        this.userFeign = userFeign;
     }
 
     public static class LoginRequest {
         public String username;
         public String password;
+    }
+
+    public static class RegisterRequest {
+        public String name;
+        public String surname;
+        public String email;
+        public String password;
+        public String confirmPassword;
     }
 
     @PostMapping("/login")
@@ -64,6 +81,55 @@ public class AuthController {
                 "id_token", tok.idToken(),
                 "refresh_token", tok.refreshToken(),
                 "expires_in", tok.expiresIn()));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+        if (!req.password.equals(req.confirmPassword)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Password and confirmPassword do not match"));
+        }
+
+        String secretHash = calculateSecretHash(req.email, clientId, clientSecret);
+
+        try {
+            SignUpRequest signUpRequest = SignUpRequest.builder()
+                    .clientId(clientId)
+                    .username(req.email)
+                    .password(req.password)
+                    .secretHash(secretHash)
+                    .userAttributes(
+                            AttributeType.builder().name("given_name").value(req.name).build(),
+                            AttributeType.builder().name("family_name").value(req.surname).build(),
+                            AttributeType.builder().name("email").value(req.email).build())
+                    .build();
+
+            SignUpResponse signUpResponse = cognito.signUp(signUpRequest);
+
+            // Prendi l'UUID unico Cognito (userSub)
+            String userSub = signUpResponse.userSub();
+
+            // Costruisci il DTO per il microservizio registry
+            UserDto userDto = new UserDto();
+            userDto.setUserId(userSub);
+            userDto.setEmail(req.email);
+            userDto.setFirstName(req.name);
+            userDto.setLastName(req.surname);
+            // puoi settare altri campi se vuoi, come ruoli o phoneNumber ecc.
+
+            // Chiama il microservizio registry tramite Feign per salvare l'utente
+            ResponseEntity<UserDto> responseFromRegistry = userFeign.create(userDto);
+
+            return ResponseEntity.ok(Map.of(
+                    "userConfirmed", signUpResponse.userConfirmed(),
+                    "userSub", userSub,
+                    "registryUser", responseFromRegistry.getBody()));
+        } catch (UsernameExistsException e) {
+            return ResponseEntity.status(409).body(Map.of("error", "User already exists"));
+        } catch (InvalidPasswordException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid password: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Registration failed: " + e.getMessage()));
+        }
     }
 
     private static String calculateSecretHash(String userName,
