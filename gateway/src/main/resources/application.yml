@@ -27,16 +27,11 @@ spring:
                     predicates[0]: Path=/api/document/** , /document/api-docs       
                     uri: lb://DOCUMENT                                
 
-
-cognito:
-  region: eu-central-1
-  client-id: 7tjsnvadbdm0413v71uku5h425
-
 openapi:
     service:
         title: gateway doc
         version: 1.0.0
-        url: http://localhost:8765
+        url: ${OPENAPI_URL:http://localhost:8765}
 
 springdoc:
     enable-native-support: true

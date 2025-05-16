@@ -19,6 +19,7 @@ public class User {
 
     private String lastName;
 
+    @Indexed
     private String email;
 
     private String phoneNumber;

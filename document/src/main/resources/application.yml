@@ -9,8 +9,8 @@ openapi:
     service:
         title: document doc
         version: 1.0.0
-        url: http://localhost:8765
-
+        url: ${OPENAPI_URL:http://localhost:8765}
+        
 springdoc:
     api-docs:
         path: /document/api-docs
