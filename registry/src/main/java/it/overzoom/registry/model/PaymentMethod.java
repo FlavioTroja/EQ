@@ -3,7 +3,7 @@ package it.overzoom.registry.model;
 public enum PaymentMethod {
     CASH,
     BANK_CHECK,
-    BANCK_DRAFT,
+    BANK_DRAFT,
     BANK_TRANSFER,
     BANK_STATEMENT,
     CREDIT_CARD,
