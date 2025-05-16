@@ -30,8 +30,8 @@ public class AuthController {
 
     public AuthController(
             CognitoIdentityProviderClient cognito,
-            @Value("${cognito.client-id}") String clientId,
-            @Value("${cognito.client-secret}") String clientSecret) {
+            @Value("${COGNITO_CLIENT_ID}") String clientId,
+            @Value("${COGNITO_CLIENT_SECRET}") String clientSecret) {
         this.cognito = cognito;
         this.clientId = clientId;
         this.clientSecret = clientSecret;

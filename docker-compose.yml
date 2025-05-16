@@ -51,9 +51,8 @@ services:
     restart: always
     ports:
       - "8765:8765"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      EUREKA_URI: http://eurekaserver:8761/eureka
+    env_file:
+      - .env  
     depends_on:
       eurekaserver:
         condition: service_started
@@ -71,10 +70,8 @@ services:
       - "5480:27017"
     volumes:
       - registrydb:/data/db  
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: secr3t
-      MONGO_INITDB_DATABASE: registry
+    env_file:
+      - .env
     networks:
       - eq_net  
 
@@ -85,16 +82,8 @@ services:
     image: registry:latest
     container_name: registry
     restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATA_MONGODB_HOST: registrydb
-      SPRING_DATA_MONGODB_PORT: 27017
-      SPRING_DATA_MONGODB_USERNAME: admin
-      SPRING_DATA_MONGODB_PASSWORD: secr3t
-      SPRING_DATA_MONGODB_DATABASE: registry
-      EUREKA_URI: http://eurekaserver:8761/eureka
+    env_file:
+      - .env
     depends_on:
       eurekaserver:
         condition: service_started
@@ -112,11 +101,8 @@ services:
       - "5481:5432"
     volumes:
       - calendardb:/data/postgres  
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /data/postgres
-      POSTGRES_DB: calendar
+    env_file:
+      - .env
     networks:
       - eq_net
 
@@ -127,15 +113,8 @@ services:
     image: calendar:latest
     container_name: calendar
     restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      RDS_HOSTNAME: calendardb
-      RDS_USERNAME: postgres
-      RDS_PASSWORD: postgres
-      RDS_PORT: 5432
-      SPRING_PROFILES_ACTIVE: dev
-      EUREKA_URI: http://eurekaserver:8761/eureka
+    env_file:
+      - .env
     depends_on:
       eurekaserver:
         condition: service_started
@@ -153,9 +132,8 @@ services:
     restart: always
     ports:
       - "8082:8082"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      EUREKA_URI: http://eurekaserver:8761/eureka
+    env_file:
+      - .env
     depends_on:
       eurekaserver:
         condition: service_started

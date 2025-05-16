@@ -8,7 +8,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ezfmvZVI2
+                    issuer-uri: https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}
 
     data:
         mongodb:

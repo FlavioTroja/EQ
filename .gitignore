@@ -52,7 +52,7 @@ yarn-error.log
 
 # NGINX e CERTBOT
 nginx/
-certbot
+certbot/
 init-letsencrypt.sh
 
 # AWS
