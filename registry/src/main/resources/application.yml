@@ -13,11 +13,11 @@ spring:
     data:
         mongodb:
             authentication-database: admin
-            database: registry
-            host: localhost
-            password: secr3t
-            port: 5480
-            username: admin
+            database: ${SPRING_DATA_MONGODB_DATABASE}
+            host: ${SPRING_DATA_MONGODB_HOST}
+            password: ${SPRING_DATA_MONGODB_PASSWORD}
+            port: ${SPRING_DATA_MONGODB_PORT}
+            username: ${SPRING_DATA_MONGODB_USERNAME}
             auto-index-creation: true
 
 openapi:
