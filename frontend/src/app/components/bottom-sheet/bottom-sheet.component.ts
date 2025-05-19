@@ -16,12 +16,12 @@ export interface BottomSheetDialogData {
   standalone: true,
   imports: [CommonModule, MatBottomSheetModule, ButtonComponent],
   template: `
-    <div class="flex flex-col grow justify-between bg-white p-2.5">
+    <div class="flex flex-col grow justify-between bg-white p-2.5 gap-2">
       <div class="flex flex-col gap-2">
-        <div class="font-bold text-xl capitalize">
+        <div *ngIf="!!data.title" class="font-bold text-xl capitalize">
             {{ data.title }}
         </div>
-        <div [innerHTML]="data.content"></div>
+        <div *ngIf="!!data.content" [innerHTML]="data.content"></div>
         <div *ngIf="!!data.templateContent">
           <ng-container *ngTemplateOutlet="data.templateContent"></ng-container>
         </div>

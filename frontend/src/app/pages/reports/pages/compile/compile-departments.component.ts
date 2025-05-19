@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CompileHeaderComponent, HeaderItem } from "../../components/compile-header.component";
-import { FillInContainerComponent } from "../../components/fill-in-container.component";
+import { ScrollBarNavigatorComponent, HeaderItem } from "../../../../components/scroll-bar-navigator/scroll-bar-navigator.component";
+import { FillInContainerComponent } from "../../../../components/fill-in-container/fill-in-container.component";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import { FormBuilder } from "@angular/forms";
@@ -24,7 +24,7 @@ import { NAVBAR_ACTION } from "../../../../models/NavBar";
   standalone: true,
   template: `
     <div class="flex flex-col gap-4">
-      <app-compile-header componentStyle="accent"
+      <app-scroll-bar-navigator componentStyle="accent"
                           [items]="departments() || []"
                           [selectedItem]="departments()?.at(this.departmentIndex())"
                           (headerClick)="changeDepartment($event)"/>
@@ -42,7 +42,7 @@ import { NAVBAR_ACTION } from "../../../../models/NavBar";
   `,
   imports: [
     CommonModule,
-    CompileHeaderComponent,
+    ScrollBarNavigatorComponent,
     FillInContainerComponent,
   ],
   styles: [``]

@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FillInContainerComponent } from "../../components/fill-in-container.component";
+import { FillInContainerComponent } from "../../../../components/fill-in-container/fill-in-container.component";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import { getRouterData, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";

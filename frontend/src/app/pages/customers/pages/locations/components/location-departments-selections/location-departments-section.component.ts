@@ -31,16 +31,11 @@ import { EditSourceComponent } from "../../pages/sources/edit/edit-source.compon
     </div>
     
     <ng-template #addDepartmentBottomSheet>
-      <div class="w-screen-paddingless">
-        <app-edit-source />
-      </div>
+      <app-edit-source />
     </ng-template>
     
   `,
   styles: [`
-    .w-screen-paddingless{
-      width: calc(100vw - 32px);
-    }
   `]
 })
 export class LocationDepartmentsSectionComponent {

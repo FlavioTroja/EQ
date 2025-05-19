@@ -74,10 +74,9 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (!this.isNewCustomer) {
-      return;
-      // this.store.dispatch(
-      //   CustomerActions.getCustomer({ id: this.id() })
-      // );
+      this.store.dispatch(
+        CustomerActions.getCustomer({ id: this.id() })
+      );
     }
 
     this.active$

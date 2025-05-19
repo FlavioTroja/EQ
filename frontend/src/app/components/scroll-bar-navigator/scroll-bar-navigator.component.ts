@@ -17,7 +17,7 @@ export interface HeaderItem {
 }
 
 @Component({
-  selector: "app-compile-header",
+  selector: "app-scroll-bar-navigator",
   standalone: true,
   template: `
     <div class="grid rounded bg-foreground shadow"
@@ -48,7 +48,7 @@ export interface HeaderItem {
   ],
   styles: [``]
 })
-export class CompileHeaderComponent implements OnChanges {
+export class ScrollBarNavigatorComponent implements OnChanges {
   @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
   @Input({ required: false }) items: HeaderItem[] = [

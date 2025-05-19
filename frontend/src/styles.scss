@@ -239,6 +239,10 @@ fill-width {
   justify-content: center;
 }
 
+.mat-bottom-sheet-container {
+  padding: 0 !important;
+}
+
 // Remove right arrow from input number
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -637,6 +641,10 @@ select {
 
 .bg-light-grey {
   background-color: #F2F2F2;
+}
+
+.bg-grey-1 {
+  background-color: #D9D9D9;
 }
 
 //------------------------------------ error

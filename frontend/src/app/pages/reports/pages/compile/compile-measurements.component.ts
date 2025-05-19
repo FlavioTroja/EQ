@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CompileHeaderComponent } from "../../components/compile-header.component";
+import { ScrollBarNavigatorComponent } from "../../../../components/scroll-bar-navigator/scroll-bar-navigator.component";
 import { MeasurementCardComponent } from "../../components/measurement-card.component";
 import { Measurement } from "../../../../models/Measurement";
 
@@ -9,7 +9,7 @@ import { Measurement } from "../../../../models/Measurement";
   standalone: true,
   template: `
     <div class="flex flex-col gap-4">
-      <app-compile-header componentStyle="success"/>
+      <app-scroll-bar-navigator componentStyle="success"/>
       <div class="flex flex-col gap-2">
         <div class="text-xl font-bold">INFORMAZIONI GENERALI</div>
         <app-measurement-card *ngFor="let measurement of measurements, index as i" [measurement]="measurement" [index]="i+1"/>
@@ -19,7 +19,7 @@ import { Measurement } from "../../../../models/Measurement";
   `,
   imports: [
     CommonModule,
-    CompileHeaderComponent,
+    ScrollBarNavigatorComponent,
     MeasurementCardComponent,
   ],
   styles: [``]
