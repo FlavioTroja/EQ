@@ -34,6 +34,7 @@ openapi:
         url: ${OPENAPI_URL:http://localhost:8765}
 
 springdoc:
+    enable-native-support: true
     api-docs:
         enabled: true
         path: /api-docs
@@ -52,7 +53,6 @@ springdoc:
           name: Registry Microservice
         - url: /document/api-docs
           name: Document Microservice  
-
 
 eureka:
     client:
