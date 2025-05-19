@@ -2,8 +2,6 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +40,11 @@ public class UserController {
     private UserMapper userMapper;
 
     @GetMapping("")
-    public ResponseEntity<List<UserDTO>> findAll(
+    public ResponseEntity<Page<UserDTO>> findAll(
             Pageable pageable) {
         log.info("REST request to get a page of Users");
-        Page<User> page = userService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent().stream().map(userMapper::toDto).collect(Collectors.toList()));
+        Page<UserDTO> page = userService.findAll(pageable);
+        return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/profile")

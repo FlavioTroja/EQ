@@ -46,7 +46,7 @@ public class SourceController {
     private SourceService sourceService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Source>> findDepartmentId(@PathVariable("id") String departmentId,
+    public ResponseEntity<Page<Source>> findDepartmentId(@PathVariable("departmentId") String departmentId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Sources by departmentId: " + departmentId);
 

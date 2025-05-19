@@ -41,7 +41,7 @@ public class DepartmentController {
     private DepartmentServiceImpl departmentService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Department>> findLocationId(@PathVariable("id") String locationId,
+    public ResponseEntity<Page<Department>> findLocationId(@PathVariable("locationId") String locationId,
             Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Departments by locationId: " + locationId);
 

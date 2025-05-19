@@ -1,8 +1,11 @@
 package it.overzoom.registry.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.overzoom.registry.dto.LocationDTO;
@@ -32,14 +35,21 @@ public class LocationServiceImpl implements LocationService {
     private LocationMapper locationMapper;
 
     @Override
+    public Page<LocationDTO> findByCustomerId(String customerId, Pageable pageable)
+            throws ResourceNotFoundException, BadRequestException {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
+        return locationRepository.findByCustomerId(customer.getId(), pageable)
+                .map(locationMapper::toDto);
+    }
+
+    @Override
     public List<LocationDTO> findByCustomerId(String customerId)
             throws ResourceNotFoundException, BadRequestException {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
-        return locationRepository.findByCustomerId(customer.getId())
-                .stream()
-                .map(locationMapper::toDto)
-                .toList();
+        return locationRepository.findByCustomerId(customer.getId()).stream()
+                .map(locationMapper::toDto).collect(Collectors.toList());
     }
 
     @Override

@@ -2,22 +2,28 @@ package it.overzoom.registry.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import it.overzoom.registry.dto.UserDTO;
+import it.overzoom.registry.mapper.UserMapper;
 import it.overzoom.registry.model.User;
 import it.overzoom.registry.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
+
+    public Page<UserDTO> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::toDto);
     }
 
     public Optional<User> findById(String id) {

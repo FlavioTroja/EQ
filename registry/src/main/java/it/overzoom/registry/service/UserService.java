@@ -5,11 +5,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import it.overzoom.registry.dto.UserDTO;
 import it.overzoom.registry.model.User;
 
 public interface UserService {
 
-    Page<User> findAll(Pageable pageable);
+    Page<UserDTO> findAll(Pageable pageable);
 
     Optional<User> findById(String id);
 
