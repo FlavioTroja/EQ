@@ -7,15 +7,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.overzoom.registry.dto.UserDTO;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.mapper.UserMapper;
 import it.overzoom.registry.model.User;
 import it.overzoom.registry.repository.UserRepository;
+import it.overzoom.registry.security.SecurityUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+
+    public boolean hasAccess(String userId) throws ResourceNotFoundException {
+        return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(userId);
+    }
 
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
@@ -26,11 +32,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable).map(userMapper::toDto);
     }
 
-    public Optional<User> findById(String id) {
-        return userRepository.findById(id);
-    }
-
-    public Optional<User> findByUserId(String userId) {
+    public Optional<User> findById(String userId) {
         return userRepository.findByUserId(userId);
     }
 

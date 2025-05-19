@@ -1,7 +1,6 @@
 package it.overzoom.registry.security;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,29 +18,26 @@ public class SecurityUtils {
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
     }
 
-    public static boolean isCurrentUser(String userId) throws ResourceNotFoundException {
-        String currentUserId = getCurrentUserId();
-        return currentUserId.equals(userId);
-    }
-
-    public static boolean isAdmin() throws ResourceNotFoundException {
+    public static String getUsername() throws ResourceNotFoundException {
         Jwt jwt = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(auth -> auth.getPrincipal() instanceof Jwt)
                 .map(auth -> (Jwt) auth.getPrincipal())
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non autenticato."));
 
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-
-        if (resourceAccess != null) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> clientMap = (Map<String, Object>) resourceAccess.get("eq-project");
-            if (clientMap != null) {
-                @SuppressWarnings("unchecked")
-                List<String> roles = (List<String>) clientMap.get("roles");
-                return roles != null && roles.contains("admin");
-            }
-        }
-
-        return false;
+        return jwt.getClaim("sub");
     }
+
+    public static boolean isCurrentUser(String userId) throws ResourceNotFoundException {
+        String currentUserId = getCurrentUserId();
+        return currentUserId.equals(userId);
+    }
+
+    public static boolean isAdmin() {
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<String> groups = jwt.getClaim("cognito:groups");
+
+        return groups != null && groups.contains("ROLE_ADMIN");
+    }
+
 }

@@ -6,15 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import it.overzoom.registry.dto.UserDTO;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.User;
 
 public interface UserService {
 
+    boolean hasAccess(String userId) throws ResourceNotFoundException;
+
     Page<UserDTO> findAll(Pageable pageable);
 
-    Optional<User> findById(String id);
-
-    Optional<User> findByUserId(String userId);
+    Optional<User> findById(String userId);
 
     boolean existsById(String id);
 

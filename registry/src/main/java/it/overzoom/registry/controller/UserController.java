@@ -47,9 +47,22 @@ public class UserController {
         return ResponseEntity.ok().body(page);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable("id") String userId)
+            throws ResourceNotFoundException, BadRequestException {
+
+        if (!userService.hasAccess(userId)) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo utente.");
+        }
+
+        return userService.findById(SecurityUtils.getCurrentUserId()).map(userMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
+    }
+
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getMyProfile() throws ResourceNotFoundException {
-        return userService.findByUserId(SecurityUtils.getCurrentUserId()).map(userMapper::toDto)
+        return userService.findById(SecurityUtils.getCurrentUserId()).map(userMapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
     }
