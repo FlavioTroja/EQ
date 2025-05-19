@@ -18,8 +18,8 @@ import { of, Subject } from "rxjs";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MeasurementCardComponent } from "../../components/measurement-card.component";
-import { FillInContainerComponent } from "../../components/fill-in-container.component";
-import { CompileHeaderComponent } from "../../components/compile-header.component";
+import { FillInContainerComponent } from "../../../../components/fill-in-container/fill-in-container.component";
+import { ScrollBarNavigatorComponent } from "../../../../components/scroll-bar-navigator/scroll-bar-navigator.component";
 
 @Component({
   selector: 'app-reports',
@@ -49,7 +49,7 @@ import { CompileHeaderComponent } from "../../components/compile-header.componen
 <!--    </ng-template>-->
   `,
   styles: [``],
-  imports: [ CommonModule, SearchComponent, TableComponent, TableSkeletonComponent, MatDialogModule, MatIconModule, MeasurementCardComponent, FillInContainerComponent, CompileHeaderComponent ]
+  imports: [ CommonModule, SearchComponent, TableComponent, TableSkeletonComponent, MatDialogModule, MatIconModule, MeasurementCardComponent, FillInContainerComponent, ScrollBarNavigatorComponent ]
 })
 export default class ReportsComponent  {
   // implements AfterViewInit, OnInit

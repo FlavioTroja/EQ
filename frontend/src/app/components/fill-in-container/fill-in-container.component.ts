@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../../../components/button/button.component";
+import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-fill-in-container",

@@ -1,9 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../../environments/environment";
-import { PartialLocation, Location, LocationFilter } from "../../../models/Location";
-import { DefaultQueryParams, Query } from "../../../../global";
-import { PaginateDatasource } from "../../../models/Table";
+import { environment } from "../../../../../../environments/environment";
+import { PartialLocation, Location, LocationFilter } from "../../../../../models/Location";
+import { DefaultQueryParams, Query } from "../../../../../../global";
+import { PaginateDatasource } from "../../../../../models/Table";
 
 const BASE_URL = environment.BASE_URL;
 @Injectable({
