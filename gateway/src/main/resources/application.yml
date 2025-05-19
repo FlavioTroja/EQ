@@ -34,12 +34,12 @@ openapi:
         url: ${OPENAPI_URL:http://localhost:8765}
 
 springdoc:
-    enable-native-support: true
     api-docs:
         enabled: true
         path: /api-docs
     swagger-ui:
         enabled: true
+        persist-authorization: true
         path: /swagger-ui.html
         config-url: /api-docs/swagger-config
         operationsSorter: method
@@ -52,6 +52,7 @@ springdoc:
           name: Registry Microservice
         - url: /document/api-docs
           name: Document Microservice  
+
 
 eureka:
     client:

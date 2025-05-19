@@ -64,7 +64,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        // calcola la SECRET_HASH
         String secretHash = calculateSecretHash(
                 req.username, clientId, clientSecret);
 
@@ -108,17 +107,15 @@ public class AuthController {
 
             SignUpResponse signUpResponse = cognito.signUp(signUpRequest);
 
-            // Prendi l'UUID unico Cognito (userSub)
+            // UUID Cognito (userSub)
             String userSub = signUpResponse.userSub();
 
-            // assegna l’utente al gruppo ROLE_USER di default
             cognito.adminAddUserToGroup(builder -> builder
                     .userPoolId(userPoolId)
                     .username(req.email)
                     .groupName("ROLE_USER")
                     .build());
 
-            // Costruisci il DTO per il microservizio registry
             UserDto userDto = new UserDto();
             userDto.setUserId(userSub);
             userDto.setEmail(req.email);
@@ -126,7 +123,6 @@ public class AuthController {
             userDto.setLastName(req.surname);
             userDto.setRoles(new String[] { "ROLE_USER" });
 
-            // Chiama il microservizio registry tramite Feign per salvare l'utente
             ResponseEntity<UserDto> responseFromRegistry = userFeign.create(userDto);
 
             return ResponseEntity.ok(Map.of(
