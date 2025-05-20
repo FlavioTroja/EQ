@@ -1,6 +1,7 @@
 import { isArray, isEqual, isObject, transform } from 'lodash-es';
 import { Sort } from "../app/models/Table";
 import { DateTime } from "luxon";
+import { FormControl } from "@angular/forms";
 
 function changes(newObj : any, origObj: any) {
   let arrayIndexCounter = 0
@@ -82,4 +83,11 @@ export function generateRandomCode(): string {
  */
 export function truncatePillText(str: string, maxLength: number = 16) {
   return str.length > maxLength ? str.substring(0, maxLength-4) +'...' : str;
+}
+
+/** Negates the boolean value of the given FormControl (E.G.: true -> false || false -> true)
+ * @param formControl of type FormControl<boolean | null>
+ */
+export function toggleBooleanFormValue(formControl: FormControl<boolean | null>): void {
+  formControl.setValue(!formControl.value);
 }

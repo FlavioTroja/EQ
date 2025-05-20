@@ -10,12 +10,13 @@ import { getRouterData, selectCustomRouteParam } from "../../../../../../../core
 import { map, pairwise, takeUntil } from "rxjs/operators";
 import { PartialLocation } from "../../../../../../../models/Location";
 import * as LocationsActions from "../../../store/actions/locations.actions";
-import { difference } from "../../../../../../../../utils/utils";
+import { difference, toggleBooleanFormValue } from "../../../../../../../../utils/utils";
 import { PartialSource } from "../../../../../../../models/Source";
 import { SectionHeaderComponent } from "../../../../../../../components/section-header/section-header.component";
 import {
   MessageContainerComponent
 } from "../../../../../../../components/message-container/message-container.component";
+import { ConditionsCardComponent } from "../components/conditions-card.component";
 
 @Component({
   selector: "app-edit-source",
@@ -30,7 +31,8 @@ import {
                        class="w-full"/>
           </div>
           <div class="flex md:w-1/4">
-            <app-input [formControl]="f.region" formControlName="region" label="codice seriale" id="location-region" type="text"
+            <app-input [formControl]="f.region" formControlName="region" label="codice seriale" id="location-region"
+                       type="text"
                        class="w-full"/>
           </div>
           <div class="flex md:w-1/4">
@@ -39,7 +41,9 @@ import {
           </div>
           <div class="flex md:w-1/4">
             <div class="w-full self-end">
-              <div class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3" (click)="toggleFormValue(this.f.showPhantom)">
+              <div
+                class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
+                (click)="toggleBooleanFormValue(this.f.showPhantom)">
                 <div class="self-center">
                   <input type="checkbox" formControlName="showPhantom">
                 </div>
@@ -51,15 +55,16 @@ import {
           </div>
         </div>
         <div class="bg-grey-1 rounded gap-2 p-2">
-          <app-section-header title="Condizioni" [viewOnly]="false" (btnAdd)="click()" />
+          <app-section-header title="Condizioni" [viewOnly]="false" (btnAdd)="click()"/>
           <div class="flex justify-center">
-            <app-message-container
-              type="warning"
-              icon="warning"
-              title="NESSUNA CONDIZIONE"
-              message="Per aggiungere una condizione di rilevazione"
-              [add]="true"/>
+            <!--            <app-message-container-->
+            <!--              type="warning"-->
+            <!--              icon="warning"-->
+            <!--              title="NESSUNA CONDIZIONE"-->
+            <!--              message="Per aggiungere una condizione di rilevazione"-->
+            <!--              [add]="true"/>-->
           </div>
+          <app-conditions-card/>
         </div>
       </div>
     </form>
@@ -69,7 +74,8 @@ import {
     InputComponent,
     ReactiveFormsModule,
     SectionHeaderComponent,
-    MessageContainerComponent
+    MessageContainerComponent,
+    ConditionsCardComponent
   ],
   styles: [ `` ]
 })
@@ -164,10 +170,6 @@ export class EditSourceComponent implements OnInit, OnDestroy {
     ).subscribe((changes: any) => this.store.dispatch(LocationsActions.locationActiveChanges({ changes })));
   }
 
-  toggleFormValue(formControl: FormControl<boolean | null>): void {
-    formControl.setValue(!formControl.value);
-  }
-
   click() {}
 
   ngOnDestroy(): void {
@@ -176,4 +178,6 @@ export class EditSourceComponent implements OnInit, OnDestroy {
     this.store.dispatch(LocationsActions.clearLocationActive());
     this.store.dispatch(LocationsActions.clearLocationHttpError());
   }
+
+  protected readonly toggleBooleanFormValue = toggleBooleanFormValue;
 }
