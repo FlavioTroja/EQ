@@ -8,6 +8,9 @@ import { InputComponent } from "../../../../../../../components/input/input.comp
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../../../../app.config";
 import { Subject } from "rxjs";
+import { InputBooleanComponent } from "../../../../../../../components/input-boolean/input-boolean.component";
+import { InputIndexedComponent } from "../../../../../../../components/input-indexed/input-indexed.component";
+import { MeasurementPointSectionComponent } from "./measurement-point-section.component";
 
 @Component({
   selector: "app-conditions-card",
@@ -50,100 +53,34 @@ import { Subject } from "rxjs";
                          type="text" class="w-full"/>
             </div>
             <div class="flex md:w-1/2">
-              <div class="w-full self-end">
-                <div
-                  class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
-                  (click)="toggleBooleanFormValue(this.f.showMeasurementConditions)">
-                  <div class="self-center">
-                    <input type="checkbox" formControlName="showMeasurementConditions">
-                  </div>
-                  <div class="font-bold self-center text-lg">
-                    Mostra "Condizioni Misura"
-                  </div>
-                </div>
-              </div>
+              <app-input-boolean [formControl]="this.f.showMeasurementConditions" message="Mostra &quot;Condizioni di Misura&quot;" class="w-full self-end" />
             </div>
           </div>
           <div class="flex flex-col gap-2 md:flex-row">
             <div class="flex md:w-1/5">
-              <div class="w-full self-end">
-                <label class="text-sm pl-2">SPD</label>
-                <div
-                  class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
-                  (click)="toggleBooleanFormValue(this.f.showSpd)">
-                  <div class="self-center">
-                    <input type="checkbox" formControlName="showSpd">
-                  </div>
-                  <div class="font-bold self-center text-lg">
-                    Mostra
-                  </div>
-                </div>
-              </div>
+              <app-input-boolean [formControl]="this.f.showSpd" message="Mostra" label="SPD" class="w-full self-end" />
             </div>
             <div class="flex md:w-1/5">
-              <div class="w-full self-end">
-                <label class="text-sm pl-2">kV</label>
-                <div
-                  class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
-                  (click)="toggleBooleanFormValue(this.f.showKv)">
-                  <div class="self-center">
-                    <input type="checkbox" formControlName="showKv">
-                  </div>
-                  <div class="font-bold self-center text-lg">
-                    Mostra
-                  </div>
-                </div>
-              </div>
+              <app-input-boolean [formControl]="this.f.showKv" message="Mostra" label="kV" class="w-full self-end" />
             </div>
             <div class="flex md:w-1/5">
-              <div class="w-full self-end">
-                <label class="text-sm pl-2">mA</label>
-                <div
-                  class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
-                  (click)="toggleBooleanFormValue(this.f.showMa)">
-                  <div class="self-center">
-                    <input type="checkbox" formControlName="showMa">
-                  </div>
-                  <div class="font-bold self-center text-lg">
-                    Mostra
-                  </div>
-                </div>
-              </div>
+              <app-input-boolean [formControl]="this.f.showMa" message="Mostra" label="mA" class="w-full self-end" />
             </div>
             <div class="flex md:w-1/5">
-              <div class="w-full self-end">
-                <label class="text-sm pl-2">S</label>
-                <div
-                  class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
-                  (click)="toggleBooleanFormValue(this.f.showS)">
-                  <div class="self-center">
-                    <input type="checkbox" formControlName="showS">
-                  </div>
-                  <div class="font-bold self-center text-lg">
-                    Mostra
-                  </div>
-                </div>
-              </div>
+              <app-input-boolean [formControl]="this.f.showS" message="Mostra" label="S" class="w-full self-end" />
             </div>
             <div class="flex md:w-1/5">
-<!--              <app-input-boolean [toggleBooleanFormValue]="toggleBooleanFormValue"-->
-<!--                                 [this.f]="this.f"></app-input-boolean>-->
+              <app-input-boolean [formControl]="this.f.showMas" message="Mostra" label="mAs" class="w-full self-end" />
             </div>
           </div>
-          <div class="flex flex-col rounded bg-grey-1 p-2 gap-2">
-            <div class="flex flex-row justify-start w-full gap-2">
-              <div class="flex justify-center self-center font-bold square" style="font-size: 32px; line-height: 32px;">1</div>
-              <div class="flex border border-black"></div>
-              <div class="flex w-full">
-                <app-input [formControl]="f.name" formControlName="name" label="Nome condizione" id="contidion-name" type="text" class="w-full"/>
-              </div>
-            </div>
-          </div>
+          <app-measurement-point-section/>
+          <app-measurement-point-section/>
+          <app-measurement-point-section/>
         </form>
       </div>
     </div>
   `,
-  imports: [ CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, InputComponent ],
+  imports: [ CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, InputComponent, InputBooleanComponent, InputIndexedComponent, MeasurementPointSectionComponent ],
   styles: [``]
 })
 export class ConditionsCardComponent {

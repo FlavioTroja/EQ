@@ -17,6 +17,7 @@ import {
   MessageContainerComponent
 } from "../../../../../../../components/message-container/message-container.component";
 import { ConditionsCardComponent } from "../components/conditions-card.component";
+import { InputBooleanComponent } from "../../../../../../../components/input-boolean/input-boolean.component";
 
 @Component({
   selector: "app-edit-source",
@@ -40,18 +41,7 @@ import { ConditionsCardComponent } from "../components/conditions-card.component
                        type="text" class="w-full"/>
           </div>
           <div class="flex md:w-1/4">
-            <div class="w-full self-end">
-              <div
-                class="flex flex-row border-input justify-start bg-foreground rounded-md select-none cursor-pointer w-full h-12 gap-2 p-3"
-                (click)="toggleBooleanFormValue(this.f.showPhantom)">
-                <div class="self-center">
-                  <input type="checkbox" formControlName="showPhantom">
-                </div>
-                <div class="font-bold self-center text-lg">
-                  Mostra "Phantom"
-                </div>
-              </div>
-            </div>
+            <app-input-boolean [formControl]="this.f.showPhantom" message="Mostra &quot;Phantom&quot;" class="w-full self-end" />
           </div>
         </div>
         <div class="bg-grey-1 rounded gap-2 p-2">
@@ -75,7 +65,8 @@ import { ConditionsCardComponent } from "../components/conditions-card.component
     ReactiveFormsModule,
     SectionHeaderComponent,
     MessageContainerComponent,
-    ConditionsCardComponent
+    ConditionsCardComponent,
+    InputBooleanComponent
   ],
   styles: [ `` ]
 })

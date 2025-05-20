@@ -3,10 +3,10 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { LocationsService } from "../../services/locations.service";
 import { exhaustMap } from "rxjs";
 import * as LocationsActions from "../actions/locations.actions";
-import * as RouterActions from "../../../../core/router/store/router.actions";
+import * as RouterActions from "../../../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
-import * as UIActions from "../../../../core/ui/store/ui.actions";
-import { NOTIFICATION_LISTENER_TYPE } from "../../../../models/Notification";
+import * as UIActions from "../../../../../../core/ui/store/ui.actions";
+import { NOTIFICATION_LISTENER_TYPE } from "../../../../../../models/Notification";
 
 
 @Injectable({

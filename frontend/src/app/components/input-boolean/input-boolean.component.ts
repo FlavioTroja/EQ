@@ -1,12 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, FormControl, FormsModule } from "@angular/forms";
+import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from "@angular/forms";
 import { toggleBooleanFormValue } from "../../../utils/utils";
 
 @Component({
   selector: 'app-input-boolean',
   standalone: true,
-  imports: [ CommonModule, FormsModule ],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputBooleanComponent),
+      multi: true
+    }
+  ],
   template: `
     <div class="w-full self-end">
       <label *ngIf="!!label" class="text-sm pl-2">{{ label }}</label>
@@ -18,7 +25,9 @@ import { toggleBooleanFormValue } from "../../../utils/utils";
           <input type="checkbox" 
                  [value]="value"
                  [disabled]="disabled"
-                 [(ngModel)]="value">
+                 [(ngModel)]="value"
+                 (input)="onChange(value)"
+                 (blur)="onTouched()">
         </div>
         <div class="font-bold self-center text-lg">
           {{ message }}
