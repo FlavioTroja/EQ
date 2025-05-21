@@ -16,12 +16,12 @@ import { InputComponent } from "../input/input.component";
   ],
   template: `
     <div class="flex flex-row justify-start w-full gap-2">
-      <div class="flex justify-center self-center items-center font-bold square" style="font-size: 32px; line-height: 32px;">
+      <div class="flex justify-center self-center items-center square" [ngClass]="{ 'font-bold': indexBold }" style="font-size: 32px; line-height: 32px;">
         {{ index }}
       </div>
       <div class="flex border border-black"></div>
       <div class="flex w-full">
-        <app-input [formControl]="formControl" [label]="label" [id]="id" [type]="type" class="w-full"/>
+        <app-input [formControl]="formControl" [label]="label" [id]="id" [type]="type" class="w-full" [placeholder]="placeholder"/>
       </div>
     </div>
   `,
@@ -31,8 +31,10 @@ export class InputIndexedComponent implements ControlValueAccessor {
   @Input({ required: true }) index!: string;
   @Input({ required: true }) formControl!: FormControl;
   @Input({ required: true }) id!: string;
-  @Input() label = "";
-  @Input() type = "text";
+  @Input({ required: false }) placeholder: string = "";
+  @Input({ required: false }) indexBold: boolean = false;
+  @Input({ required: false }) label: string = "";
+  @Input({ required: false }) type: string = "text";
 
   value: boolean = false;
   disabled = false;
