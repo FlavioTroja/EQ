@@ -82,8 +82,6 @@ export class InputComponent implements ControlValueAccessor {
         min: {min: 300, actual: '22'},
       }
     */
-    console.log(errors, Object.keys(errors)[0], Object.values(Object.values(errors)[0])[0]);
-    console.log(errorsTexts);
     this.setErrorText(Object.keys(errors)[0], Object.values(Object.values(errors)[0])[0]);
   }
 
