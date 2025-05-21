@@ -1,13 +1,13 @@
-import { isNaN, isNil, omitBy, overSome } from "lodash-es";
-
 export enum Roles {
-  USER = "user",
-  ADMIN = "admin",
+  USER = "ROLE_USER",
+  ADMIN = "ROLE_ADMIN",
   OVERZOOM = "OVERZOOM",
 }
 
 export interface User {
   id: number,
+  firstName: string,
+  lastName: string,
   username: string,
   email: string,
   roles: Roles[],

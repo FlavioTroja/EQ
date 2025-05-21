@@ -21,7 +21,7 @@ import * as RouterActions from "../../../../core/router/store/router.actions";
       <div class="flex gap-2">
         <img class="rounded-full" width="48" height="48" [ngSrc]="getProfileImage()" priority>
         <div class="flex flex-col" *ngIf="!collapsed">
-          <div class="font-bold"> {{ profile()!.username }} </div>
+          <div class="font-bold"> {{ profile()?.lastName! + ' ' + profile()?.firstName! }}</div>
           <div class="flex gap-1.5 text-xs cursor-pointer">
             <div class="opacity-50 hover:opacity-100 duration-100 ease-in-out" (click)="goToSettings()"> Settings</div>
             <div class="opacity-50 hover:opacity-100 duration-100 ease-in-out" (click)="logout()"> Logout</div>
@@ -29,8 +29,8 @@ import * as RouterActions from "../../../../core/router/store/router.actions";
         </div>
       </div>
       <mat-icon
-        class="icon-size material-symbols-rounded-filled cursor-pointer opacity-50 hover:opacity-100 duration-700 ease-in-out"
-        (click)="toggle()" [ngClass]="{
+          class="icon-size material-symbols-rounded-filled cursor-pointer opacity-50 hover:opacity-100 duration-700 ease-in-out"
+          (click)="toggle()" [ngClass]="{
       'rotate-0': collapsed,
       'rotate-180': !collapsed
       }">double_arrows
@@ -54,7 +54,10 @@ export class FooterComponent {
     if (!this.profile()) {
       return "";
     }
-    return this.profile()!.avatarUrl ? this.profile()!.avatarUrl! : `https://eu.ui-avatars.com/api/?name=${this.profile()?.username}&rounded=true&size=48`;
+
+    return this.profile()!.avatarUrl
+        ? this.profile()!.avatarUrl!
+        : `https://eu.ui-avatars.com/api/?name=${this.profile()?.lastName!.at(0)! + this.profile()?.firstName!.at(0)!}&rounded=true&size=48`;
   }
 
   goToSettings() {
