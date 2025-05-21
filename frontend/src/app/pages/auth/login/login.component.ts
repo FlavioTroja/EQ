@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Store } from "@ngrx/store";
 import { getAccessToken, getAuthError } from "../../../core/auth/store/auth.selectors";
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -14,7 +14,7 @@ import * as RouterActions from "../../../core/router/store/router.actions";
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ReactiveFormsModule, InputComponent],
+  imports: [CommonModule, FormsModule, MatIconModule, ReactiveFormsModule, InputComponent, NgOptimizedImage],
   template: `
     <!--    <div class="m-auto max-w-[20em] min-w-[10em] flex flex-wrap items-start justify-between md:max-w-screen-xl">-->
     <!--      <img src="/../assets/images/logo.png" class="h-14" alt="Logo" />-->
@@ -67,7 +67,17 @@ import * as RouterActions from "../../../core/router/store/router.actions";
       </form>
       <div class="flex gap-2">
         Non hai un'account? 
-        <div class="underline blue" (click)="goToRegister()">Registrati</div>
+        <div class="underline blue cursor-pointer" (click)="goToRegister()">Registrati</div>
+      </div>
+      <div class="flex gap-1 items-center">
+        <div class="h-0.5 w-32 bg-gray-300 rounded-full"></div>
+        <span class="">oppure</span>
+        <div class="h-0.5 w-32 bg-gray-300 rounded-full"></div>
+      </div>
+      <div class="bg-foreground default-shadow p-2.5 rounded-lg flex items-center justify-center gap-3 cursor-pointer w-64"
+      (click)="handleGoogleSignIn()">
+        <img src="../../../../assets/default/google.png" class="w-7 h-7"/>
+        <span class="font-bold text-lg">Accedi con google</span>
       </div>
     </div>
   `,
@@ -107,4 +117,12 @@ export default class LoginComponent {
   goToRegister(): void {
     this.store.dispatch(RouterActions.go({ path: ['auth/register'] }))
   }
+
+  handleGoogleSignIn = () => {
+    const cognitoDomain = "";
+    const redirectUri = "";
+    const clientId = "";
+
+    window.location.href = `https://${cognitoDomain}/oauth2/authorize?identity_provider=Google&redirect_uri=${redirectUri}&response_type=TOKEN&client_id=${clientId}&scope=email+openid+profile`;
+  };
 }

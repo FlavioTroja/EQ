@@ -95,7 +95,17 @@ import * as RouterActions from "../../../core/router/store/router.actions";
       </form>
       <div class="flex gap-2">
         Hai già un'account?
-        <div class="underline blue" (click)="goToLogin()">Accedi</div>
+        <div class="underline blue cursor-pointer" (click)="goToLogin()">Accedi</div>
+      </div>
+      <div class="flex gap-1 items-center">
+        <div class="h-0.5 w-32 bg-gray-300 rounded-full"></div>
+        <span>oppure</span>
+        <div class="h-0.5 w-32 bg-gray-300 rounded-full"></div>
+      </div>
+      <div class="bg-foreground default-shadow p-2.5 rounded-lg flex items-center justify-center gap-3 cursor-pointer w-64"
+           (click)="handleGoogleSignIn()">
+        <img src="../../../../assets/default/google.png" class="w-7 h-7"/>
+        <span class="font-bold text-lg">Accedi con google</span>
       </div>
     </div>
   `,
@@ -150,4 +160,12 @@ export default class RegisterComponent {
   goToLogin(): void {
     this.store.dispatch(RouterActions.go({ path: ['auth/login'] }))
   }
+
+  handleGoogleSignIn = () => {
+    const cognitoDomain = "";
+    const redirectUri = "";
+    const clientId = "";
+
+    window.location.href = `https://${cognitoDomain}/oauth2/authorize?identity_provider=Google&redirect_uri=${redirectUri}&response_type=TOKEN&client_id=${clientId}&scope=email+openid+profile`;
+  };
 }
