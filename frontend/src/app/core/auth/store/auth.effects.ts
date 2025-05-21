@@ -56,7 +56,7 @@ export class AuthEffects  {
     ofType(AuthActions.logout),
     tap(() => this.authService.cleanAuth()),
     exhaustMap(() => [
-      RouterActions.go({ path: [""] }),
+      RouterActions.go({ path: ["auth/login"] }),
       AuthActions.logoutSuccess()
     ])
   ));
