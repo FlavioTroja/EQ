@@ -21,6 +21,8 @@ public class LocationDTO {
 
     private String province;
 
+    private String zipCode;
+
     private Integer completedDepartments;
 
     private List<DepartmentDTO> departments = new ArrayList<>();
@@ -87,5 +89,13 @@ public class LocationDTO {
 
     public void setDepartments(List<DepartmentDTO> departments) {
         this.departments = departments;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 }

@@ -22,6 +22,8 @@ public class Location {
 
     private String city;
 
+    private String zipCode;
+
     private String province;
 
     private Integer completedDepartments;
@@ -91,6 +93,14 @@ public class Location {
 
     public void setCompletedDepartments(Integer completedDepartments) {
         this.completedDepartments = completedDepartments;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
 }
