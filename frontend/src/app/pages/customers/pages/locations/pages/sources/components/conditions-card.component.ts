@@ -73,9 +73,10 @@ import { MeasurementPointSectionComponent } from "./measurement-point-section.co
               <app-input-boolean [formControl]="this.f.showMas" message="Mostra" label="mAs" class="w-full self-end" />
             </div>
           </div>
-          <app-measurement-point-section/>
-          <app-measurement-point-section/>
-          <app-measurement-point-section/>
+          <div class="flex flex-col gap-2">
+            <app-measurement-point-section *ngFor="let condition of conditions, index as i" [index]="i+1" (onDelete)="deleteCondition(i)"/>
+            <app-measurement-point-section [index]="conditions.length+1" [ghost]="true" />
+          </div>
         </form>
       </div>
     </div>
@@ -106,8 +107,16 @@ export class ConditionsCardComponent {
     return this.conditionForm.controls;
   }
 
+  get conditions() {
+    return this.f.conditions.getRawValue() || [];
+  }
+
   toggleConditionCardCollapsed() {
     this.isConditionCardCollapsed = !this.isConditionCardCollapsed;
+  }
+
+  deleteCondition(index: number) {
+
   }
 
   protected readonly toggleBooleanFormValue = toggleBooleanFormValue;
