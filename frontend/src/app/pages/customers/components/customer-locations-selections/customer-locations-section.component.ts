@@ -10,7 +10,7 @@ import * as RouterActions from "../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../app.config";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { getRouterUrl, selectCustomRouteParam } from "../../../../core/router/store/router.selectors";
+import { getRouterUrl } from "../../../../core/router/store/router.selectors";
 import { SectionHeaderComponent } from "../../../../components/section-header/section-header.component";
 
 @Component({
@@ -27,8 +27,6 @@ import { SectionHeaderComponent } from "../../../../components/section-header/se
             *ngFor="let location of locations; index as i"
             [viewOnly]="viewOnly"
             [location]="location"
-            (onSave)="onLocationSaveChanges($event)"
-            (onDelete)="onLocationDelete(i)"
           />
         </div>
       </div>

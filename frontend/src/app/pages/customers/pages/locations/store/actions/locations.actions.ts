@@ -4,11 +4,11 @@ import { HttpError } from "../../../../../../models/Notification";
 import { DefaultQueryParams, Query } from "../../../../../../../global";
 import { PaginateDatasource } from "../../../../../../models/Table";
 
-export const addLocation = createAction("[Locations] Add", props<{ location: PartialLocation }>());
+export const addLocation = createAction("[Locations] Add", props<{ customerId: string, location: PartialLocation }>());
 export const addLocationSuccess = createAction("[Locations] Add location Success", props<{ location: Location }>());
 export const addLocationFailed = createAction("[Locations] Add Failed", props<{ error: HttpError }>());
 
-export const getLocation = createAction("[Locations] Get", props<{ id: string, params?: DefaultQueryParams }>());
+export const getLocation = createAction("[Locations] Get", props<{ locationId: string, customerId: string, params?: DefaultQueryParams }>());
 export const getLocationSuccess = createAction("[Locations] Get location Success", props<{ current: Location }>());
 export const getLocationFailed = createAction("[Locations] Get Failed", props<{ error: HttpError }>());
 

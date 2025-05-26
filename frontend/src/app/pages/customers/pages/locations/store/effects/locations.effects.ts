@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { LocationsService } from "../../services/locations.service";
-import { exhaustMap } from "rxjs";
+import { catchError, concatMap, exhaustMap, map, of } from "rxjs";
 import * as LocationsActions from "../actions/locations.actions";
 import * as RouterActions from "../../../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
@@ -14,32 +14,25 @@ import { NOTIFICATION_LISTENER_TYPE } from "../../../../../../models/Notificatio
 })
 export class LocationsEffects {
 
-  // addLocationEffect$ = createEffect(() => this.actions$.pipe(
-  //   ofType(LocationsActions.addLocation),
-  //   exhaustMap(({ location }) => this.locationService.addLocation(location)
-  //     .pipe(
-  //       concatMap((location) => [
-  //         LocationsActions.addLocationSuccess({ location }),
-  //         RouterActions.go({ path: [`/locations`] })
-  //       ]),
-  //       catchError((err) => of(LocationsActions.addLocationFailed(err)))
-  //     ))
-  // ));
+  addLocationEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(LocationsActions.addLocation),
+    exhaustMap(({ customerId, location }) => this.locationService.addLocation(customerId, location)
+      .pipe(
+        concatMap((location) => [
+          LocationsActions.addLocationSuccess({ location }),
+          RouterActions.go({ path: [`/locations`] })
+        ]),
+        catchError((err) => of(LocationsActions.addLocationFailed(err)))
+      ))
+  ));
 
-  // getLocationEffect$ = createEffect(() => this.actions$.pipe(
-  //   ofType(LocationsActions.getLocation),
-  //   exhaustMap(({ id, params }) => this.locationService.getLocation(id, params)
-  //     .pipe(
-  //       map((location) => LocationsActions.getLocationSuccess({ current: location })),
-  //       catchError((err) => of(LocationsActions.getLocationFailed(err)))
-  //     ))
-  // ));
-
-  getLocationFailedEffect$ = createEffect(() => this.actions$.pipe(
-    ofType(LocationsActions.getLocationFailed),
-    exhaustMap(() => [
-      RouterActions.go({ path: ["/locations"] })
-    ])
+  getLocationEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(LocationsActions.getLocation),
+    exhaustMap(({ locationId, customerId, params }) => this.locationService.getLocation(locationId, customerId, params)
+      .pipe(
+        map((location) => LocationsActions.getLocationSuccess({ current: location })),
+        catchError((err) => of(LocationsActions.getLocationFailed(err)))
+      ))
   ));
 
   // deleteLocationEffect$ = createEffect(() => this.actions$.pipe(

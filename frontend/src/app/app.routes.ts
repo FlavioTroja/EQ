@@ -3,6 +3,7 @@ import { AuthGuard } from "./core/auth/services/auth.guard";
 import NotFoundComponent from "./components/not-found/not-found.component";
 import { provideState } from "@ngrx/store";
 import { reducers as customerManagementReducers } from "./pages/customers/store/reducers";
+import { reducers as locationManagementReducers } from "./pages/customers/pages/locations/store/reducers";
 import { reducers as userManagementReducers } from "./pages/users/store/reducers";
 import { reducers as machineManagementReducers } from "./pages/machines/store/reducers";
 import { reducers as reportManagementReducers } from "./pages/reports/store/reducers";
@@ -11,6 +12,7 @@ import { CustomersEffects } from "./pages/customers/store/effects/customers.effe
 import { UsersEffects } from "./pages/users/store/effects/users.effects";
 import { MachinesEffects } from "./pages/machines/store/effects/machines.effects";
 import { ReportsEffects } from "./pages/reports/store/effects/reports.effects";
+import { LocationsEffects } from "./pages/customers/pages/locations/store/effects/locations.effects";
 
 export const routes: Routes = [
   {
@@ -65,7 +67,8 @@ export const routes: Routes = [
     canActivate: [ AuthGuard ],
     providers: [
       provideState("customer-manager", customerManagementReducers),
-      provideEffects(CustomersEffects)
+      provideState("location-manager", locationManagementReducers),
+      provideEffects([CustomersEffects, LocationsEffects])
     ],
     loadChildren: () => import("./pages/customers/customers.routing")
   },
