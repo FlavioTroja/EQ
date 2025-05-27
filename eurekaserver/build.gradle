@@ -36,7 +36,3 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-bootJar {
-    archiveFileName = "eurekaserver.jar"
-}

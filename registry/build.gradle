@@ -57,7 +57,3 @@ tasks.withType(JavaCompile).configureEach {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-bootJar {
-    archiveFileName = "registry.jar"
-}

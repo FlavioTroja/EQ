@@ -45,7 +45,3 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-bootJar {
-    archiveFileName = "calendar.jar"
-}
