@@ -11,66 +11,39 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { map, pairwise, takeUntil } from "rxjs/operators";
 import * as LocationsActions from "../../store/actions/locations.actions";
 import { Subject } from "rxjs";
-import { PartialLocation } from "../../../../../../models/Location";
+import { createLocationPayload, PartialLocation } from "../../../../../../models/Location";
 import { difference } from "../../../../../../../utils/utils";
 import { getCurrentLocation } from "../../store/selectors/locations.selectors";
 import { InputComponent } from "../../../../../../components/input/input.component";
-import { MatBottomSheet } from "@angular/material/bottom-sheet";
-import { SectionHeaderComponent } from "../../../../../../components/section-header/section-header.component";
 import {
   LocationDepartmentsSectionComponent
-} from "../../components/location-departments-selections/location-departments-section.component";
+} from "../../components/location-departments-section.component";
 
 @Component({
   selector: 'app-edit-location',
   standalone: true,
-  imports: [ CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, ReactiveFormsModule, InputComponent, SectionHeaderComponent, LocationDepartmentsSectionComponent ],
+  imports: [ CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, ReactiveFormsModule, InputComponent, LocationDepartmentsSectionComponent ],
   template: `
     <form [formGroup]="locationForm">
       <div class="flex flex-col gap-2">
         <div class="flex font-bold uppercase">informazioni generali</div>
-        <div class="flex flex-col w-full gap-2 md:flex-row">
-          <div class="flex md:w-1/3">
-            <app-input [formControl]="f.state" formControlName="state" label="stato" id="location-state" type="text" class="w-full" />
-          </div>
-          <div class="flex md:w-1/3">
-            <app-input [formControl]="f.region" formControlName="region" label="regione" id="location-region" type="text" class="w-full" />
-          </div>
-          <div class="flex md:w-1/3">
-            <app-input [formControl]="f.province" formControlName="province" label="provincia" id="location-province" type="text" class="w-full" />
-          </div>
+        <div class="flex">
+          <app-input [formControl]="f.name" formControlName="name" label="nome" id="location-name" type="text" class="w-full" />
         </div>
         <div class="flex flex-col gap-2 md:flex-row">
-          <div class="flex gap-2 md:w-1/2">
-            <div class="flex w-4/5">
+          <div class="flex md:w-3/5">
+            <app-input [formControl]="f.address" formControlName="address" label="indirizzo" id="location-address" type="text" class="w-full" />
+          </div>
+          <div class="flex flex-col gap-2 md:flex-row">
+            <div class="flex w-full md:w-1/2">
               <app-input [formControl]="f.city" formControlName="city" label="città" id="location-city" type="text" class="w-full" />
             </div>
-            <div class="flex w-1/5">
-              <app-input [formControl]="f.cap" formControlName="cap" label="cap" id="location-cap" type="text" class="w-full" />
-            </div>
-          </div>
-          <div class="flex gap-2 md:w-1/2">
-            <div class="flex w-4/5">
-              <app-input [formControl]="f.address" formControlName="address" label="indirizzo" id="location-address" type="text" class="w-full" />
-            </div>
-            <div class="flex w-1/5">
-              <app-input [formControl]="f.number" formControlName="number" label="civico" id="location-number" type="text" class="w-full" />
+            <div class="flexflex w-full md:w-1/2">
+              <app-input [formControl]="f.province" formControlName="province" label="provincia" id="location-province" type="text" class="w-full" />
             </div>
           </div>
         </div>
-        <div class="flex flex-row gap-2">
-          <div class="flex flex-col basis-full">
-            <label for="location-note" class="text-md justify-left block px-3 py-0 font-medium"
-                   [ngClass]="f.note.invalid && f.note.dirty ? ('text-red-800') : ('text-gray-900')">
-              note
-            </label>
-            <textarea class="focus:outline-none p-3 rounded-md w-full border-input"
-                      [ngClass]="{'border-input-error' : f.note.invalid && f.note.dirty, 'viewOnly' : viewOnly()}"
-                      id="location-note"
-                      formControlName="note"></textarea>
-          </div>
-        </div>
-        <app-location-departments-section />
+        <app-location-departments-section [departments]="departments"/>
       </div>
     </form>
   `,
@@ -87,19 +60,17 @@ export default class EditLocationComponent implements OnInit {
     .pipe(takeUntilDestroyed());
 
   id = toSignal(this.store.select(selectCustomRouteParam("locationId")));
+  customerId = toSignal(this.store.select(selectCustomRouteParam("customerId")));
   viewOnly: Signal<boolean> = toSignal(this.store.select(getRouterData).pipe(
     map(data => data!["viewOnly"] ?? false)
   ));
 
   locationForm = this.fb.group({
-    state: [{ value: "", disabled: this.viewOnly() }, Validators.required ],
-    region: [{ value: "", disabled: this.viewOnly() }],
-    province: [{ value: "", disabled: this.viewOnly() }],
-    city: [{ value: "", disabled: this.viewOnly() }],
-    cap: [{ value: "", disabled: this.viewOnly() }],
+    name: [{ value: "", disabled: this.viewOnly() }, Validators.required ],
     address: [{ value: "", disabled: this.viewOnly() }],
-    number: [{ value: "", disabled: this.viewOnly() }],
-    note: [{ value: "", disabled: this.viewOnly() }],
+    city: [{ value: "", disabled: this.viewOnly() }],
+    zipcode: [{ value: "", disabled: this.viewOnly() }],
+    province: [{ value: "", disabled: this.viewOnly() }],
     departments: [[{}]],
   });
 
@@ -120,7 +91,7 @@ export default class EditLocationComponent implements OnInit {
   ngOnInit() {
     if (!this.isNewLocation) {
       this.store.dispatch(
-        LocationsActions.getLocation({ id: this.id() })
+        LocationsActions.getLocation({ locationId: this.id(), customerId: this.customerId() })
       );
     }
 
@@ -132,7 +103,7 @@ export default class EditLocationComponent implements OnInit {
 
         this.locationForm.patchValue(value);
 
-        this.loadLocations(value.departments);
+        this.loadDepartments(value.departments);
 
         this.initFormValue = this.locationForm.value as PartialLocation;
       });
@@ -141,7 +112,7 @@ export default class EditLocationComponent implements OnInit {
 
   }
 
-  loadLocations(departments: any[]) {
+  loadDepartments(departments: any[]) {
     this.locationForm.patchValue({
       departments: departments
     });
@@ -163,7 +134,7 @@ export default class EditLocationComponent implements OnInit {
           ]
         };
 
-        return /*createLocationPayload(diff)*/;
+        return createLocationPayload(diff);
       }),
       map((changes: any) => Object.keys(changes).length !== 0 && !this.locationForm.invalid ? { ...changes, id: this.id() } : {}),
       takeUntil(this.subject),

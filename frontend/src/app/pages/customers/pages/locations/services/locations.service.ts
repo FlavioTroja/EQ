@@ -12,33 +12,33 @@ const BASE_URL = environment.BASE_URL;
 export class LocationsService {
   http = inject(HttpClient);
 
-  addLocation(payload: PartialLocation) {
+  addLocation(customerId: string, payload: PartialLocation) {
     const newPayload = {
       ...payload,
       id: undefined,
     }
-    return this.http.post<Location>(`${BASE_URL}/api/registry/locations`, newPayload);
+    return this.http.post<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations`, newPayload);
   }
 
-  getLocation(id: string,  params?: DefaultQueryParams) {
-    return this.http.get<Location>(`${BASE_URL}/api/registry/locations/${id}`, { params: { ...params } });
+  getLocation(locationId: string, customerId: string,  params?: DefaultQueryParams) {
+    return this.http.get<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locaitons/${locationId}`, { params: { ...params } });
   }
 
-  editLocation(id: string, payload: PartialLocation) {
+  editLocation(id: string, customerId: string, payload: PartialLocation) {
     const body = { ...payload, id: undefined };
-    return this.http.patch<Location>(`${BASE_URL}/api/registry/locations/${id}`, body);
+    return this.http.patch<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${id}`, body);
   }
 
-  deleteLocation(id: string) {
-    return this.http.delete<Location>(`${BASE_URL}/api/registry/locations/${id}`);
+  deleteLocation(id: string, customerId: string) {
+    return this.http.delete<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${id}`);
   }
 
-  loadLocations(payload: Query<LocationFilter>) {
-    return this.http.get<PaginateDatasource<Location>>(`${BASE_URL}/api/registry/locations`);
+  loadLocations(customerId: string, payload: Query<LocationFilter>) {
+    return this.http.get<PaginateDatasource<Location>>(`${BASE_URL}/api/registry/customers/${customerId}/locations`);
   }
 
-  loadAllLocations(payload: Query<object>) {
-    return this.http.post<Location[]>(`${BASE_URL}/api/registry/locations/all`, payload);
+  loadAllLocations(customerId: string, payload: Query<object>) {
+    return this.http.post<Location[]>(`${BASE_URL}/api/registry/customers/${customerId}/locations/all`, payload);
   }
 
 

@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, Signal } from "@angular/core";
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { InputComponent } from "../../../../../../../components/input/input.component";
 import { Store } from "@ngrx/store";
 import { AppState } from "../../../../../../../app.config";
@@ -13,9 +13,6 @@ import * as LocationsActions from "../../../store/actions/locations.actions";
 import { difference, toggleBooleanFormValue } from "../../../../../../../../utils/utils";
 import { PartialSource } from "../../../../../../../models/Source";
 import { SectionHeaderComponent } from "../../../../../../../components/section-header/section-header.component";
-import {
-  MessageContainerComponent
-} from "../../../../../../../components/message-container/message-container.component";
 import { ConditionsCardComponent } from "../components/conditions-card.component";
 import { InputBooleanComponent } from "../../../../../../../components/input-boolean/input-boolean.component";
 
@@ -64,7 +61,6 @@ import { InputBooleanComponent } from "../../../../../../../components/input-boo
     InputComponent,
     ReactiveFormsModule,
     SectionHeaderComponent,
-    MessageContainerComponent,
     ConditionsCardComponent,
     InputBooleanComponent
   ],
@@ -109,9 +105,9 @@ export class EditSourceComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (!this.isNewLocation) {
-      this.store.dispatch(
-        LocationsActions.getLocation({ id: this.id() })
-      );
+      // this.store.dispatch(
+      //   LocationsActions.getLocation({ id: this.id() })
+      // );
     }
 
     this.active$

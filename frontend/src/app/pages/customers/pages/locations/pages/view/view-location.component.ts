@@ -24,10 +24,11 @@ export default class ViewLocationComponent implements OnInit {
   store: Store<AppState> = inject(Store);
   active = this.store.selectSignal(getCurrentLocation);
   id = toSignal(this.store.select(selectCustomRouteParam("id")));
+  customerId = toSignal(this.store.select(selectCustomRouteParam("customerId")));
 
   ngOnInit() {
     this.store.dispatch(
-      LocationsActions.getLocation({ id: this.id()})
+      LocationsActions.getLocation({ locationId: this.id(), customerId: this.customerId() })
     );
   }
 }

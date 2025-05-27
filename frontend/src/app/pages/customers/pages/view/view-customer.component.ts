@@ -11,11 +11,14 @@ import { selectCustomRouteParam } from "../../../../core/router/store/router.sel
 import { LocationOnCustomerSection } from "../../../../models/Customer";
 import * as CustomersActions from "../../store/actions/customers.actions";
 import { getCurrentCustomer } from "../../store/selectors/customers.selectors";
+import {
+  LocationCardComponent
+} from "../../components/customer-locations-selections/location-card/location-card.component";
 
 @Component({
   selector: 'app-view-customer',
   standalone: true,
-  imports: [ CommonModule, MatIconModule, ClipboardModule, MatTooltipModule ],
+  imports: [ CommonModule, MatIconModule, ClipboardModule, MatTooltipModule, LocationCardComponent ],
   template: `
     <div class="flex flex-col gap-2" *ngIf="active() as customer">
       <div class="bg-white default-shadow p-2 rounded-md">
@@ -73,44 +76,7 @@ import { getCurrentCustomer } from "../../store/selectors/customers.selectors";
       <!--        [viewOnly]="true"-->
       <!--        [locations]="locations"-->
       <!--      />-->
-      <div class="flex justify-between bg-white rounded border p-2 gap-2" *ngFor="let location of locations">
-        <div class="flex w-4/5 gap-7">
-          <div class="flex w-1/4">{{ truncatePillText(location.address || "", 30) }}</div>
-          <div class="flex w-1/4">{{ truncatePillText(location.city || "") }}</div>
-          <div class="flex w-1/4">{{ truncatePillText(location.name || "", 30) }}</div>
-          <div class="flex w-1/4 gap-2">
-            <div>
-              <div class="flex rounded-full bg-light-grey border p-1 pr-2 gap-1">
-                <mat-icon class="material-symbols-rounded">space_dashboard</mat-icon>
-                <div class="flex font-bold text-center gap-2">
-                  {{ location.departments?.length }}
-                  <div class="font-normal">reparti</div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="flex rounded-full bg-light-grey border p-1 pr-2 gap-1">
-                <mat-icon class="material-symbols-rounded">precision_manufacturing</mat-icon>
-                <div class="flex font-bold text-center gap-2">
-                  {{ getTotalLocationMachine(location) }}
-                  <div class="font-normal">macchine</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex w-1/5 justify-end items-center select-none gap-2">
-          <div class="flex flex-row p-1 accent gap-2.5 items-center text-center max-h-10 rounded default-shadow default-shadow-hover cursor-pointer">
-            <mat-icon class="icon-size material-symbols-rounded">visibility</mat-icon>
-          </div>
-          <div class="flex flex-row p-1 warning gap-2.5 items-center text-center max-h-10 rounded default-shadow default-shadow-hover cursor-pointer">
-            <mat-icon class="icon-size material-symbols-rounded">edit</mat-icon>
-          </div>
-          <div class="flex flex-row p-1 error gap-2.5 items-center text-center max-h-10 rounded default-shadow default-shadow-hover cursor-pointer">
-            <mat-icon class="icon-size material-symbols-rounded">delete</mat-icon>
-          </div>
-        </div>
-      </div>
+      <app-location-card *ngFor="let location of locations" [location]="location" [viewOnly]="true"/>
     </div>
   `,
   styles: [``]
@@ -129,10 +95,6 @@ export default class ViewCustomerComponent implements OnInit {
 
   get locations() {
     return this.active()?.locations.filter(o => Object.keys(o).length > 0) as LocationOnCustomerSection[];
-  }
-
-  getTotalLocationMachine(location: LocationOnCustomerSection) {
-    return location.departments?.reduce((acc, curr) => acc+= +(curr?.sources?.length || 0), 0);
   }
 
   protected readonly truncatePillText = truncatePillText;

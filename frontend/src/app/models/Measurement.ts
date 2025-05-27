@@ -12,5 +12,9 @@ export interface MeasurementValue {
   unitMeasure: string;
 }
 
+export enum unitMeasure {
+
+}
+
 
 export type PartialMeasurement = Partial<Measurement>;
