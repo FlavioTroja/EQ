@@ -8,11 +8,11 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot      
+      - ./certbot/www:/var/www/certbot
     restart: unless-stopped
-    command: /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"  
+    command: /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
     networks:
-      - eq_net   
+      - eq_net
 
   certbot:
     image: certbot/certbot
@@ -21,38 +21,32 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     restart: unless-stopped
-    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;" 
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
     depends_on:
-      - nginx 
+      - nginx
     networks:
-      - eq_net  
+      - eq_net
 
   eurekaserver:
-    build:
-      context: ./eurekaserver
-      dockerfile: Dockerfile
-    image: eurekaserver:latest
+    image: overzoom/eq_eurekaserver:latest
     container_name: eurekaserver
     restart: always
     ports:
       - "8761:8761"
     environment:
       EUREKA_CLIENT_REGISTER-WITH-EUREKA: false
-      EUREKA_CLIENT_FETCH-REGISTRY: false  
+      EUREKA_CLIENT_FETCH-REGISTRY: false
     networks:
       - eq_net
 
   gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
-    image: gateway:latest
+    image: overzoom/eq_gateway:latest
     container_name: gateway
     restart: always
     ports:
       - "8765:8765"
     env_file:
-      - .env  
+      - .env
     depends_on:
       eurekaserver:
         condition: service_started
@@ -69,17 +63,14 @@ services:
     ports:
       - "5480:27017"
     volumes:
-      - registrydb:/data/db  
+      - registrydb:/data/db
     env_file:
       - .env
     networks:
-      - eq_net  
+      - eq_net
 
   registry:
-    build:
-      context: ./registry
-      dockerfile: Dockerfile
-    image: registry:latest
+    image: overzoom/eq_registry:latest
     container_name: registry
     restart: always
     env_file:
@@ -90,7 +81,7 @@ services:
       registrydb:
         condition: service_started
     networks:
-      - eq_net    
+      - eq_net
 
   calendardb:
     image: postgres
@@ -100,17 +91,14 @@ services:
     ports:
       - "5481:5432"
     volumes:
-      - calendardb:/data/postgres  
+      - calendardb:/data/postgres
     env_file:
       - .env
     networks:
       - eq_net
 
   calendar:
-    build:
-      context: ./calendar
-      dockerfile: Dockerfile
-    image: calendar:latest
+    image: overzoom/eq_calendar:latest
     container_name: calendar
     restart: always
     env_file:
@@ -124,10 +112,7 @@ services:
       - eq_net
 
   document:
-    build:
-      context: ./document
-      dockerfile: Dockerfile
-    image: document:latest
+    image: overzoom/eq_document:latest
     container_name: document
     restart: always
     ports:
@@ -138,13 +123,10 @@ services:
       eurekaserver:
         condition: service_started
     networks:
-      - eq_net    
+      - eq_net
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: frontend:latest
+    image: overzoom/eq_frontend:latest
     container_name: frontend
     restart: always
     ports:

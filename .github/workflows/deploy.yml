@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Build & Deploy EQ Microservices
 
 on:
   push:
@@ -6,53 +6,52 @@ on:
       - main
 
 jobs:
-  deploy:
-    name: Deploy on Production Server
+  build-and-push:
+    name: Build and Push EQ Docker Images
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          node-version: 18
-          cache: npm
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm install
+      - name: Push EQ microservices to Docker Hub
+        run: |
+          chmod +x ./push_eq.sh
+          ./push_eq.sh
+        env:
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_PASSWORD }}
+          TAG: latest
 
-      - name: Build
-        working-directory: frontend
-        run: yarn build --configuration production
+  deploy:
+    name: SSH Deploy on Production Server
+    needs: build-and-push
+    runs-on: ubuntu-latest
 
-      - name: Upload dist on VPS
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SERVER_SSH_PORT }}
-          source: frontend/dist/soko-fe/*
-          strip_components: 3
-          target: /home/manager/eq/frontend/dist/
-          rm: true
-
-      - name: Git Pull on VPS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SERVER_SSH_PORT }}
-          script: git -C ~/eq pull
-
-      - name: Deploy on VPS
-        uses: appleboy/ssh-action@master
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_SSH_PORT }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SERVER_SSH_PORT }}
+
           script: |
-            cd ~/eq
-            bash ~/eq/build.sh
+            # Vai nella directory con docker-compose.yml
+            cd /home/manager/eq
+
+            # Aggiorna immagini da Docker Hub
+            docker compose pull
+
+            # Ricrea tutti i container (solo quelli con immagine aggiornata)
+            docker compose up -d
