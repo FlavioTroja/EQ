@@ -9,7 +9,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 RUN rm -rf /usr/share/nginx/html/*
 
 # ✅ Copia direttamente i file Angular già pronti (senza soko-fe)
-COPY dist /usr/share/nginx/html/
+COPY dist/soko-fe/* /usr/share/nginx/html/
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
