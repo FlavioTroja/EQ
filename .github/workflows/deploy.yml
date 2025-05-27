@@ -6,8 +6,45 @@ on:
       - main
 
 jobs:
+  detect-changes:
+    name: Detect Changed Microservices
+    runs-on: ubuntu-latest
+    outputs:
+      registry: ${{ steps.filter.outputs.registry }}
+      gateway: ${{ steps.filter.outputs.gateway }}
+      eurekaserver: ${{ steps.filter.outputs.eurekaserver }}
+      calendar: ${{ steps.filter.outputs.calendar }}
+      document: ${{ steps.filter.outputs.document }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      any: ${{ steps.filter.outputs.any_changed }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Filter changed services
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            registry: 'registry/**'
+            gateway: 'gateway/**'
+            eurekaserver: 'eurekaserver/**'
+            calendar: 'calendar/**'
+            document: 'document/**'
+            frontend: 'frontend/**'
+            any_changed:
+              - 'registry/**'
+              - 'gateway/**'
+              - 'eurekaserver/**'
+              - 'calendar/**'
+              - 'document/**'
+              - 'frontend/**'
+
   build-and-push:
-    name: Build and Push EQ Docker Images
+    name: Build and Push Docker Images
+    needs: detect-changes
+    if: needs.detect-changes.outputs.any == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +60,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Push EQ microservices to Docker Hub
+      - name: Push only changed microservices
         run: |
           chmod +x ./push_eq.sh
-          ./push_eq.sh
+          ./push_eq.sh $(echo \
+            ${{ needs.detect-changes.outputs.registry == 'true' && 'registry' || '' }} \
+            ${{ needs.detect-changes.outputs.gateway == 'true' && 'gateway' || '' }} \
+            ${{ needs.detect-changes.outputs.eurekaserver == 'true' && 'eurekaserver' || '' }} \
+            ${{ needs.detect-changes.outputs.calendar == 'true' && 'calendar' || '' }} \
+            ${{ needs.detect-changes.outputs.document == 'true' && 'document' || '' }} \
+            ${{ needs.detect-changes.outputs.frontend == 'true' && 'frontend' || '' }} \
+          )
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -47,11 +91,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
           script: |
-            # Vai nella directory con docker-compose.yml
             cd /home/manager/eq
-
-            # Aggiorna immagini da Docker Hub
             docker compose pull
-
-            # Ricrea tutti i container (solo quelli con immagine aggiornata)
             docker compose up -d

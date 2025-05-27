@@ -4,7 +4,11 @@ set -euo pipefail
 # Configurazione
 DOCKERHUB_USER="${DOCKERHUB_USER:-overzoom}"
 TAG="${TAG:-latest}"
-SERVICES=("registry" "gateway" "eurekaserver" "calendar" "document")
+if [[ $# -gt 0 ]]; then
+  SERVICES=("$@")
+else
+  SERVICES=("registry" "gateway" "eurekaserver" "calendar" "document" "frontend")
+fi
 FRONTEND_DIR="frontend"
 REFERENCE_BRANCH="origin/main"  # oppure HEAD~1 per confrontare con l'ultimo commit
 
