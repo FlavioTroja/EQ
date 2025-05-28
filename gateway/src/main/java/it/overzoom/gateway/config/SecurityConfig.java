@@ -22,9 +22,13 @@ public class SecurityConfig {
                                                                 "/calendar/api-docs/**", "/registry/api-docs/**",
                                                                 "/document/api-docs/**")
                                                 .permitAll()
+
                                                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                                 .anyExchange().authenticated())
-                                .oauth2ResourceServer(rs -> rs.jwt(Customizer.withDefaults()));
+                                .oauth2ResourceServer(rs -> rs.jwt(Customizer.withDefaults()))
+                                .exceptionHandling(handling -> handling
+                                                .authenticationEntryPoint(new CorsAuthenticationEntryPoint()));
+
                 return http.build();
         }
 }
