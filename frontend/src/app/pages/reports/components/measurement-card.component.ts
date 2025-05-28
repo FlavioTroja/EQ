@@ -1,8 +1,8 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { Measurement } from "../../../models/Measurement";
+import { Measurement, unitMeasureLabel } from "../../../models/Measurement";
 
 @Component({
   selector: "app-measurement-card",
@@ -31,7 +31,7 @@ import { Measurement } from "../../../models/Measurement";
                  id="id1" [value]="value.value"
                  type="number"
                  [disabled]="viewOnly"/>
-          <span class="absolute right-2 top-3 font-bold select-none">{{ value.unitMeasure }}</span>
+          <span class="absolute right-2 top-3 font-bold select-none">{{ unitMeasureLabel[value.unitMeasure] }}</span>
         </div>
       </div>
     </div>
@@ -48,4 +48,5 @@ export class MeasurementCardComponent {
   @Input({ required: true }) measurement!: Measurement;
   @Input() viewOnly: boolean = false;
 
+  protected readonly unitMeasureLabel = unitMeasureLabel;
 }
