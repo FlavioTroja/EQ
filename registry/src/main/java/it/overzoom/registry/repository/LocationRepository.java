@@ -17,4 +17,6 @@ public interface LocationRepository extends MongoRepository<Location, String> {
         List<Location> findByCustomerId(String customerId);
 
         List<Location> findByIdIn(List<String> ids);
+
+        boolean existsByCustomerId(String customerId);
 }

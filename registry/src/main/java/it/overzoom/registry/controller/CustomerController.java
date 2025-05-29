@@ -105,11 +105,13 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") String customerId)
-            throws ResourceNotFoundException {
+            throws ResourceNotFoundException, BadRequestException {
 
+        // Controllo esistenza (puoi lasciarlo o spostarlo nel servizio come sopra)
         if (!customerService.existsById(customerId)) {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
+        // Questo metodo ora può lanciare BadRequestException
         customerService.deleteById(customerId);
         return ResponseEntity.noContent().build();
     }

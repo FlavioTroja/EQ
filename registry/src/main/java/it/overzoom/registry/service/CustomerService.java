@@ -29,7 +29,7 @@ public interface CustomerService {
     CustomerDTO partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException;
 
-    void deleteById(String id);
+    void deleteById(String id) throws BadRequestException, ResourceNotFoundException;
 
     boolean hasAccess(String customerId) throws ResourceNotFoundException;
 

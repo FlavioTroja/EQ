@@ -236,7 +236,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void deleteById(String id) {
+    @Transactional
+    public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
+        if (!customerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
+        // Verifica che non ci siano location collegate
+        if (locationRepository.existsByCustomerId(id)) {
+            throw new BadRequestException(
+                "Impossibile cancellare il cliente perché ci sono delle location ad esso associate."
+            );
+        }
         customerRepository.deleteById(id);
     }
 
