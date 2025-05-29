@@ -14,7 +14,7 @@ export const initialState: ProfileState = {
 
 const profileReducer = createReducer(
   initialState,
-  on(ProfileActions.loadProfileSuccess, (_state, { user }) => ({
+  on(ProfileActions.loadProfileSuccess, (state, { user }) => ({
     user: { ...user },
     error: false
   })),
@@ -22,7 +22,7 @@ const profileReducer = createReducer(
     ...state,
     error: true
   })),
-  on(ProfileActions.editProfileSuccess, (_state, { user }) => ({
+  on(ProfileActions.editProfileSuccess, (state, { user }) => ({
     user: { ...user },
     error: false
   })),
@@ -30,7 +30,7 @@ const profileReducer = createReducer(
     ...state,
     error: false
   })),
-  on(AuthActions.logoutSuccess, (_state) => ({
+  on(AuthActions.logoutSuccess, (state) => ({
     user: {} as PartialUser,
     error: false
   }))

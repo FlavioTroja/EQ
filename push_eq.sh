@@ -10,7 +10,7 @@ else
   SERVICES=("registry" "gateway" "eurekaserver" "calendar" "document" "frontend")
 fi
 FRONTEND_DIR="frontend"
-REFERENCE_BRANCH="origin/main"  # oppure HEAD~1 per confrontare con l'ultimo commit
+REFERENCE_BRANCH="HEAD~1"  # oppure HEAD~1 per confrontare con l'ultimo commit
 
 # Funzione per log con timestamp
 log() {
@@ -30,11 +30,8 @@ for service in "${SERVICES[@]}"; do
   if [ -d "$service" ]; then
     log "🔍 Controllo modifiche in $service..."
 
-    log "🔍 git diff rispetto a $REFERENCE_BRANCH in $FRONTEND_DIR:"
-    git diff --name-only "$REFERENCE_BRANCH" -- "$FRONTEND_DIR"
-
-    if git diff --quiet "$REFERENCE_BRANCH" -- "$FRONTEND_DIR"; then
-      log "✅ Nessuna modifica in $FRONTEND_DIR. Skip."
+    if git diff --quiet "$REFERENCE_BRANCH" -- "$service"; then
+      log "✅ Nessuna modifica in $service. Skip."
       continue
     fi
 
