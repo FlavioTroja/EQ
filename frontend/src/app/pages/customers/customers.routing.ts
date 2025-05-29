@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NAVBAR_ACTION } from "../../models/NavBar";
 import { getActiveCustomerChanges } from "./store/selectors/customers.selectors";
+import { getActiveLocationChanges } from "./pages/locations/store/selectors/locations.selectors";
 
 const routes: Routes = [
   {
@@ -53,7 +54,7 @@ const routes: Routes = [
         other: "Aggiungi sede"
       },
       buttons: [
-        { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.CUSTOMER_SAVE, selectors: { disabled: getActiveCustomerChanges } },
+        { label: "Salva", iconName: "edit", action: NAVBAR_ACTION.LOCATION_SAVE, selectors: { disabled: getActiveLocationChanges } },
       ],
       backAction: "-",
     }
