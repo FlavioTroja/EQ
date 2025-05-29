@@ -10,7 +10,7 @@ import { getRouterData, selectCustomRouteParam } from "../../../../../../core/ro
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { map, pairwise, takeUntil } from "rxjs/operators";
 import * as LocationsActions from "../../store/actions/locations.actions";
-import { Subject } from "rxjs";
+import { Subject, tap } from "rxjs";
 import { createLocationPayload, PartialLocation } from "../../../../../../models/Location";
 import { difference } from "../../../../../../../utils/utils";
 import { getCurrentLocation } from "../../store/selectors/locations.selectors";
@@ -71,6 +71,7 @@ export default class EditLocationComponent implements OnInit {
     city: [{ value: "", disabled: this.viewOnly() }],
     zipcode: [{ value: "", disabled: this.viewOnly() }],
     province: [{ value: "", disabled: this.viewOnly() }],
+    customerId: [this.customerId(), Validators.required],
     departments: [[{}]],
   });
 
@@ -128,17 +129,19 @@ export default class EditLocationComponent implements OnInit {
         const diff = {
           ...difference(this.initFormValue, newState),
 
-          // Array data
+          customerId: !!newState.customerId ? newState.customerId : this.customerId(),
+
           departments: [
             ...(newState.departments || []),
           ]
         };
 
+        console.log(diff, this.locationForm.invalid)
         return createLocationPayload(diff);
       }),
       map((changes: any) => Object.keys(changes).length !== 0 && !this.locationForm.invalid ? { ...changes, id: this.id() } : {}),
       takeUntil(this.subject),
-      // tap(changes => console.log(changes)),
+      tap(changes => console.log(changes)),
     ).subscribe((changes: any) => this.store.dispatch(LocationsActions.locationActiveChanges({ changes })));
   }
 

@@ -6,6 +6,7 @@ import * as RouterActions from "../../router/store/router.actions";
 import * as UserActions from "../../../pages/users/store/actions/users.actions";
 import * as SupplierActions from "../../../pages/suppliers/store/actions/suppliers.actions";
 import * as CustomerActions from "../../../pages/customers/store/actions/customers.actions";
+import * as LocationActions from "../../../pages/customers/pages/locations/store/actions/locations.actions";
 import * as ReportActions from "../../../pages/reports/store/actions/reports.actions";
 import * as MachineActions from "../../../pages/machines/store/actions/machines.actions";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -21,6 +22,8 @@ import {
 export class NavbuttonService {
   store: Store<AppState> = inject(Store);
   id = toSignal(this.store.select(selectCustomRouteParam("id")));
+  customerId = toSignal(this.store.select(selectCustomRouteParam("customerId")));
+  locationId = toSignal(this.store.select(selectCustomRouteParam("locationId")));
   url = signal(document.location.href);
   departmentIndex = toSignal(this.store.select(selectCustomRouteParam("departmentIndex")));
   departmentLength = toSignal(this.store.select(getActiveReportLocationsDepartmentsLength));
@@ -70,6 +73,15 @@ export class NavbuttonService {
     {
       actionName: NAVBAR_ACTION.CUSTOMER_NAVIGATE_ON_MODIFY,
       callback: () => this.store.dispatch(RouterActions.go({ path: [ `customers/${this.id()}` ] }))
+    },
+    // LOCATION SECTION
+    {
+      actionName: NAVBAR_ACTION.LOCATION_SAVE,
+      callback: () => this.store.dispatch(LocationActions.editLocation())
+    },
+    {
+      actionName: NAVBAR_ACTION.LOCATION_NAVIGATE_ON_MODIFY,
+      callback: () => this.store.dispatch(RouterActions.go({ path: [ `customers/${this.customerId()}/locations/${this.locationId()}` ] }))
     },
     // USER SECTION
     {

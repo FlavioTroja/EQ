@@ -25,7 +25,7 @@ export class LocationsService {
   }
 
   editLocation(id: string, customerId: string, payload: PartialLocation) {
-    const body = { ...payload, id: undefined };
+    const body = { ...payload, id: id };
     return this.http.patch<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${id}`, body);
   }
 
