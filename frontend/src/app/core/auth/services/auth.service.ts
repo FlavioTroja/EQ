@@ -1,8 +1,7 @@
-import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { Auth, LoginPayload, RegisterPayload } from "../../../models/Auth";
-import { Observable, of } from "rxjs";
 
 const BASE_URL = environment.BASE_URL;
 const AUTH_KEY = "Authorization";
@@ -18,7 +17,6 @@ export class AuthService {
 
   login(payload: LoginPayload) {
     return this.http.post<Auth>(`${BASE_URL}/auth/login`, payload);
-    // return of({ access_token: "fjbgvohub" });
   }
 
   saveAuth(auth: Auth) {
