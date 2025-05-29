@@ -10,7 +10,7 @@ else
   SERVICES=("registry" "gateway" "eurekaserver" "calendar" "document" "frontend")
 fi
 FRONTEND_DIR="frontend"
-REFERENCE_BRANCH="HEAD~1"  # oppure HEAD~1 per confrontare con l'ultimo commit
+REFERENCE_BRANCH="origin/main"  # oppure HEAD~1 per confrontare con l'ultimo commit
 
 # Funzione per log con timestamp
 log() {
