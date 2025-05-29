@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -109,5 +110,25 @@ public class LocationController {
         Location updateLocation = locationService.partialUpdate(id, location);
 
         return ResponseEntity.ok().body(updateLocation);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable("customerId") String customerId,
+            @PathVariable("id") String locationId)
+            throws ResourceNotFoundException, BadRequestException {
+
+        if (!customerService.hasAccess(customerId)) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+        }
+
+        Location loc = locationService.findById(locationId);
+        if (!loc.getCustomerId().equals(customerId)) {
+            throw new BadRequestException("La sede non appartiene a questo cliente.");
+        }
+
+        locationService.deleteById(locationId);
+
+        return ResponseEntity.noContent().build();
     }
 }

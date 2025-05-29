@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.dto.LocationDTO;
 import it.overzoom.registry.exception.BadRequestException;
@@ -100,5 +101,20 @@ public class LocationServiceImpl implements LocationService {
         }
 
         return this.create(existingLocation);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
+        if (!locationRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Location non trovata.");
+        }
+        // Blocca se ci sono dipartimenti associati
+        if (departmentRepository.existsByLocationId(id)) {
+            throw new BadRequestException(
+                "Impossibile cancellare la sede perché ci sono dei dipartimenti ad essa associati."
+            );
+        }
+        locationRepository.deleteById(id);
     }
 }

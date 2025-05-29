@@ -18,4 +18,5 @@ public interface DepartmentRepository extends MongoRepository<Department, String
 
     List<Department> findByIdIn(List<String> ids);
 
+    boolean existsByLocationId(String locationId);
 }

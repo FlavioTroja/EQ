@@ -28,4 +28,6 @@ public interface LocationService {
 
         Location partialUpdate(String id, Location location)
                         throws ResourceNotFoundException, BadRequestException;
+
+        void deleteById(String id) throws BadRequestException, ResourceNotFoundException;
 }
