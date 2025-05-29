@@ -30,8 +30,11 @@ for service in "${SERVICES[@]}"; do
   if [ -d "$service" ]; then
     log "🔍 Controllo modifiche in $service..."
 
-    if git diff --quiet "$REFERENCE_BRANCH" -- "$service"; then
-      log "✅ Nessuna modifica in $service. Skip."
+    log "🔍 git diff rispetto a $REFERENCE_BRANCH in $FRONTEND_DIR:"
+    git diff --name-only "$REFERENCE_BRANCH" -- "$FRONTEND_DIR"
+
+    if git diff --quiet "$REFERENCE_BRANCH" -- "$FRONTEND_DIR"; then
+      log "✅ Nessuna modifica in $FRONTEND_DIR. Skip."
       continue
     fi
 
