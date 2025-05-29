@@ -64,7 +64,7 @@ public class LocationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Location> create(@PathVariable("id") String customerId,
+    public ResponseEntity<Location> create(@PathVariable("customerId") String customerId,
             @Valid @RequestBody Location location)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Location : " + location.toString());
