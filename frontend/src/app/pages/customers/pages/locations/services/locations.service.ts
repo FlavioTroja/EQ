@@ -21,7 +21,7 @@ export class LocationsService {
   }
 
   getLocation(locationId: string, customerId: string,  params?: DefaultQueryParams) {
-    return this.http.get<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locaitons/${locationId}`, { params: { ...params } });
+    return this.http.get<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${locationId}`, { params: { ...params } });
   }
 
   editLocation(id: string, customerId: string, payload: PartialLocation) {

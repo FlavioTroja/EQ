@@ -1,8 +1,10 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ScrollBarNavigatorComponent } from "../../../../components/scroll-bar-navigator/scroll-bar-navigator.component";
+import {
+  ScrollBarNavigatorComponent
+} from "../../../../components/scroll-bar-navigator/scroll-bar-navigator.component";
 import { MeasurementCardComponent } from "../../components/measurement-card.component";
-import { Measurement } from "../../../../models/Measurement";
+import { Measurement, unitMeasure } from "../../../../models/Measurement";
 
 @Component({
   selector: "app-compile-measurements",
@@ -31,21 +33,21 @@ export default class CompileMeasurementsComponent {
       sourceId:"",
       date:"",
       name:"tavolo comando dietro visiva",
-      values: [{ value: "", unitMeasure: "mSv/anno" }, { value: "", unitMeasure: "µGy/exp" }],
+      values: [{ value: "", unitMeasure: unitMeasure.miniSievertAnnual }, { value: "", unitMeasure: unitMeasure.microGrayExp }],
     },
     {
       id:"",
       sourceId:"",
       date:"",
       name:"postazione operatore",
-      values: [{ value: "", unitMeasure: "mSv/anno" }, { value: "", unitMeasure: "µGy/exp" }],
+      values: [{ value: "", unitMeasure: unitMeasure.miniSievertAnnual }, { value: "", unitMeasure: unitMeasure.microGrayExp }],
     },
     {
       id:"",
       sourceId:"",
       date:"",
       name:"dietro porta accesso sala comandi",
-      values: [{ value: "", unitMeasure: "mSv/anno" }, { value: "", unitMeasure: "µGy/exp" }],
+      values: [{ value: "", unitMeasure: unitMeasure.miniSievertAnnual }, { value: "", unitMeasure: unitMeasure.microGrayExp }],
     },
   ];
 }

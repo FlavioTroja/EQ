@@ -1,9 +1,11 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { InputIndexedComponent } from "../../../../../../../components/input-indexed/input-indexed.component";
-import { FormBuilder, Validators } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { InputComponent } from "../../../../../../../components/input/input.component";
+import { MatSelectModule } from "@angular/material/select";
+import { unitMeasure, unitMeasureLabel } from "../../../../../../../models/Measurement";
 
 @Component({
   selector: 'app-measurement-point-section',
@@ -11,21 +13,27 @@ import { InputComponent } from "../../../../../../../components/input/input.comp
   template: `
     <div class="flex flex-col rounded bg-grey-1 p-2 gap-2" [ngClass]="{ 'ghost': ghost }">
 
-      <app-input-indexed [index]="''+index" [indexBold]="true">
-        <app-input [formControl]="this.f.name" id="measurement-point-name" label="nome" type="text"
+      <app-input-indexed class="w-full" [index]="''+index" [indexBold]="true">
+        <app-input class="w-full text-black" [formControl]="this.f.name" id="measurement-point-name" label="nome" type="text"
                    [placeholder]="ghost ? 'Nuova misurazione' : ''"/>
       </app-input-indexed>
       <app-input-indexed [index]="'A'">
-<!--        <label class="text-md justify-left block px-3 py-0 font-medium">tipologia cliente</label>-->
-<!--        <mat-select class="focus:outline-none p-3 border-input rounded-md w-full bg-foreground"-->
-<!--                    [formControl]="f.unitMeasurement1"-->
-<!--        >-->
-<!--          <mat-option class="p-3 bg-white !italic">Nessun valore</mat-option>-->
-<!--          <mat-option class="p-3 bg-white" *ngFor="let type of customerTypeArray" [value]="type.value">{{type.name}}</mat-option>-->
-<!--        </mat-select>-->
+        <div class="flex flex-col w-full" [ngClass]="{ 'text-black': this.f.unitMeasurement1.touched }">
+          <label class="text-md justify-left block px-3 py-0 font-medium">u.m.</label>
+          <mat-select class="focus:outline-none p-3 border-input rounded-md w-full bg-foreground"
+                      [formControl]="f.unitMeasurement1">
+            <mat-option class="p-3 bg-white" *ngFor="let unitMeasure of unitMeasures" [value]="unitMeasure">{{ unitMeasureLabel[unitMeasure] }}</mat-option>
+          </mat-select>
+        </div>
       </app-input-indexed>
       <app-input-indexed [index]="'B'">
-        ijsbfgjibijinmv
+        <div class="flex flex-col w-full" [ngClass]="{ 'text-black': this.f.unitMeasurement2.touched }">
+          <label class="text-md justify-left block px-3 py-0 font-medium">u.m.</label>
+          <mat-select class="focus:outline-none p-3 border-input rounded-md w-full bg-foreground"
+                      [formControl]="f.unitMeasurement2">
+            <mat-option class="p-3 bg-white" *ngFor="let unitMeasure of unitMeasures" [value]="unitMeasure">{{ unitMeasureLabel[unitMeasure] }}</mat-option>
+          </mat-select>
+        </div>
       </app-input-indexed>
 
       <div class="flex w-full justify-end" *ngIf="!ghost">
@@ -36,7 +44,7 @@ import { InputComponent } from "../../../../../../../components/input/input.comp
       </div>
     </div>
   `,
-  imports: [ CommonModule, InputIndexedComponent, MatIconModule, InputComponent ],
+  imports: [ CommonModule, InputIndexedComponent, MatIconModule, InputComponent, MatSelectModule, ReactiveFormsModule ],
   styles: [`
     .ghost {
       background-color: #EBEBEB;
@@ -57,13 +65,19 @@ export class MeasurementPointSectionComponent implements OnInit {
 
   measurementPointForm = this.fb.group({
     name: ["", [Validators.required]],
-    unitMeasurement1: ["", [Validators.required]],
-    unitMeasurement2: ["", [Validators.required]],
+    unitMeasurement1: [unitMeasure.microGrayExp, [Validators.required]],
+    unitMeasurement2: [unitMeasure.miniSievertAnnual, [Validators.required]],
   })
 
   get f() { return this.measurementPointForm.controls; }
 
+  get unitMeasures() {
+    return Object.values(unitMeasure);
+  }
+
   ngOnInit() {
 
   }
+
+  protected readonly unitMeasureLabel = unitMeasureLabel;
 }
