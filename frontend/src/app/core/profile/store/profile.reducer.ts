@@ -1,7 +1,7 @@
+import { Action, createReducer, on } from "@ngrx/store";
 import { PartialUser } from "../../../models/User";
-import { createReducer, on, Action } from "@ngrx/store";
-import * as ProfileActions from "./profile.actions";
 import * as AuthActions from "../../auth/store/auth.actions";
+import * as ProfileActions from "./profile.actions";
 
 export interface ProfileState {
     user: PartialUser,
@@ -14,7 +14,7 @@ export const initialState: ProfileState = {
 
 const profileReducer = createReducer(
   initialState,
-  on(ProfileActions.loadProfileSuccess, (state, { user }) => ({
+  on(ProfileActions.loadProfileSuccess, (_state, { user }) => ({
     user: { ...user },
     error: false
   })),
@@ -22,7 +22,7 @@ const profileReducer = createReducer(
     ...state,
     error: true
   })),
-  on(ProfileActions.editProfileSuccess, (state, { user }) => ({
+  on(ProfileActions.editProfileSuccess, (_state, { user }) => ({
     user: { ...user },
     error: false
   })),
@@ -30,7 +30,7 @@ const profileReducer = createReducer(
     ...state,
     error: false
   })),
-  on(AuthActions.logoutSuccess, (state) => ({
+  on(AuthActions.logoutSuccess, (_state) => ({
     user: {} as PartialUser,
     error: false
   }))
