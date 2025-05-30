@@ -133,12 +133,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerDTO createWithNested(CustomerDTO dto) {
-        // 1) Customer base senza DBRef
         Customer customer = customerMapper.toEntity(dto);
         customer.setLocations(Collections.emptyList());
         customer = customerRepository.save(customer);
 
-        // 2) Location
         List<Location> savedLocs = new ArrayList<>();
         for (LocationDTO locDto : dto.getLocations()) {
             locDto.setCustomerId(customer.getId());
@@ -146,7 +144,6 @@ public class CustomerServiceImpl implements CustomerService {
             loc.setDepartments(Collections.emptyList());
             loc = locationRepository.save(loc);
 
-            // 3) Department
             List<Department> savedDeps = new ArrayList<>();
             for (DepartmentDTO depDto : locDto.getDepartments()) {
                 depDto.setLocationId(loc.getId());
@@ -154,31 +151,27 @@ public class CustomerServiceImpl implements CustomerService {
                 dep.setSources(Collections.emptyList());
                 dep = departmentRepository.save(dep);
 
-                // 4) Source
                 List<Source> savedSrcs = new ArrayList<>();
                 for (SourceDTO srcDto : depDto.getSources()) {
                     srcDto.setDepartmentId(dep.getId());
                     Source src = sourceMapper.toEntity(srcDto);
                     savedSrcs.add(sourceRepository.save(src));
                 }
-                // ricollego i Source al Department
                 dep.setSources(savedSrcs);
                 savedDeps.add(departmentRepository.save(dep));
             }
-            // ricollego i Department alla Location
             loc.setDepartments(savedDeps);
             savedLocs.add(locationRepository.save(loc));
         }
 
-        // 5) ricollego le Location al Customer
         customer.setLocations(savedLocs);
         customer = customerRepository.save(customer);
 
-        // 6) restituisco il DTO completo di tutti gli ID
         return customerMapper.toDto(customer);
     }
 
     @Override
+    @Transactional
     public CustomerDTO update(Customer customer) throws ResourceNotFoundException, BadRequestException {
         Customer existingCustomer = customerRepository.findById(customer.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
@@ -197,6 +190,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerDTO partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException {
         Customer existingCustomer = customerRepository.findById(customer.getId())
@@ -240,7 +234,6 @@ public class CustomerServiceImpl implements CustomerService {
         if (!customerRepository.existsById(id)) {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
-        // Verifica che non ci siano location collegate
         if (locationRepository.existsByCustomerId(id)) {
             throw new BadRequestException(
                     "Impossibile cancellare il cliente perché ci sono delle sedi ad esso associate.");

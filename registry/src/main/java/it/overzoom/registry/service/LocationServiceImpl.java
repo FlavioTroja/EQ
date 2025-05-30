@@ -72,6 +72,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public Location create(Location location) throws ResourceNotFoundException, BadRequestException {
         Customer customer = customerRepository.findById(location.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
@@ -80,6 +81,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public Location update(Location location) throws ResourceNotFoundException, BadRequestException {
         Location existingLocation = this.findById(location.getId());
 
@@ -91,6 +93,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public Location partialUpdate(String id, Location location)
             throws ResourceNotFoundException, BadRequestException {
         Location existingLocation = this.findById(location.getId());

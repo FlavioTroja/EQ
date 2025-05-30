@@ -44,6 +44,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional
     public Department create(Department department) throws ResourceNotFoundException, BadRequestException {
         return departmentRepository.save(department);
     }
@@ -77,17 +78,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
-        // 1) Verifico l'esistenza del reparto
-        Department dept = departmentRepository.findById(id)
+        departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reparto non trovato."));
 
-        // 2) Controllo che non ci siano sorgenti collegate
         if (sourceRepository.existsByDepartmentId(id)) {
             throw new BadRequestException(
                     "Impossibile cancellare il reparto perché ci sono delle sorgenti ad esso collegate.");
         }
 
-        // 3) Cancello
         departmentRepository.deleteById(id);
     }
 }

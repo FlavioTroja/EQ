@@ -37,11 +37,13 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
+    @Transactional
     public Measurement create(Measurement measurement) {
         return measurementRepository.save(measurement);
     }
 
     @Override
+    @Transactional
     public Optional<Measurement> partialUpdate(String id, Measurement measurement) {
         return this.findById(id)
                 .map(existingMeasurement -> {

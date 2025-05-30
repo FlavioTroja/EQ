@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.dto.MachineDTO;
@@ -49,11 +50,13 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
+    @Transactional
     public Machine create(Machine machine) {
         return machineRepository.save(machine);
     }
 
     @Override
+    @Transactional
     public Optional<Machine> update(Machine machine) {
         return machineRepository.findById(machine.getId()).map(existingMachine -> {
             existingMachine.setName(machine.getName());
@@ -63,6 +66,7 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
+    @Transactional
     public Optional<Machine> partialUpdate(String id, Machine machine) {
         return machineRepository.findById(id)
                 .map(existingMachine -> {
@@ -78,6 +82,7 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
+    @Transactional
     public void delete(String id) {
         machineRepository.deleteById(id);
     }
