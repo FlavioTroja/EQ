@@ -98,9 +98,6 @@ public class DepartmentController {
         if (department.getId() == null) {
             throw new BadRequestException("ID invalido.");
         }
-        if (!departmentService.existsById(department.getId())) {
-            throw new ResourceNotFoundException("Cliente non trovato.");
-        }
 
         Department updateDepartment = departmentService.update(department).orElseThrow(
                 () -> new ResourceNotFoundException("Reparto non trovato con questo ID :: " + department.getId()));
@@ -117,9 +114,6 @@ public class DepartmentController {
                 department.toString());
         if (id == null) {
             throw new BadRequestException("ID invalido.");
-        }
-        if (!departmentService.existsById(id)) {
-            throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
         Department updateDepartment = departmentService.partialUpdate(id, department)

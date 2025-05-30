@@ -10,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -96,43 +98,36 @@ public class SourceController {
                 .body(source);
     }
 
-    // @PutMapping("")
-    // public ResponseEntity<Source> update(@Valid @RequestBody Source
-    // source)
-    // throws BadRequestException, ResourceNotFoundException {
-    // log.info("REST request to update Source: " + source.toString());
-    // if (source.getId() == null) {
-    // throw new BadRequestException("ID invalido.");
-    // }
-    // if (!sourceService.existsById(source.getId())) {
-    // throw new ResourceNotFoundException("Cliente non trovato.");
-    // }
+    @PutMapping("")
+    public ResponseEntity<Source> update(@Valid @RequestBody Source source)
+            throws BadRequestException, ResourceNotFoundException {
+        log.info("REST request to update Source: " + source.toString());
+        if (source.getId() == null) {
+            throw new BadRequestException("ID invalido.");
+        }
 
-    // Source updateSource = sourceService.update(source);
+        Source updateSource = sourceService.update(source)
+                .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata."));
 
-    // return ResponseEntity.ok().body(updateSource);
-    // }
+        return ResponseEntity.ok().body(updateSource);
+    }
 
-    // @PatchMapping(value = "/{id}", consumes = { "application/json",
-    // "application/merge-patch+json" })
-    // public ResponseEntity<Source> partialUpdate(@PathVariable(value = "id")
-    // String id,
-    // @RequestBody Source source) throws BadRequestException,
-    // ResourceNotFoundException {
-    // log.info("REST request to partial update Source: " +
-    // source.toString());
-    // if (id == null) {
-    // throw new BadRequestException("ID invalido.");
-    // }
-    // if (!sourceService.existsById(id)) {
-    // throw new ResourceNotFoundException("Cliente non trovato.");
-    // }
+    @PatchMapping(value = "/{id}", consumes = { "application/json",
+            "application/merge-patch+json" })
+    public ResponseEntity<Source> partialUpdate(@PathVariable(value = "id") String id,
+            @RequestBody Source source) throws BadRequestException,
+            ResourceNotFoundException {
+        log.info("REST request to partial update Source: " +
+                source.toString());
+        if (id == null) {
+            throw new BadRequestException("ID invalido.");
+        }
 
-    // Source updateSource = sourceService.partialUpdate(id,
-    // source);
+        Source updateSource = sourceService.partialUpdate(id, source).orElseThrow(
+                () -> new ResourceNotFoundException("Sorgente non trovata con questo ID :: " + id));
 
-    // return ResponseEntity.ok().body(updateSource);
-    // }
+        return ResponseEntity.ok().body(updateSource);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String sourceId)
