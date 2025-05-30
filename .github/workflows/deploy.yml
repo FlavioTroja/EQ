@@ -15,10 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       any: ${{ steps.filter.outputs.any_changed }}
-      services: ${{ steps.list.outputs.services }}    # <-- da filter → list
+      services: ${{ steps.list.outputs.services }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Filter changed services
         id: filter
@@ -43,22 +44,18 @@ jobs:
         if: steps.filter.outputs.any_changed == 'true'
         id: list
         run: |
-          SERVICES_JSON=$(jq -n \
-            --arg r "${{ steps.filter.outputs.registry }}" \
-            --arg g "${{ steps.filter.outputs.gateway }}" \
-            --arg e "${{ steps.filter.outputs.eurekaserver }}" \
-            --arg c "${{ steps.filter.outputs.calendar }}" \
-            --arg d "${{ steps.filter.outputs.document }}" \
-            --arg f "${{ steps.filter.outputs.frontend }}" \
-            '[
-              ($r == "true") ? ["registry"] : [],
-              ($g == "true") ? ["gateway"] : [],
-              ($e == "true") ? ["eurekaserver"] : [],
-              ($c == "true") ? ["calendar"] : [],
-              ($d == "true") ? ["document"] : [],
-              ($f == "true") ? ["frontend"] : []
-            ] | add')
-          echo "::set-output name=services::$SERVICES_JSON"
+          # raccogliamo in bash
+          SERVICES=()
+          [[ "${{ steps.filter.outputs.registry }}"       == "true" ]] && SERVICES+=("registry")
+          [[ "${{ steps.filter.outputs.gateway }}"        == "true" ]] && SERVICES+=("gateway")
+          [[ "${{ steps.filter.outputs.eurekaserver }}"  == "true" ]] && SERVICES+=("eurekaserver")
+          [[ "${{ steps.filter.outputs.calendar }}"       == "true" ]] && SERVICES+=("calendar")
+          [[ "${{ steps.filter.outputs.document }}"       == "true" ]] && SERVICES+=("document")
+          [[ "${{ steps.filter.outputs.frontend }}"       == "true" ]] && SERVICES+=("frontend")
+
+          # trasformiamo in JSON array
+          SERVICES_JSON=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -s .)
+          echo "services=$SERVICES_JSON" >> $GITHUB_OUTPUT
 
   build-and-push:
     name: Build and Push Docker Images
@@ -67,33 +64,34 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: ${{ fromJson(needs.detect-changes.outputs.services) }}  # <-- JSON array → matrix
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
 
     env:
       IMAGE_REGISTRY: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
       TAG_SHA: ${{ github.sha }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: docker/setup-qemu-action@v2
-        name: Set up QEMU
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-      - uses: docker/setup-buildx-action@v3
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - uses: actions/cache@v3
-        name: Cache Docker layers
+      - name: Cache Docker layers
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache-${{ matrix.service }}
           key: buildx-${{ matrix.service }}-${{ github.sha }}
           restore-keys: |
             buildx-${{ matrix.service }}-
 
-      - uses: docker/login-action@v2
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
