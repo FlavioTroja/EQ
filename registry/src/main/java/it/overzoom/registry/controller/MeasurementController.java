@@ -36,7 +36,6 @@ import jakarta.validation.Valid;
 public class MeasurementController {
 
     private static final Logger log = LoggerFactory.getLogger(MeasurementController.class);
-
     private final MeasurementService measurementService;
     private final SourceService sourceService;
     private final DepartmentService departmentService;
