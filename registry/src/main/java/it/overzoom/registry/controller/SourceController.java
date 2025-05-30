@@ -138,7 +138,6 @@ public class SourceController {
     public ResponseEntity<Void> delete(@PathVariable("id") String sourceId)
             throws ResourceNotFoundException, BadRequestException {
 
-        // 1) Recupera la sorgente (404 se non esiste)
         Source src = sourceService.findById(sourceId);
 
         Department dept = departmentService.findById(src.getDepartmentId());
