@@ -117,8 +117,8 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: appleboy/ssh-action@v0.1.7
-        name: Deploy via SSH
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_SSH_PORT }}
@@ -126,8 +126,18 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            cd /home/manager/eq
-            docker compose pull
-            docker compose up -d
-        retry: 2
-        retry-delay-seconds: 15
+            attempt=0
+            max_attempts=2
+            until [ $attempt -ge $max_attempts ]
+            do
+              echo "Deploy attempt $((attempt+1))..."
+              cd /home/manager/eq
+              docker compose pull && docker compose up -d && break
+              attempt=$((attempt+1))
+              echo "Deploy failed, retrying in 15s..."
+              sleep 15
+            done
+            if [ $attempt -ge $max_attempts ]; then
+              echo "❌ All deploy attempts failed!"
+              exit 1
+            fi
