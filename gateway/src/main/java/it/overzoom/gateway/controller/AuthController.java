@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpRespo
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExistsException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final CognitoIdentityProviderClient cognito;
