@@ -17,7 +17,8 @@ public class SecurityConfig {
                 http.csrf(csrf -> csrf.disable())
                                 .cors(Customizer.withDefaults())
                                 .authorizeExchange(ex -> ex
-                                                .pathMatchers("/api/auth/**", "swagger-ui.html", "/swagger-ui/**",
+                                                .pathMatchers("/api/auth/**", "/auth/**", "swagger-ui.html",
+                                                                "/swagger-ui/**",
                                                                 "/api-docs/**",
                                                                 "/calendar/api-docs/**", "/registry/api-docs/**",
                                                                 "/document/api-docs/**")
