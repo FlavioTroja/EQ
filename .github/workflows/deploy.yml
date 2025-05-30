@@ -101,7 +101,7 @@ jobs:
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache-${{ matrix.service }} \
             --cache-to=type=local,dest=/tmp/.buildx-cache-${{ matrix.service }},mode=max \
-            --platform linux/amd64,linux/arm64 \
+            --platform linux/amd64 \
             -t $IMAGE_REGISTRY/eq-${{ matrix.service }}:latest \
             -t $IMAGE_REGISTRY/eq-${{ matrix.service }}:${TAG_SHA} \
             -f ./${{ matrix.service }}/Dockerfile \

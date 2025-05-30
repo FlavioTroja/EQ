@@ -148,7 +148,6 @@ public class SourceController {
             throw new BadRequestException("Non hai i permessi per accedere a questa sorgente.");
         }
 
-        // 3) Esegue la cancellazione (blocca internamente se ci sono misure)
         sourceService.deleteById(sourceId);
 
         return ResponseEntity.noContent().build();
