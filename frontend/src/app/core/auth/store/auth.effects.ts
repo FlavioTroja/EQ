@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from "@ngrx/effects";
-import { catchError, exhaustMap, filter, map, of, tap } from "rxjs";
+import { catchError, delay, exhaustMap, filter, map, of, tap } from "rxjs";
 import * as ProfileActions from "../../profile/store/profile.actions";
 import * as RouterActions from "../../router/store/router.actions";
 import { AuthService } from "../services/auth.service";
@@ -46,6 +46,7 @@ export class AuthEffects  {
   loginSuccessEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.loginSuccess),
     tap(({ auth }) => this.authService.saveAuth(auth)),
+    delay(10),
     exhaustMap(() => [
       ProfileActions.loadProfile(),
       RouterActions.go({ path: ["home"] })

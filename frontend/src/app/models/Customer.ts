@@ -6,13 +6,13 @@ export interface Customer {
   id: string,
   name: string,
   fiscalCode: string,
-  vatNumber: string,
+  vatCode: string,
   pec: string,
   sdi: string,
   paymentMethod: PaymentMethod,
   email: string,
-  phone: number,
-  note?: number,
+  phoneNumber: number,
+  notes?: number,
   locations: Location[]
 }
 
@@ -37,13 +37,13 @@ export function createCustomerPayload(customer: any): CustomerDTO {
     id: customer.id,
     name: customer.name,
     fiscalCode: customer.fiscalCode,
-    vatNumber: customer.vatNumber,
+    vatCode: customer.vatCode,
     sdi: customer.sdi,
     type: customer.type,
     email: customer.email,
     pec: customer.pec,
-    phone: customer.phone,
-    note: customer.note,
+    phoneNumber: customer.phoneNumber,
+    notes: customer.notes,
     locations: customer.locations?.filter((i: any) => Object.keys(i).length),
   }
   return <CustomerDTO>omitBy(customerDTO, overSome([isNil, isNaN]));

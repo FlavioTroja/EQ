@@ -48,12 +48,12 @@ export default class EditCustomerComponent implements OnInit, OnDestroy {
   customerForm = this.fb.group({
     name: [{ value: "", disabled: this.viewOnly() }, Validators.required ],
     fiscalCode: [{ value: "", disabled: this.viewOnly() }],
-    vatNumber: [{ value: "", disabled: this.viewOnly() }],
-    sdiNumber: [{ value: "", disabled: this.viewOnly() }],
+    vatCode: [{ value: "", disabled: this.viewOnly() }],
+    sdi: [{ value: "", disabled: this.viewOnly() }],
     email: [{ value: "", disabled: this.viewOnly() }],
     pec: [{ value: "", disabled: this.viewOnly() }],
-    phone: [{ value: "", disabled: this.viewOnly() }],
-    note: [{ value: "", disabled: this.viewOnly() }],
+    phoneNumber: [{ value: "", disabled: this.viewOnly() }],
+    notes: [{ value: "", disabled: this.viewOnly() }],
     locations: [[{}]],
   });
 

@@ -67,7 +67,7 @@ const routes: Routes = [
         default: "Visualizza Sede",
       },
       buttons: [
-        { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.CUSTOMER_NAVIGATE_ON_MODIFY },
+        { label: "Modifica", iconName: "edit", action: NAVBAR_ACTION.LOCATION_NAVIGATE_ON_MODIFY },
         // { label: "", iconName: "search", action: NAVBAR_ACTION.USERS_EDIT },
         // { label: "", iconName: "home", action: NAVBAR_ACTION.USERS_DELETE }
       ],

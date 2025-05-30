@@ -24,10 +24,10 @@ import { LocationDepartmentCardComponent } from "./location-department-card.comp
   template: `
 
     <div class="flex flex-col gap-2">
-      <app-section-header title="Reparti" [viewOnly]="false" (btnAdd)="addNewDepartment()" />
+      <app-section-header title="Reparti" [viewOnly]="viewOnly" (btnAdd)="addNewDepartment()" />
       <div class="flex flex-col w-full gap-2.5">
         <div>
-          <app-location-department-card *ngFor="let department of departments" [department]="department"/>
+          <app-location-department-card *ngFor="let department of departments" [department]="department" [viewOnly]="viewOnly"/>
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@ import { DepartmentSourceCardComponent } from "./department-source-card.componen
            (click)="toggleCardCollapsed()">
         <div class="flex gap-8 items-center text-lg h-[34px]">
           {{ this.f.name.getRawValue() }}
-          <div class="flex rounded-full text-sm self-center bg-light-grey border p-1 pr-2 gap-1" *ngIf="!isCardCollapsed" style="line-height: 14px !important">
+          <div class="flex rounded-full text-sm self-center bg-light-grey border p-1 pr-2 gap-1" *ngIf="!isCardCollapsed || viewOnly" style="line-height: 14px !important">
             <mat-icon class="material-symbols-rounded">precision_manufacturing</mat-icon>
             <div class="flex font-bold self-center gap-2">
               {{ department.sources?.length || 0 }}
@@ -51,13 +51,13 @@ import { DepartmentSourceCardComponent } from "./department-source-card.componen
         </mat-icon>
       </div>
       <form class="flex flex-col w-full gap-2 p-2" *ngIf="isCardCollapsed" [@translateDown]="isCardCollapsed ? 'up' : 'down'" [formGroup]="departmentForm">
-        <div class="flex w-full">
+        <div class="flex w-full" *ngIf="!viewOnly">
           <app-input [formControl]="f.name" formControlName="name" label="nome reparto" id="department-name" type="text" class="w-full" />
         </div>
         <div class="flex w-full" [ngClass]="{ 'p-2 bg-grey-1': !viewOnly }">
           <app-department-source-card class="w-full" *ngFor="let source of department.sources" [source]="source"/>
         </div>
-        <div class="flex justify-end w-full">
+        <div class="flex justify-end w-full" *ngIf="!viewOnly">
           <div class="flex cursor-pointer error default-shadow-hover rounded py-2 px-3 gap-2">
             <mat-icon class="icon-size material-symbols-rounded">delete</mat-icon>
             <div>Rimuovi condizione</div>
