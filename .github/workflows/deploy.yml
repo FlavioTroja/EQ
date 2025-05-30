@@ -96,6 +96,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Build frontend assets
+        if: matrix.service == 'frontend'
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run build
+
       - name: Build and push ${{ matrix.service }}
         run: |
           docker buildx build \
