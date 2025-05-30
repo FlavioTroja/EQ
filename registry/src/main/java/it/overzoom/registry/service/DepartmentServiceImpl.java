@@ -1,5 +1,7 @@
 package it.overzoom.registry.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,31 +51,25 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.save(department);
     }
 
-    // @Override
-    // public Optional<Department> update(Department department) throws
-    // ResourceNotFoundException, BadRequestException {
-    // return this.findById(department.getId()).map(existingDepartment -> {
-    // existingDepartment.setName(department.getName());
-    // existingDepartment.setAddress(department.getAddress());
-    // return existingDepartment;
-    // }).map(this::create);
-    // }
+    @Override
+    public Optional<Department> update(Department department) {
+        return departmentRepository.findById(department.getId()).map(existingDepartment -> {
+            existingDepartment.setName(department.getName());
+            return existingDepartment;
+        }).map(departmentRepository::save);
+    }
 
-    // @Override
-    // public Optional<Department> partialUpdate(String id, Department department)
-    // throws ResourceNotFoundException, BadRequestException {
-    // return this.findById(id)
-    // .map(existingDepartment -> {
-    // if (department.getName() != null) {
-    // existingDepartment.setName(department.getName());
-    // }
-    // if (department.getAddress() != null) {
-    // existingDepartment.setAddress(department.getAddress());
-    // }
-    // return existingDepartment;
-    // })
-    // .map(this::create);
-    // }
+    @Override
+    public Optional<Department> partialUpdate(String id, Department department) {
+        return departmentRepository.findById(id)
+                .map(existingDepartment -> {
+                    if (department.getName() != null) {
+                        existingDepartment.setName(department.getName());
+                    }
+                    return existingDepartment;
+                })
+                .map(departmentRepository::save);
+    }
 
     @Override
     @Transactional

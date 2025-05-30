@@ -1,5 +1,7 @@
 package it.overzoom.registry.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,9 +20,9 @@ public interface DepartmentService {
 
     Department create(Department department) throws ResourceNotFoundException, BadRequestException;
 
-    // Optional<Department> update(Department department);
+    Optional<Department> update(Department department);
 
-    // Optional<Department> partialUpdate(String id, Department department);
+    Optional<Department> partialUpdate(String id, Department department);
 
     void deleteById(String id) throws BadRequestException, ResourceNotFoundException;
 }

@@ -10,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,43 +91,42 @@ public class DepartmentController {
                 .body(department);
     }
 
-    // @PutMapping("")
-    // public ResponseEntity<Department> update(@Valid @RequestBody Department
-    // department)
-    // throws BadRequestException, ResourceNotFoundException {
-    // log.info("REST request to update Department: " + department.toString());
-    // if (department.getId() == null) {
-    // throw new BadRequestException("ID invalido.");
-    // }
-    // if (!departmentService.existsById(department.getId())) {
-    // throw new ResourceNotFoundException("Cliente non trovato.");
-    // }
+    @PutMapping("")
+    public ResponseEntity<Department> update(@Valid @RequestBody Department department)
+            throws BadRequestException, ResourceNotFoundException {
+        log.info("REST request to update Department: " + department.toString());
+        if (department.getId() == null) {
+            throw new BadRequestException("ID invalido.");
+        }
+        if (!departmentService.existsById(department.getId())) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
 
-    // Department updateDepartment = departmentService.update(department);
+        Department updateDepartment = departmentService.update(department).orElseThrow(
+                () -> new ResourceNotFoundException("Reparto non trovato con questo ID :: " + department.getId()));
 
-    // return ResponseEntity.ok().body(updateDepartment);
-    // }
+        return ResponseEntity.ok().body(updateDepartment);
+    }
 
-    // @PatchMapping(value = "/{id}", consumes = { "application/json",
-    // "application/merge-patch+json" })
-    // public ResponseEntity<Department> partialUpdate(@PathVariable(value = "id")
-    // String id,
-    // @RequestBody Department department) throws BadRequestException,
-    // ResourceNotFoundException {
-    // log.info("REST request to partial update Department: " +
-    // department.toString());
-    // if (id == null) {
-    // throw new BadRequestException("ID invalido.");
-    // }
-    // if (!departmentService.existsById(id)) {
-    // throw new ResourceNotFoundException("Cliente non trovato.");
-    // }
+    @PatchMapping(value = "/{id}", consumes = { "application/json",
+            "application/merge-patch+json" })
+    public ResponseEntity<Department> partialUpdate(@PathVariable(value = "id") String id,
+            @RequestBody Department department) throws BadRequestException,
+            ResourceNotFoundException {
+        log.info("REST request to partial update Department: " +
+                department.toString());
+        if (id == null) {
+            throw new BadRequestException("ID invalido.");
+        }
+        if (!departmentService.existsById(id)) {
+            throw new ResourceNotFoundException("Cliente non trovato.");
+        }
 
-    // Department updateDepartment = departmentService.partialUpdate(id,
-    // department);
+        Department updateDepartment = departmentService.partialUpdate(id, department)
+                .orElseThrow(() -> new ResourceNotFoundException("Reparto non trovato con questo ID :: " + id));
 
-    // return ResponseEntity.ok().body(updateDepartment);
-    // }
+        return ResponseEntity.ok().body(updateDepartment);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String departmentId)

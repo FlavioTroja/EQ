@@ -1,5 +1,7 @@
 package it.overzoom.registry.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,31 +49,29 @@ public class SourceServiceImpl implements SourceService {
         return sourceRepository.save(source);
     }
 
-    // @Override
-    // public Optional<Source> partialUpdate(String id, Source source)
-    // throws ResourceNotFoundException, BadRequestException {
-    // return this.findById(id)
-    // .map(existingSource -> {
-    // if (source.getName() != null) {
-    // existingSource.setName(source.getName());
-    // }
-    // if (source.getAddress() != null) {
-    // existingSource.setAddress(source.getAddress());
-    // }
-    // return existingSource;
-    // })
-    // .map(this::create);
-    // }
+    @Override
+    public Optional<Source> partialUpdate(String id, Source source) {
+        return sourceRepository.findById(id)
+                .map(existingSource -> {
+                    if (source.getSn() != null) {
+                        existingSource.setSn(source.getSn());
+                    }
+                    if (source.getExpirationDate() != null) {
+                        existingSource.setExpirationDate(source.getExpirationDate());
+                    }
+                    return existingSource;
+                })
+                .map(sourceRepository::save);
+    }
 
-    // @Override
-    // public Optional<Source> update(Source source) throws
-    // ResourceNotFoundException, BadRequestException {
-    // return this.findById(source.getId()).map(existingSource -> {
-    // existingSource.setName(source.getName());
-    // existingSource.setAddress(source.getAddress());
-    // return existingSource;
-    // }).map(this::create);
-    // }
+    @Override
+    public Optional<Source> update(Source source) {
+        return sourceRepository.findById(source.getId()).map(existingSource -> {
+            existingSource.setSn(source.getSn());
+            existingSource.setExpirationDate(source.getExpirationDate());
+            return existingSource;
+        }).map(sourceRepository::save);
+    }
 
     @Override
     @Transactional
