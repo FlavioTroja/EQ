@@ -2,7 +2,6 @@ package it.overzoom.registry.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,11 @@ import it.overzoom.registry.repository.MeasurementRepository;
 @Service
 public class MeasurementServiceImpl implements MeasurementService {
 
-    @Autowired
-    private MeasurementRepository measurementRepository;
+    private final MeasurementRepository measurementRepository;
+
+    public MeasurementServiceImpl(MeasurementRepository measurementRepository) {
+        this.measurementRepository = measurementRepository;
+    }
 
     @Override
     public Page<Measurement> findBySourceId(String sourceId, Pageable pageable) {

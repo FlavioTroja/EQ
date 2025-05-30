@@ -39,7 +39,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final LocationRepository locationRepository;
     private final DepartmentRepository departmentRepository;
     private final SourceRepository sourceRepository;
-
     private final CustomerMapper customerMapper;
     private final LocationMapper locationMapper;
     private final DepartmentMapper departmentMapper;

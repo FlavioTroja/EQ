@@ -3,7 +3,6 @@ package it.overzoom.registry.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,14 +16,16 @@ import it.overzoom.registry.repository.MachineRepository;
 @Service
 public class MachineServiceImpl implements MachineService {
 
-    @Autowired
-    private MachineRepository machineRepository;
+    private final MachineRepository machineRepository;
+    private final CustomerService customerService;
+    private final MachineMapper machineMapper;
 
-    @Autowired
-    private CustomerServiceImpl customerService;
-
-    @Autowired
-    private MachineMapper machineMapper;
+    public MachineServiceImpl(MachineRepository machineRepository, CustomerService customerService,
+            MachineMapper machineMapper) {
+        this.machineRepository = machineRepository;
+        this.customerService = customerService;
+        this.machineMapper = machineMapper;
+    }
 
     @Override
     public Page<Machine> findAll(Pageable pageable) {

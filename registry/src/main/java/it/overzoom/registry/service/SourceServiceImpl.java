@@ -1,6 +1,5 @@
 package it.overzoom.registry.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,11 @@ import it.overzoom.registry.repository.SourceRepository;
 @Service
 public class SourceServiceImpl implements SourceService {
 
-    @Autowired
-    private SourceRepository sourceRepository;
+    private final SourceRepository sourceRepository;
+
+    public SourceServiceImpl(SourceRepository sourceRepository) {
+        this.sourceRepository = sourceRepository;
+    }
 
     @Override
     public Page<Source> findByDepartmentId(String departmentId, Pageable pageable)

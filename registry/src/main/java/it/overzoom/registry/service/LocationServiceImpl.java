@@ -3,7 +3,6 @@ package it.overzoom.registry.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,17 +22,20 @@ import it.overzoom.registry.repository.LocationRepository;
 @Service
 public class LocationServiceImpl implements LocationService {
 
-    @Autowired
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
+    private final DepartmentRepository departmentRepository;
+    private final CustomerRepository customerRepository;
+    private final LocationMapper locationMapper;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private LocationMapper locationMapper;
+    public LocationServiceImpl(LocationRepository locationRepository,
+            DepartmentRepository departmentRepository,
+            CustomerRepository customerRepository,
+            LocationMapper locationMapper) {
+        this.locationRepository = locationRepository;
+        this.departmentRepository = departmentRepository;
+        this.customerRepository = customerRepository;
+        this.locationMapper = locationMapper;
+    }
 
     @Override
     public Page<LocationDTO> findByCustomerId(String customerId, Pageable pageable)
@@ -112,8 +114,7 @@ public class LocationServiceImpl implements LocationService {
         // Blocca se ci sono dipartimenti associati
         if (departmentRepository.existsByLocationId(id)) {
             throw new BadRequestException(
-                "Impossibile cancellare la sede perché ci sono dei dipartimenti ad essa associati."
-            );
+                    "Impossibile cancellare la sede perché ci sono dei dipartimenti ad essa associati.");
         }
         locationRepository.deleteById(id);
     }

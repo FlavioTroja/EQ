@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,23 +28,23 @@ import it.overzoom.registry.repository.SourceRepository;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    @Autowired
-    private ReportRepository reportRepository;
+    private final ReportRepository reportRepository;
+    private final LocationRepository locationRepository;
+    private final CustomerRepository customerRepository;
+    private final MeasurementRepository measurementRepository;
+    private final DepartmentRepository departmentRepository;
+    private final SourceRepository sourceRepository;
 
-    @Autowired
-    private LocationRepository locationRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private MeasurementRepository measurementRepository;
-
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private SourceRepository sourceRepository;
+    public ReportServiceImpl(ReportRepository reportRepository, LocationRepository locationRepository,
+            CustomerRepository customerRepository, MeasurementRepository measurementRepository,
+            DepartmentRepository departmentRepository, SourceRepository sourceRepository) {
+        this.reportRepository = reportRepository;
+        this.locationRepository = locationRepository;
+        this.customerRepository = customerRepository;
+        this.measurementRepository = measurementRepository;
+        this.departmentRepository = departmentRepository;
+        this.sourceRepository = sourceRepository;
+    }
 
     @Override
     public Page<Report> findByLocationId(String locationId, Pageable pageable) {

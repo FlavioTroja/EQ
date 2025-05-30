@@ -19,13 +19,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public boolean hasAccess(String userId) throws ResourceNotFoundException {
-        return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(userId);
-    }
-
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+    }
+
+    public boolean hasAccess(String userId) throws ResourceNotFoundException {
+        return SecurityUtils.isAdmin() || SecurityUtils.isCurrentUser(userId);
     }
 
     public Page<UserDTO> findAll(Pageable pageable) {
