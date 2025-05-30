@@ -122,7 +122,7 @@ public class LocationServiceImpl implements LocationService {
         if (!locationRepository.existsById(id)) {
             throw new ResourceNotFoundException("Location non trovata.");
         }
-        // Blocca se ci sono dipartimenti associati
+
         if (departmentRepository.existsByLocationId(id)) {
             throw new BadRequestException(
                     "Impossibile cancellare la sede perché ci sono dei dipartimenti ad essa associati.");

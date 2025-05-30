@@ -54,7 +54,7 @@ jobs:
           [[ "${{ steps.filter.outputs.frontend }}"       == "true" ]] && SERVICES+=("frontend")
 
           # trasformiamo in JSON array
-          SERVICES_JSON=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -s .)
+          SERVICES_JSON=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -s -c .)
           echo "services=$SERVICES_JSON" >> $GITHUB_OUTPUT
 
   build-and-push:
