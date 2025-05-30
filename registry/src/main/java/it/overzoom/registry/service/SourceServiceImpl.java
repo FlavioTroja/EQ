@@ -48,16 +48,6 @@ public class SourceServiceImpl implements SourceService {
     }
 
     // @Override
-    // public Optional<Source> update(Source source) throws
-    // ResourceNotFoundException, BadRequestException {
-    // return this.findById(source.getId()).map(existingSource -> {
-    // existingSource.setName(source.getName());
-    // existingSource.setAddress(source.getAddress());
-    // return existingSource;
-    // }).map(this::create);
-    // }
-
-    // @Override
     // public Optional<Source> partialUpdate(String id, Source source)
     // throws ResourceNotFoundException, BadRequestException {
     // return this.findById(id)
@@ -71,6 +61,16 @@ public class SourceServiceImpl implements SourceService {
     // return existingSource;
     // })
     // .map(this::create);
+    // }
+
+    // @Override
+    // public Optional<Source> update(Source source) throws
+    // ResourceNotFoundException, BadRequestException {
+    // return this.findById(source.getId()).map(existingSource -> {
+    // existingSource.setName(source.getName());
+    // existingSource.setAddress(source.getAddress());
+    // return existingSource;
+    // }).map(this::create);
     // }
 
     @Override
