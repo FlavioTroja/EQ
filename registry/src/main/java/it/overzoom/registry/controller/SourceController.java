@@ -141,7 +141,6 @@ public class SourceController {
         // 1) Recupera la sorgente (404 se non esiste)
         Source src = sourceService.findById(sourceId);
 
-        // 2) Recupera il reparto e la sede collegati, controlla permessi sul customer
         Department dept = departmentService.findById(src.getDepartmentId());
         Location loc = locationService.findById(dept.getLocationId());
         if (!customerService.hasAccess(loc.getCustomerId())) {
