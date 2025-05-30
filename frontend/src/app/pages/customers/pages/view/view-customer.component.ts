@@ -45,10 +45,10 @@ import {
                 <span class="px-1">{{ customer.pec }}</span>
               </div>
 
-              <div *ngIf="customer.vatNumber"
+              <div *ngIf="customer.vatCode"
                    class="bg-gray-100 rounded-full max-w-max py-1 px-2 flex justify-between items-center">
                 <span class="font-bold letter-spacing">IVA</span>
-                <span class="px-1">{{ customer.vatNumber }}</span>
+                <span class="px-1">{{ customer.vatCode }}</span>
               </div>
             </div>
           </div>
@@ -59,16 +59,16 @@ import {
               <mat-icon class="icon-size material-symbols-rounded">mail
               </mat-icon>&nbsp;{{ customer?.email?.toLowerCase() }}
             </a>
-            <a *ngIf="customer.phone" [href]="'https://wa.me/' + customer.phone" target="_blank"
+            <a *ngIf="customer.phoneNumber" [href]="'https://wa.me/' + customer.phoneNumber" target="_blank"
                class="inline-flex items-center px-2.5 py-0.5 rounded-md shadow-sm accent text-sm font-medium">
-              <mat-icon class="icon-size material-symbols-rounded">phone</mat-icon>&nbsp;{{ customer.phone }}
+              <mat-icon class="icon-size material-symbols-rounded">phone</mat-icon>&nbsp;{{ customer.phoneNumber }}
             </a>
           </div>
         </div>
 
-        <div *ngIf="customer.note">
+        <div *ngIf="customer.notes">
           <div class="font-bold py-1">NOTE</div>
-          <div>{{ customer.note }}</div>
+          <div>{{ customer.notes }}</div>
         </div>
       </div>
 
