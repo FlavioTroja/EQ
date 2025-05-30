@@ -193,7 +193,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public CustomerDTO partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException {
-        Customer existingCustomer = customerRepository.findById(customer.getId())
+        Customer existingCustomer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
 
         if (customer.getName() != null) {

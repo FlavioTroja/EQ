@@ -96,7 +96,7 @@ public class LocationServiceImpl implements LocationService {
     @Transactional
     public Location partialUpdate(String id, Location location)
             throws ResourceNotFoundException, BadRequestException {
-        Location existingLocation = this.findById(location.getId());
+        Location existingLocation = this.findById(id);
 
         if (location.getName() != null) {
             existingLocation.setName(location.getName());
