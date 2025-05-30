@@ -46,7 +46,7 @@ public class LocationController {
         log.info("REST request to get a page of Locations by customerId: " + customerId);
 
         if (!customerService.hasAccess(customerId)) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
         Page<LocationDTO> page = locationService.findByCustomerId(customerId, pageable);
@@ -59,7 +59,7 @@ public class LocationController {
         Location location = locationService.findById(locationId);
 
         if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
         return ResponseEntity.ok(location);
@@ -114,18 +114,13 @@ public class LocationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable("customerId") String customerId,
-            @PathVariable("id") String locationId)
+    public ResponseEntity<Void> delete(@PathVariable("id") String locationId)
             throws ResourceNotFoundException, BadRequestException {
 
-        if (!customerService.hasAccess(customerId)) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
-        }
-
         Location loc = locationService.findById(locationId);
-        if (!loc.getCustomerId().equals(customerId)) {
-            throw new BadRequestException("La sede non appartiene a questo cliente.");
+
+        if (!customerService.hasAccess(loc.getCustomerId())) {
+            throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
         locationService.deleteById(locationId);

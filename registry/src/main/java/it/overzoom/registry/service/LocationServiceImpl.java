@@ -101,7 +101,15 @@ public class LocationServiceImpl implements LocationService {
         if (location.getAddress() != null) {
             existingLocation.setAddress(location.getAddress());
         }
-
+        if (location.getCity() != null) {
+            existingLocation.setCity(location.getCity());
+        }
+        if (location.getProvince() != null) {
+            existingLocation.setProvince(location.getProvince());
+        }
+        if (location.getZipCode() != null) {
+            existingLocation.setZipCode(location.getZipCode());
+        }
         return this.create(existingLocation);
     }
 

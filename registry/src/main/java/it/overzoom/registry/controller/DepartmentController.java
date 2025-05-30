@@ -62,7 +62,7 @@ public class DepartmentController {
         Department department = departmentService.findById(departmentId);
         Location location = locationService.findById(department.getLocationId());
         if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questo reparto.");
         }
         return ResponseEntity.ok(department);
     }
@@ -78,7 +78,7 @@ public class DepartmentController {
 
         Location location = locationService.findById(locationId);
         if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questo reparto.");
         }
 
         department.setLocationId(locationId);
@@ -128,24 +128,16 @@ public class DepartmentController {
     // }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable("locationId") String locationId,
-            @PathVariable("id") String departmentId)
+    public ResponseEntity<Void> delete(@PathVariable("id") String departmentId)
             throws ResourceNotFoundException, BadRequestException {
 
-        // 1) Verifico esistenza location e permessi su customer
-        Location location = locationService.findById(locationId);
-        if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
-        }
-
-        // 2) (Opzionale) Controllo coerenza: che il reparto appartenga davvero
         Department dept = departmentService.findById(departmentId);
-        if (!dept.getLocationId().equals(locationId)) {
-            throw new BadRequestException("Il reparto non appartiene a questa sede.");
+
+        Location loc = locationService.findById(dept.getLocationId());
+        if (!customerService.hasAccess(loc.getCustomerId())) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo reparto.");
         }
 
-        // 3) Cancellazione (può lanciare BadRequestException se ci sono sorgenti)
         departmentService.deleteById(departmentId);
 
         return ResponseEntity.noContent().build();

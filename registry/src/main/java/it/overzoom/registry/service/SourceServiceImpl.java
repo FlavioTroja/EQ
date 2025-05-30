@@ -3,19 +3,23 @@ package it.overzoom.registry.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Source;
+import it.overzoom.registry.repository.MeasurementRepository;
 import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class SourceServiceImpl implements SourceService {
 
     private final SourceRepository sourceRepository;
+    private final MeasurementRepository measurementRepository;
 
-    public SourceServiceImpl(SourceRepository sourceRepository) {
+    public SourceServiceImpl(SourceRepository sourceRepository, MeasurementRepository measurementRepository) {
         this.sourceRepository = sourceRepository;
+        this.measurementRepository = measurementRepository;
     }
 
     @Override
@@ -68,4 +72,19 @@ public class SourceServiceImpl implements SourceService {
     // })
     // .map(this::create);
     // }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
+        // 1) Verifico che la sorgente esista
+        Source src = sourceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata."));
+        // 2) Blocca se ci sono misure
+        if (measurementRepository.existsBySourceId(id)) {
+            throw new BadRequestException(
+                    "Impossibile cancellare la sorgente perché ci sono misure già registrate.");
+        }
+        // 3) Cancello
+        sourceRepository.deleteById(id);
+    }
 }

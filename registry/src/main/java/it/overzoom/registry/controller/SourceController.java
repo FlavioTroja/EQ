@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +53,7 @@ public class SourceController {
         Department department = departmentService.findById(departmentId);
         Location location = locationService.findById(department.getLocationId());
         if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questa sorgente.");
         }
 
         Page<Source> page = sourceService.findByDepartmentId(departmentId, pageable);
@@ -67,7 +68,7 @@ public class SourceController {
         Department department = departmentService.findById(source.getDepartmentId());
         Location location = locationService.findById(department.getLocationId());
         if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questa sorgente.");
         }
         return ResponseEntity.ok(source);
     }
@@ -84,7 +85,7 @@ public class SourceController {
         Department department = departmentService.findById(departmentId);
         Location location = locationService.findById(department.getLocationId());
         if (!customerService.hasAccess(location.getCustomerId())) {
-            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+            throw new BadRequestException("Non hai i permessi per accedere a questa sorgente.");
         }
 
         source.setDepartmentId(departmentId);
@@ -132,4 +133,24 @@ public class SourceController {
 
     // return ResponseEntity.ok().body(updateSource);
     // }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String sourceId)
+            throws ResourceNotFoundException, BadRequestException {
+
+        // 1) Recupera la sorgente (404 se non esiste)
+        Source src = sourceService.findById(sourceId);
+
+        // 2) Recupera il reparto e la sede collegati, controlla permessi sul customer
+        Department dept = departmentService.findById(src.getDepartmentId());
+        Location loc = locationService.findById(dept.getLocationId());
+        if (!customerService.hasAccess(loc.getCustomerId())) {
+            throw new BadRequestException("Non hai i permessi per accedere a questa sorgente.");
+        }
+
+        // 3) Esegue la cancellazione (blocca internamente se ci sono misure)
+        sourceService.deleteById(sourceId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -5,7 +5,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Measurement;
 import it.overzoom.registry.repository.MeasurementRepository;
 
@@ -51,5 +54,13 @@ public class MeasurementServiceImpl implements MeasurementService {
                     return existingMeasurement;
                 })
                 .map(this::create);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) throws ResourceNotFoundException, BadRequestException {
+        measurementRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Misurazione non trovata."));
+        measurementRepository.deleteById(id);
     }
 }

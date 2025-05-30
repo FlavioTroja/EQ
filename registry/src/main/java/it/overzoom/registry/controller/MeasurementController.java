@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.model.Department;
+import it.overzoom.registry.model.Location;
 import it.overzoom.registry.model.Measurement;
+import it.overzoom.registry.model.Source;
+import it.overzoom.registry.service.CustomerService;
+import it.overzoom.registry.service.DepartmentService;
+import it.overzoom.registry.service.LocationService;
 import it.overzoom.registry.service.MeasurementService;
+import it.overzoom.registry.service.SourceService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,9 +38,21 @@ public class MeasurementController {
     private static final Logger log = LoggerFactory.getLogger(MeasurementController.class);
 
     private final MeasurementService measurementService;
+    private final SourceService sourceService;
+    private final DepartmentService departmentService;
+    private final LocationService locationService;
+    private final CustomerService customerService;
 
-    public MeasurementController(MeasurementService measurementService) {
+    public MeasurementController(MeasurementService measurementService,
+            SourceService sourceService,
+            DepartmentService departmentService,
+            LocationService locationService,
+            CustomerService customerService) {
         this.measurementService = measurementService;
+        this.sourceService = sourceService;
+        this.departmentService = departmentService;
+        this.locationService = locationService;
+        this.customerService = customerService;
     }
 
     @GetMapping("")
@@ -73,5 +93,25 @@ public class MeasurementController {
                 .orElseThrow(() -> new ResourceNotFoundException("Misurazione non trovata con questo ID :: " + id));
 
         return ResponseEntity.ok().body(updateMeasurement);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String measurementId)
+            throws ResourceNotFoundException, BadRequestException {
+
+        Measurement m = measurementService.findById(measurementId)
+                .orElseThrow(() -> new ResourceNotFoundException("Misurazione non trovata."));
+
+        Source src = sourceService.findById(m.getSourceId());
+        Department dept = departmentService.findById(src.getDepartmentId());
+        Location loc = locationService.findById(dept.getLocationId());
+
+        if (!customerService.hasAccess(loc.getCustomerId())) {
+            throw new BadRequestException("Non hai i permessi per cancellare questa misurazione.");
+        }
+
+        measurementService.deleteById(measurementId);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -15,4 +15,6 @@ public interface MeasurementRepository extends MongoRepository<Measurement, Stri
     Page<Measurement> findBySourceId(String sourceId, Pageable pageable);
 
     List<Measurement> findBySourceId(String sourceId);
+
+    boolean existsBySourceId(String sourceId);
 }
