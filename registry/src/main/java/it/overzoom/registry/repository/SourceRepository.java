@@ -17,4 +17,6 @@ public interface SourceRepository extends MongoRepository<Source, String> {
     List<Source> findByDepartmentId(String departmentId);
 
     List<Source> findByMachineId(String machineId);
+
+    boolean existsByDepartmentId(String departmentId);
 }

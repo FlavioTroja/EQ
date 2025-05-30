@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -32,18 +31,18 @@ import jakarta.validation.Valid;
 public class SourceController {
 
     private static final Logger log = LoggerFactory.getLogger(SourceController.class);
+    private final DepartmentService departmentService;
+    private final LocationService locationService;
+    private final CustomerService customerService;
+    private final SourceService sourceService;
 
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private LocationService locationService;
-
-    @Autowired
-    private CustomerService customerService;
-
-    @Autowired
-    private SourceService sourceService;
+    public SourceController(DepartmentService departmentService, LocationService locationService,
+            CustomerService customerService, SourceService sourceService) {
+        this.departmentService = departmentService;
+        this.locationService = locationService;
+        this.customerService = customerService;
+        this.sourceService = sourceService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<Source>> findDepartmentId(@PathVariable("departmentId") String departmentId,

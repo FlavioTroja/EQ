@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import it.overzoom.registry.dto.ReportDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Report;
-import it.overzoom.registry.service.ReportServiceImpl;
+import it.overzoom.registry.service.ReportService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,9 +28,11 @@ import jakarta.validation.Valid;
 public class ReportController {
 
     private static final Logger log = LoggerFactory.getLogger(ReportController.class);
+    private final ReportService reportService;
 
-    @Autowired
-    private ReportServiceImpl reportService;
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<Report>> findByLocationId(@PathVariable("id") String locationId,

@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.mapper.UserMapper;
 import it.overzoom.registry.model.User;
 import it.overzoom.registry.security.SecurityUtils;
-import it.overzoom.registry.service.UserServiceImpl;
+import it.overzoom.registry.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -32,12 +31,13 @@ import jakarta.validation.Valid;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final UserService userService;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    private UserMapper userMapper;
+    public UserController(UserService userService, UserMapper userMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<UserDTO>> findAll(

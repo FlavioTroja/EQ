@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +31,11 @@ import jakarta.validation.Valid;
 public class CustomerController {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
+    private final CustomerService customerService;
 
-    @Autowired
-    private CustomerService customerService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<CustomerDTO>> findAll(Pageable pageable) throws ResourceNotFoundException {

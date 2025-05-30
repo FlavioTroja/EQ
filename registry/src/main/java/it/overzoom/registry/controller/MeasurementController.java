@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Measurement;
-import it.overzoom.registry.service.MeasurementServiceImpl;
+import it.overzoom.registry.service.MeasurementService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,8 +29,11 @@ public class MeasurementController {
 
     private static final Logger log = LoggerFactory.getLogger(MeasurementController.class);
 
-    @Autowired
-    private MeasurementServiceImpl measurementService;
+    private final MeasurementService measurementService;
+
+    public MeasurementController(MeasurementService measurementService) {
+        this.measurementService = measurementService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<Measurement>> findBySourceId(@PathVariable("id") String sourceId,

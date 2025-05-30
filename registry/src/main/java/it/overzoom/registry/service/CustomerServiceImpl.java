@@ -244,8 +244,7 @@ public class CustomerServiceImpl implements CustomerService {
         // Verifica che non ci siano location collegate
         if (locationRepository.existsByCustomerId(id)) {
             throw new BadRequestException(
-                "Impossibile cancellare il cliente perché ci sono delle location ad esso associate."
-            );
+                    "Impossibile cancellare il cliente perché ci sono delle sedi ad esso associate.");
         }
         customerRepository.deleteById(id);
     }

@@ -5,10 +5,10 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +20,9 @@ import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
-import it.overzoom.registry.service.CustomerServiceImpl;
-import it.overzoom.registry.service.DepartmentServiceImpl;
-import it.overzoom.registry.service.LocationServiceImpl;
+import it.overzoom.registry.service.CustomerService;
+import it.overzoom.registry.service.DepartmentService;
+import it.overzoom.registry.service.LocationService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,15 +30,16 @@ import jakarta.validation.Valid;
 public class DepartmentController {
 
     private static final Logger log = LoggerFactory.getLogger(DepartmentController.class);
+    private final LocationService locationService;
+    private final CustomerService customerService;
+    private final DepartmentService departmentService;
 
-    @Autowired
-    private LocationServiceImpl locationService;
-
-    @Autowired
-    private CustomerServiceImpl customerService;
-
-    @Autowired
-    private DepartmentServiceImpl departmentService;
+    public DepartmentController(LocationService locationService, CustomerService customerService,
+            DepartmentService departmentService) {
+        this.locationService = locationService;
+        this.customerService = customerService;
+        this.departmentService = departmentService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<Department>> findLocationId(@PathVariable("locationId") String locationId,
@@ -125,4 +126,28 @@ public class DepartmentController {
 
     // return ResponseEntity.ok().body(updateDepartment);
     // }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable("locationId") String locationId,
+            @PathVariable("id") String departmentId)
+            throws ResourceNotFoundException, BadRequestException {
+
+        // 1) Verifico esistenza location e permessi su customer
+        Location location = locationService.findById(locationId);
+        if (!customerService.hasAccess(location.getCustomerId())) {
+            throw new BadRequestException("Non hai i permessi per accedere a questo cliente.");
+        }
+
+        // 2) (Opzionale) Controllo coerenza: che il reparto appartenga davvero
+        Department dept = departmentService.findById(departmentId);
+        if (!dept.getLocationId().equals(locationId)) {
+            throw new BadRequestException("Il reparto non appartiene a questa sede.");
+        }
+
+        // 3) Cancellazione (può lanciare BadRequestException se ci sono sorgenti)
+        departmentService.deleteById(departmentId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

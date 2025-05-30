@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,8 @@ import it.overzoom.registry.dto.LocationDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Location;
-import it.overzoom.registry.service.CustomerServiceImpl;
-import it.overzoom.registry.service.LocationServiceImpl;
+import it.overzoom.registry.service.CustomerService;
+import it.overzoom.registry.service.LocationService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -33,11 +32,13 @@ public class LocationController {
 
     private static final Logger log = LoggerFactory.getLogger(LocationController.class);
 
-    @Autowired
-    private CustomerServiceImpl customerService;
+    private final CustomerService customerService;
+    private final LocationService locationService;
 
-    @Autowired
-    private LocationServiceImpl locationService;
+    public LocationController(CustomerService customerService, LocationService locationService) {
+        this.customerService = customerService;
+        this.locationService = locationService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<LocationDTO>> findCustomerId(@PathVariable("customerId") String customerId,

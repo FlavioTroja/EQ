@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ import it.overzoom.registry.dto.MachineDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Machine;
-import it.overzoom.registry.service.MachineServiceImpl;
+import it.overzoom.registry.service.MachineService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,9 +30,11 @@ import jakarta.validation.Valid;
 public class MachineController {
 
     private static final Logger log = LoggerFactory.getLogger(MachineController.class);
+    private final MachineService machineService;
 
-    @Autowired
-    private MachineServiceImpl machineService;
+    public MachineController(MachineService machineService) {
+        this.machineService = machineService;
+    }
 
     @GetMapping("")
     public ResponseEntity<Page<Machine>> findAll(Pageable pageable) {
