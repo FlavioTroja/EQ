@@ -1,5 +1,9 @@
 name: Build & Deploy EQ Microservices
 
+concurrency:
+  group: eq-microservices-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -10,17 +14,10 @@ jobs:
     name: Detect Changed Microservices
     runs-on: ubuntu-latest
     outputs:
-      registry: ${{ steps.filter.outputs.registry }}
-      gateway: ${{ steps.filter.outputs.gateway }}
-      eurekaserver: ${{ steps.filter.outputs.eurekaserver }}
-      calendar: ${{ steps.filter.outputs.calendar }}
-      document: ${{ steps.filter.outputs.document }}
-      frontend: ${{ steps.filter.outputs.frontend }}
       any: ${{ steps.filter.outputs.any_changed }}
-
+      services: ${{ steps.filter.outputs.services }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Filter changed services
         id: filter
@@ -40,21 +37,55 @@ jobs:
               - 'calendar/**'
               - 'document/**'
               - 'frontend/**'
+      - name: Build list of services
+        if: steps.filter.outputs.any_changed == 'true'
+        id: list
+        run: |
+          echo "::set-output name=services::$(jq -nr \
+            --arg r ${{ steps.filter.outputs.registry }} \
+            --arg g ${{ steps.filter.outputs.gateway }} \
+            --arg e ${{ steps.filter.outputs.eurekaserver }} \
+            --arg c ${{ steps.filter.outputs.calendar }} \
+            --arg d ${{ steps.filter.outputs.document }} \
+            --arg f ${{ steps.filter.outputs.frontend }} \
+            '[
+               ($r == "true") * ["registry"],
+               ($g == "true") * ["gateway"],
+               ($e == "true") * ["eurekaserver"],
+               ($c == "true") * ["calendar"],
+               ($d == "true") * ["document"],
+               ($f == "true") * ["frontend"]
+             ] | add | join(",")') 
 
   build-and-push:
-    name: Build and Push Docker Images
+    name: Build & Push Docker Images
     needs: detect-changes
     if: needs.detect-changes.outputs.any == 'true'
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        service: ${{ fromJson('["' + needs.detect-changes.outputs.services.replace(',', '","') + '"]') }}
+    env:
+      IMAGE_REGISTRY: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
+      TAG_SHA: ${{ github.sha }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Set up QEMU (for multi-arch)
+        uses: docker/setup-qemu-action@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache-${{ matrix.service }}
+          key: buildx-${{ matrix.service }}-${{ github.sha }}
+          restore-keys: |
+            buildx-${{ matrix.service }}-
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -62,27 +93,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Push only changed microservices
+      - name: Build and push ${{ matrix.service }}
         run: |
-          chmod +x ./push_eq.sh
-          ./push_eq.sh $(echo \
-            ${{ needs.detect-changes.outputs.registry == 'true' && 'registry' || '' }} \
-            ${{ needs.detect-changes.outputs.gateway == 'true' && 'gateway' || '' }} \
-            ${{ needs.detect-changes.outputs.eurekaserver == 'true' && 'eurekaserver' || '' }} \
-            ${{ needs.detect-changes.outputs.calendar == 'true' && 'calendar' || '' }} \
-            ${{ needs.detect-changes.outputs.document == 'true' && 'document' || '' }} \
-            ${{ needs.detect-changes.outputs.frontend == 'true' && 'frontend' || '' }} \
-          )
-        env:
-          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_PASSWORD }}
-          TAG: latest
+          docker buildx build \
+            --cache-from=type=local,src=/tmp/.buildx-cache-${{ matrix.service }} \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-${{ matrix.service }},mode=max \
+            --platform linux/amd64,linux/arm64 \
+            -t $IMAGE_REGISTRY/eq-${{ matrix.service }}:latest \
+            -t $IMAGE_REGISTRY/eq-${{ matrix.service }}:${TAG_SHA} \
+            -f ./${{ matrix.service }}/Dockerfile \
+            ./${{ matrix.service }} \
+            --push
 
   deploy:
     name: SSH Deploy on Production Server
     needs: build-and-push
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.7
@@ -91,8 +118,10 @@ jobs:
           port: ${{ secrets.SERVER_SSH_PORT }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-
           script: |
+            set -e
             cd /home/manager/eq
             docker compose pull
             docker compose up -d
+        retry: 2
+        retry-delay-seconds: 15
