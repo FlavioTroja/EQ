@@ -1,0 +1,11 @@
+# kibana/config/kibana.yml
+server.host: "0.0.0.0"
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+
+# indichiamo a Kibana che è servito al path /kibana
+server.basePath: "/kibana"
+# quando una richiesta arriva a /kibana/*, Kibana riscrive internamente come /
+server.rewriteBasePath: true
+
+# (facoltativo: se vuoi disabilitare il CSP restrittivo di default)
+# server.csp.strict: false
