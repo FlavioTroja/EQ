@@ -55,7 +55,7 @@ public class MeasurementController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<Measurement>> findBySourceId(@PathVariable("id") String sourceId,
+    public ResponseEntity<Page<Measurement>> findBySourceId(@PathVariable("sourceId") String sourceId,
             Pageable pageable) {
         log.info("REST request to get a page of Measurements");
         Page<Measurement> page = measurementService.findBySourceId(sourceId, pageable);
@@ -63,7 +63,7 @@ public class MeasurementController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Measurement> create(@PathVariable("id") String sourceId,
+    public ResponseEntity<Measurement> create(@PathVariable("sourceId") String sourceId,
             @Valid @RequestBody Measurement measurement)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Measurement : " + measurement.toString());

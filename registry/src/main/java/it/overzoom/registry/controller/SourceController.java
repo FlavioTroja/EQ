@@ -76,7 +76,7 @@ public class SourceController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Source> create(@PathVariable("id") String departmentId,
+    public ResponseEntity<Source> create(@PathVariable("departmentId") String departmentId,
             @Valid @RequestBody Source source)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Source : " + source.toString());

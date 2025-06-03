@@ -35,7 +35,7 @@ public class ReportController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<Report>> findByLocationId(@PathVariable("id") String locationId,
+    public ResponseEntity<Page<Report>> findByLocationId(@PathVariable("locationId") String locationId,
             Pageable pageable) {
         log.info("REST request to get a page of Reports");
         Page<Report> page = reportService.findByLocationId(locationId, pageable);
@@ -43,7 +43,7 @@ public class ReportController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Report> create(@PathVariable("id") String locationId,
+    public ResponseEntity<Report> create(@PathVariable("locationId") String locationId,
             @Valid @RequestBody Report report)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Report : " + report.toString());
