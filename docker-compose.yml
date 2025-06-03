@@ -1,138 +1,6 @@
+version: '2.4'
+
 services:
-  # ———————— Ingress / Certbot ————————
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    restart: unless-stopped
-    command: /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
-    networks:
-      - eq_net
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    restart: unless-stopped
-    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
-    depends_on:
-      - nginx
-    networks:
-      - eq_net
-
-  # ———————— Eureka & Gateway & Microservizi ————————
-  eurekaserver:
-    image: overzoom/eq_eurekaserver:latest
-    container_name: eurekaserver
-    restart: always
-    ports:
-      - "8761:8761"
-    environment:
-      EUREKA_CLIENT_REGISTER-WITH-EUREKA: false
-      EUREKA_CLIENT_FETCH-REGISTRY: false
-    networks:
-      - eq_net
-
-  gateway:
-    image: overzoom/eq_gateway:latest
-    container_name: gateway
-    restart: always
-    ports:
-      - "8765:8765"
-    env_file:
-      - .env
-    depends_on:
-      - eurekaserver
-    networks:
-      - eq_net
-
-  registrydb:
-    image: mongo
-    container_name: registrydb
-    restart: always
-    logging:
-      options:
-        max-size: 200m
-    ports:
-      - "5480:27017"
-    volumes:
-      - registrydb:/data/db
-    env_file:
-      - .env
-    networks:
-      - eq_net
-
-  registry:
-    image: overzoom/eq_registry:latest
-    container_name: registry
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - eurekaserver
-      - registrydb
-    networks:
-      - eq_net
-
-  calendardb:
-    image: postgres
-    container_name: calendardb
-    restart: always
-    shm_size: 128mb
-    ports:
-      - "5481:5432"
-    volumes:
-      - calendardb:/data/postgres
-    env_file:
-      - .env
-    networks:
-      - eq_net
-
-  calendar:
-    image: overzoom/eq_calendar:latest
-    container_name: calendar
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - eurekaserver
-      - calendardb
-    networks:
-      - eq_net
-
-  document:
-    image: overzoom/eq_document:latest
-    container_name: document
-    restart: always
-    ports:
-      - "8082:8082"
-    env_file:
-      - .env
-    depends_on:
-      - eurekaserver
-    networks:
-      - eq_net
-
-  frontend:
-    image: overzoom/eq_frontend:latest
-    container_name: frontend
-    restart: always
-    ports:
-      - "4200:80"
-    depends_on:
-      - gateway
-    networks:
-      - eq_net
-
-  # ———————— ELK Stack ————————
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
     container_name: elasticsearch
@@ -144,6 +12,8 @@ services:
       - "9200:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+    mem_limit: 2g      
+    mem_reservation: 1g 
     networks:
       - eq_net
 
@@ -153,10 +23,12 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - "5000:5000"      # endpoint TCP JSON
-      - "9600:9600"      # monitoring API
+      - "5000:5000"
+      - "9600:9600"
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    mem_limit: 1g       
+    mem_reservation: 512m
     networks:
       - eq_net
 
@@ -171,6 +43,119 @@ services:
       - "5601:5601"
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    mem_limit: 1g       
+    mem_reservation: 512m
+    networks:
+      - eq_net
+
+  gateway:
+    image: overzoom/eq_gateway:latest
+    container_name: gateway
+    mem_limit: 512m     
+    mem_reservation: 256m
+    ports:
+      - "8765:8765"
+    env_file:
+      - .env
+    depends_on:
+      - eurekaserver
+    networks:
+      - eq_net
+
+  registry:
+    image: overzoom/eq_registry:latest
+    container_name: registry
+    mem_limit: 512m
+    mem_reservation: 256m
+    env_file:
+      - .env
+    depends_on:
+      - eurekaserver
+      - registrydb
+    networks:
+      - eq_net
+
+  calendar:
+    image: overzoom/eq_calendar:latest
+    container_name: calendar
+    mem_limit: 512m
+    mem_reservation: 256m
+    env_file:
+      - .env
+    depends_on:
+      - eurekaserver
+      - calendardb
+    networks:
+      - eq_net
+
+  document:
+    image: overzoom/eq_document:latest
+    container_name: document
+    ports:
+      - "8082:8082"
+    mem_limit: 512m
+    mem_reservation: 256m
+    env_file:
+      - .env
+    depends_on:
+      - eurekaserver
+    networks:
+      - eq_net
+
+  frontend:
+    image: overzoom/eq_frontend:latest
+    container_name: frontend
+    ports:
+      - "4200:80"
+    mem_limit: 256m  
+    mem_reservation: 128m
+    depends_on:
+      - gateway
+    networks:
+      - eq_net
+
+  eurekaserver:
+    image: overzoom/eq_eurekaserver:latest
+    container_name: eurekaserver
+    mem_limit: 512m
+    mem_reservation: 256m
+    environment:
+      EUREKA_CLIENT_REGISTER-WITH-EUREKA: false
+      EUREKA_CLIENT_FETCH-REGISTRY: false
+    ports:
+      - "8761:8761"
+    networks:
+      - eq_net
+
+  registrydb:
+    image: mongo
+    container_name: registrydb
+    mem_limit: 512m
+    mem_reservation: 256m
+    logging:
+      options:
+        max-size: 200m
+    ports:
+      - "5480:27017"
+    volumes:
+      - registrydb:/data/db
+    env_file:
+      - .env
+    networks:
+      - eq_net
+
+  calendardb:
+    image: postgres
+    container_name: calendardb
+    mem_limit: 512m
+    mem_reservation: 256m
+    shm_size: 128mb
+    ports:
+      - "5481:5432"
+    volumes:
+      - calendardb:/data/postgres
+    env_file:
+      - .env
     networks:
       - eq_net
 
@@ -179,7 +164,6 @@ networks:
     driver: bridge
 
 volumes:
-  gatewaydb:
+  esdata:
   registrydb:
   calendardb:
-  esdata:
