@@ -70,7 +70,7 @@ public class DepartmentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Department> create(@PathVariable("id") String locationId,
+    public ResponseEntity<Department> create(@PathVariable("locationId") String locationId,
             @Valid @RequestBody Department department)
             throws BadRequestException, URISyntaxException, ResourceNotFoundException {
         log.info("REST request to save Department : " + department.toString());
