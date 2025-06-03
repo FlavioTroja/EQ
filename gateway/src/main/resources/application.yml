@@ -3,7 +3,7 @@ server:
 
 spring:
     application:
-        name: gateway 
+        name: gateway    
     security:
         oauth2:
             resourceserver:
@@ -61,4 +61,7 @@ eureka:
     instance:
         prefer-ip-address: true
         
-      
+logging:
+    logstash:
+        host: ${LOGSTASH_HOST:localhost}
+        port: ${LOGSTASH_PORT:5000}      
