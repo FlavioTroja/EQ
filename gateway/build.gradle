@@ -31,7 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.5'
 	implementation 'software.amazon.awssdk:cognitoidentityprovider:2.31.41'
-	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+	implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
 	
 	compileOnly 'org.projectlombok:lombok:1.18.36'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
