@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +32,8 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExi
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final CognitoIdentityProviderClient cognito;
     private final String clientId;
@@ -66,7 +70,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         String secretHash = calculateSecretHash(
                 req.username, clientId, clientSecret);
-
+        log.info("Logging in user: {}", req.username);
         InitiateAuthRequest authReq = InitiateAuthRequest.builder()
                 .authFlow(AuthFlowType.USER_PASSWORD_AUTH)
                 .clientId(clientId)
@@ -87,6 +91,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+        log.info("Registering user: {}", req.email);
         if (!req.password.equals(req.confirmPassword)) {
             return ResponseEntity.badRequest().body(Map.of("error", "Password and confirmPassword do not match"));
         }
