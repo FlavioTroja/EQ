@@ -11,6 +11,7 @@ import { LocationOnCustomerSection } from "../../../../../models/Customer";
 import * as RouterActions from "../../../../../core/router/store/router.actions";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { getRouterUrl } from "../../../../../core/router/store/router.selectors";
+import * as LocationActions from "../../../pages/locations/store/actions/locations.actions";
 
 @Component({
   selector: 'app-location-card',
@@ -79,7 +80,7 @@ export class LocationCardComponent {
   }
 
   deleteLocation(){
-
+    this.store.dispatch(LocationActions.deleteLocation({ customerId: this.location?.customerId!, locationId: this.location?.id! }))
   }
 
   protected readonly truncatePillText = truncatePillText;

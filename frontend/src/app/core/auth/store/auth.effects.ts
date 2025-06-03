@@ -46,7 +46,7 @@ export class AuthEffects  {
   loginSuccessEffect$ = createEffect(() => this.actions$.pipe(
     ofType(AuthActions.loginSuccess),
     tap(({ auth }) => this.authService.saveAuth(auth)),
-    delay(10),
+    delay(100),
     exhaustMap(() => [
       ProfileActions.loadProfile(),
       RouterActions.go({ path: ["home"] })
