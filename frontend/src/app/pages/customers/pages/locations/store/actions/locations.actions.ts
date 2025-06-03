@@ -19,7 +19,7 @@ export const editLocation = createAction("[Locations] Edit");
 export const editLocationSuccess = createAction("[Locations] Edit location Success", props<{ location: Location }>());
 export const editLocationFailed = createAction("[Locations] Edit Failed", props<{ error: HttpError }>());
 
-export const deleteLocation = createAction("[Locations] Delete", props<{ id: string }>());
+export const deleteLocation = createAction("[Locations] Delete", props<{ locationId: string, customerId: string, }>());
 export const deleteLocationSuccess = createAction("[Locations] Delete location Success", props<{ location: Location }>());
 export const deleteLocationFailed = createAction("[Locations] Delete Failed", props<{ error: HttpError }>());
 

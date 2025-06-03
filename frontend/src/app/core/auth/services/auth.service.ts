@@ -12,11 +12,11 @@ export class AuthService {
   http = inject(HttpClient);
 
   register(payload: RegisterPayload) {
-    return this.http.post<Auth>(`${BASE_URL}/auth/register`, payload);
+    return this.http.post<Auth>(`${BASE_URL}/api/auth/register`, payload);
   }
 
   login(payload: LoginPayload) {
-    return this.http.post<Auth>(`${BASE_URL}/auth/login`, payload);
+    return this.http.post<Auth>(`${BASE_URL}/api/auth/login`, payload);
   }
 
   saveAuth(auth: Auth) {
