@@ -29,8 +29,8 @@ export class LocationsService {
     return this.http.patch<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${id}`, body);
   }
 
-  deleteLocation(id: string, customerId: string) {
-    return this.http.delete<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${id}`);
+  deleteLocation(customerId: string, locationId: string) {
+    return this.http.delete<Location>(`${BASE_URL}/api/registry/customers/${customerId}/locations/${locationId}`);
   }
 
   loadLocations(customerId: string, payload: Query<LocationFilter>) {

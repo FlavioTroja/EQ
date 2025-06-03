@@ -1,11 +1,25 @@
-import { Component, inject, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, inject, Input, OnChanges, SimpleChanges, TemplateRef, ViewChild } from "@angular/core";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { MatIconModule } from "@angular/material/icon";
-import { PartialDepartment } from "../../../../../models/Department";
+import { createDepartmentPayload, PartialDepartment } from "../../../../../models/Department";
 import { CommonModule } from "@angular/common";
 import { InputComponent } from "../../../../../components/input/input.component";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { DepartmentSourceCardComponent } from "./department-source-card.component";
+import {
+  BottomSheetComponent,
+  BottomSheetDialogData
+} from "../../../../../components/bottom-sheet/bottom-sheet.component";
+import { MatBottomSheet } from "@angular/material/bottom-sheet";
+import { EditSourceComponent } from "../pages/sources/edit/edit-source.component";
+import { DepartmentService } from "../services/department.service";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { selectCustomRouteParam } from "../../../../../core/router/store/router.selectors";
+import { Store } from "@ngrx/store";
+import { AppState } from "../../../../../app.config";
+import { difference } from "../../../../../../utils/utils";
+import { Source } from "../../../../../models/Source";
+import * as DepartmentsActions from "../store/actions/departments.actions";
 
 @Component({
   selector: 'app-location-department-card',
@@ -37,8 +51,9 @@ import { DepartmentSourceCardComponent } from "./department-source-card.componen
       <div class="flex w-full cursor-pointer justify-between gap-2 p-2 rounded items-center"
            (click)="toggleCardCollapsed()">
         <div class="flex gap-8 items-center text-lg h-[34px]">
-          {{ this.f.name.getRawValue() }}
-          <div class="flex rounded-full text-sm self-center bg-light-grey border p-1 pr-2 gap-1" *ngIf="!isCardCollapsed || viewOnly" style="line-height: 14px !important">
+          {{ this.isNewDepartment ? 'Nuovo reparto' : this.f.name.getRawValue() }}
+          <div class="flex rounded-full text-sm self-center bg-light-grey border p-1 pr-2 gap-1"
+               *ngIf="!isNewDepartment && (!isDepartmentCardOpen || viewOnly)" style="line-height: 14px !important">
             <mat-icon class="material-symbols-rounded">precision_manufacturing</mat-icon>
             <div class="flex font-bold self-center gap-2">
               {{ department.sources?.length || 0 }}
@@ -46,59 +61,132 @@ import { DepartmentSourceCardComponent } from "./department-source-card.componen
             </div>
           </div>
         </div>
-        <mat-icon class="material-symbols-rounded" [@rotateArrow]="isCardCollapsed ? 'close' : 'open'">
+        <mat-icon class="material-symbols-rounded" [@rotateArrow]="isDepartmentCardOpen ? 'close' : 'open'">
           keyboard_arrow_down
         </mat-icon>
       </div>
-      <form class="flex flex-col w-full gap-2 p-2" *ngIf="isCardCollapsed" [@translateDown]="isCardCollapsed ? 'up' : 'down'" [formGroup]="departmentForm">
+      <form class="flex flex-col w-full gap-2 p-2" *ngIf="isDepartmentCardOpen"
+            [@translateDown]="isDepartmentCardOpen ? 'up' : 'down'"
+            [formGroup]="departmentForm">
         <div class="flex w-full" *ngIf="!viewOnly">
-          <app-input [formControl]="f.name" formControlName="name" label="nome reparto" id="department-name" type="text" class="w-full" />
+          <app-input [formControl]="f.name" formControlName="name" label="nome reparto" id="department-name" type="text"
+                     class="w-full"/>
         </div>
-        <div class="flex w-full" [ngClass]="{ 'p-2 bg-grey-1': !viewOnly }">
-          <app-department-source-card class="w-full" *ngFor="let source of department.sources" [source]="source"/>
+        <div class="flex flex-col w-full gap-2" [ngClass]="{ 'p-2 bg-grey-1': !viewOnly }">
+          <app-department-source-card class="w-full" *ngFor="let source of sources" [source]="source"/>
+          <div class="flex w-full justify-center" *ngIf="!viewOnly">
+            <button class="focus:outline-none rounded-full border-input bg-foreground flex items-center"
+                    (click)="addNewSource()">
+              <mat-icon class="align-to-center icon-size material-symbols-rounded scale-75">add</mat-icon>
+            </button>
+          </div>
         </div>
-        <div class="flex justify-end w-full" *ngIf="!viewOnly">
-          <div class="flex cursor-pointer error default-shadow-hover rounded py-2 px-3 gap-2">
+        <div class="flex justify-end gap-2 w-full" *ngIf="!viewOnly">
+          <div class="flex cursor-pointer error d efault-shadow-hover rounded py-2 px-3 gap-2" 
+               [ngClass]="{'opacity-60  pointer-events-none': isNewDepartment}">
             <mat-icon class="icon-size material-symbols-rounded">delete</mat-icon>
             <div>Rimuovi condizione</div>
+          </div>
+          <div class="flex cursor-pointer accent default-shadow-hover rounded py-2 px-3 gap-2" 
+               [ngClass]="{'opacity-60  pointer-events-none': this.departmentForm.invalid}" 
+               (click)="saveDepartment()">
+            <mat-icon class="icon-size material-symbols-rounded">check</mat-icon>
+            <div class="font-bold">Salva</div>
           </div>
         </div>
       </form>
     </div>
+
+
+
+
+    <ng-template #addSourceBottomSheet>
+      <app-edit-source />
+    </ng-template>
   `,
   imports: [
     MatIconModule,
     CommonModule,
     InputComponent,
     ReactiveFormsModule,
-    DepartmentSourceCardComponent
+    DepartmentSourceCardComponent,
+    EditSourceComponent
   ],
   styles: [ `` ]
 })
 export class LocationDepartmentCardComponent implements OnChanges {
   @Input({ required: true }) department: PartialDepartment = {};
   @Input({ required: false }) viewOnly: boolean = false;
+  @Input({ required: false }) isDepartmentCardOpen?: boolean = false;
+
+  @ViewChild("addSourceBottomSheet") addSourceBottomSheet?: TemplateRef<any>;
 
   fb = inject(FormBuilder);
+  store: Store<AppState> = inject(Store);
+  bottomSheet = inject(MatBottomSheet);
+  departmentsService = inject(DepartmentService);
 
-  isCardCollapsed: boolean = false;
+  locationId = toSignal(this.store.select(selectCustomRouteParam("locationId")));
 
   departmentForm = this.fb.group({
+    id: [''],
     name: ["", Validators.required],
-    sources: [[{}]]
+    sources: [[] as Source[]]
   })
+
+  isNewDepartment: boolean = false;
 
   get f() {
     return this.departmentForm.controls;
   }
 
+  get sources(): Source[] {
+    return this.f.sources.value || [];
+  }
+
   toggleCardCollapsed() {
-    this.isCardCollapsed = !this.isCardCollapsed;
+    this.isDepartmentCardOpen = !this.isDepartmentCardOpen;
+  }
+
+  addNewSource() {
+    const dialogRef: any = this.bottomSheet.open(BottomSheetComponent, {
+      backdropClass: "blur-filter",
+      panelClass: "backdropPanelClassForBottomSheet",
+      data: <BottomSheetDialogData> {
+        title: "",
+        content: "",
+        templateContent: this.addSourceBottomSheet,
+        buttons: [
+          { iconName: "check", label: "Conferma", bgColor: "confirm",  onClick: () => dialogRef.dismiss(true) },
+          { iconName: "clear", label: "Annulla",  onClick: () => dialogRef.dismiss(false) }
+        ]
+      }
+    });
+  }
+
+  saveDepartment() {
+    const department: PartialDepartment = createDepartmentPayload({
+      ...difference(this.department, this.departmentForm.value),
+      id: this.f.id.value,
+      sources: this.sources
+    });
+    if (this.isNewDepartment) {
+      this.store.dispatch(DepartmentsActions.addDepartment({ locationId: this.locationId(), department }));
+      return;
+    } else {
+      this.store.dispatch(DepartmentsActions.editDepartment({ locationId: this.locationId(), department }));
+      return;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if(!!changes['department']) {
-      this.departmentForm.patchValue(changes['department'].currentValue);
+      const department = changes['department'].currentValue;
+      if (!Object.keys(department).length) {
+        this.isNewDepartment = true;
+        return;
+      }
+      this.departmentForm.patchValue(department);
     }
   }
 }

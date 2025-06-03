@@ -13,6 +13,7 @@ import { UsersEffects } from "./pages/users/store/effects/users.effects";
 import { MachinesEffects } from "./pages/machines/store/effects/machines.effects";
 import { ReportsEffects } from "./pages/reports/store/effects/reports.effects";
 import { LocationsEffects } from "./pages/customers/pages/locations/store/effects/locations.effects";
+import { DepartmentsEffects } from "./pages/customers/pages/locations/store/effects/departments.effects";
 
 export const routes: Routes = [
   {
@@ -68,7 +69,7 @@ export const routes: Routes = [
     providers: [
       provideState("customer-manager", customerManagementReducers),
       provideState("location-manager", locationManagementReducers),
-      provideEffects([CustomersEffects, LocationsEffects])
+      provideEffects([CustomersEffects, LocationsEffects, DepartmentsEffects])
     ],
     loadChildren: () => import("./pages/customers/customers.routing")
   },

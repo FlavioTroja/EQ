@@ -3,6 +3,7 @@ import { Actions, concatLatestFrom, createEffect, ofType } from "@ngrx/effects";
 import { LocationsService } from "../../services/locations.service";
 import { catchError, concatMap, exhaustMap, map, of } from "rxjs";
 import * as LocationsActions from "../actions/locations.actions";
+import * as CustomerActions from "../../../../store/actions/customers.actions";
 import * as RouterActions from "../../../../../../core/router/store/router.actions";
 import { Store } from "@ngrx/store";
 import * as UIActions from "../../../../../../core/ui/store/ui.actions";
@@ -37,14 +38,17 @@ export class LocationsEffects {
       ))
   ));
 
-  // deleteLocationEffect$ = createEffect(() => this.actions$.pipe(
-  //   ofType(LocationsActions.deleteLocation),
-  //   exhaustMap(({ id  }) => this.locationService.deleteLocation(id)
-  //     .pipe(
-  //       map((location) => LocationsActions.loadLocations({ query: { query: {}, options: { limit: 10, page: 1, populate: "address" } } })),
-  //       catchError((err) => of(LocationsActions.deleteLocationFailed(err)))
-  //     ))
-  // ));
+  deleteLocationEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(LocationsActions.deleteLocation),
+    exhaustMap(({ customerId, locationId }) => this.locationService.deleteLocation(customerId, locationId)
+      .pipe(
+        concatMap(() => [
+          UIActions.setUiNotification({ notification: { type: NOTIFICATION_LISTENER_TYPE.SUCCESS, message: "Eliminazione effettuata con successo" } }),
+          CustomerActions.getCustomer({ id: customerId })
+        ]),
+        catchError((err) => of(LocationsActions.deleteLocationFailed(err)))
+      ))
+  ));
   //
   // loadLocationEffect$ = createEffect(() => this.actions$.pipe(
   //   ofType(LocationsActions.loadLocations),
