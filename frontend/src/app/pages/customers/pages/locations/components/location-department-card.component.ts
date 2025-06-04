@@ -11,7 +11,7 @@ import {
   BottomSheetDialogData
 } from "../../../../../components/bottom-sheet/bottom-sheet.component";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
-import { EditSourceComponent } from "../pages/sources/edit/edit-source.component";
+import { EditSourceComponent } from "../pages/sources/pages/edit/edit-source.component";
 import { DepartmentService } from "../services/department.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { selectCustomRouteParam } from "../../../../../core/router/store/router.selectors";

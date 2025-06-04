@@ -34,7 +34,7 @@ export class MachinesService {
   }
 
   loadMachines(payload: Query<MachineFilter>) {
-    return this.http.get<PaginateDatasource<Machine>>(`${BASE_URL}/api/registry/machines`);
+    return this.http.get<PaginateDatasource<Machine>>(`${BASE_URL}/api/registry/machines`, { params: { q: payload.query?.value || "", ...payload.options } });
   }
 
   loadAllMachines(payload: Query<object>) {
