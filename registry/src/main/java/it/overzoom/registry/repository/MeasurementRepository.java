@@ -12,9 +12,9 @@ import it.overzoom.registry.model.Measurement;
 @Repository
 public interface MeasurementRepository extends MongoRepository<Measurement, String> {
 
-    Page<Measurement> findBySourceId(String sourceId, Pageable pageable);
+    Page<Measurement> findByIrradiationConditionId(String irradiationConditionId, Pageable pageable);
 
-    List<Measurement> findBySourceId(String sourceId);
+    List<Measurement> findByIrradiationConditionId(String irradiationConditionId);
 
-    boolean existsBySourceId(String sourceId);
+    boolean existsByIrradiationConditionId(String irradiationConditionId);
 }

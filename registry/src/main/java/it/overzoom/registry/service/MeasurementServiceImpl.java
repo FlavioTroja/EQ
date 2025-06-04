@@ -22,8 +22,8 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public Page<Measurement> findBySourceId(String sourceId, Pageable pageable) {
-        return measurementRepository.findBySourceId(sourceId, pageable);
+    public Page<Measurement> findByIrradiationConditionId(String irradiationConditionId, Pageable pageable) {
+        return measurementRepository.findByIrradiationConditionId(irradiationConditionId, pageable);
     }
 
     @Override

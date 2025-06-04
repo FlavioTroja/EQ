@@ -6,7 +6,8 @@ import org.mapstruct.ReportingPolicy;
 import it.overzoom.registry.dto.SourceDTO;
 import it.overzoom.registry.model.Source;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { MeasurementMapper.class })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {
+        IrradiationConditionMapper.class })
 public interface SourceMapper {
 
     SourceDTO toDto(Source entity);

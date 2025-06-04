@@ -13,6 +13,10 @@ public class SourceDTO {
     @NotNull
     private String sn;
 
+    private String phantom;
+
+    private Integer load;
+
     private Date expirationDate;
 
     @NotNull
@@ -79,5 +83,21 @@ public class SourceDTO {
 
     public void setMachineId(String machineId) {
         this.machineId = machineId;
+    }
+
+    public String getPhantom() {
+        return phantom;
+    }
+
+    public void setPhantom(String phantom) {
+        this.phantom = phantom;
+    }
+
+    public Integer getLoad() {
+        return load;
+    }
+
+    public void setLoad(Integer load) {
+        this.load = load;
     }
 }

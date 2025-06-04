@@ -11,7 +11,7 @@ import it.overzoom.registry.model.Measurement;
 
 public interface MeasurementService {
 
-    Page<Measurement> findBySourceId(String sourceId, Pageable pageable);
+    Page<Measurement> findByIrradiationConditionId(String irradiationConditionId, Pageable pageable);
 
     Optional<Measurement> findById(String id);
 

@@ -17,7 +17,7 @@ public class MeasurementDTO {
     private Float value;
 
     @NotNull
-    private String sourceId;
+    private String irradiationConditionId;
 
     public String getId() {
         return id;
@@ -51,11 +51,11 @@ public class MeasurementDTO {
         this.value = value;
     }
 
-    public String getSourceId() {
-        return sourceId;
+    public String getIrradiationConditionId() {
+        return irradiationConditionId;
     }
 
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
+    public void setIrradiationConditionId(String irradiationConditionId) {
+        this.irradiationConditionId = irradiationConditionId;
     }
 }

@@ -10,18 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Source;
-import it.overzoom.registry.repository.MeasurementRepository;
+import it.overzoom.registry.repository.IrradiationConditionRepository;
 import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class SourceServiceImpl implements SourceService {
 
+    private final IrradiationConditionRepository irradiationConditionRepository;
     private final SourceRepository sourceRepository;
-    private final MeasurementRepository measurementRepository;
 
-    public SourceServiceImpl(SourceRepository sourceRepository, MeasurementRepository measurementRepository) {
+    public SourceServiceImpl(SourceRepository sourceRepository,
+            IrradiationConditionRepository irradiationConditionRepository) {
         this.sourceRepository = sourceRepository;
-        this.measurementRepository = measurementRepository;
+        this.irradiationConditionRepository = irradiationConditionRepository;
     }
 
     @Override
@@ -76,15 +77,12 @@ public class SourceServiceImpl implements SourceService {
     @Override
     @Transactional
     public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
-        // 1) Verifico che la sorgente esista
-        Source src = sourceRepository.findById(id)
+        sourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata."));
-        // 2) Blocca se ci sono misure
-        if (measurementRepository.existsBySourceId(id)) {
+        if (irradiationConditionRepository.existsBySourceId(id)) {
             throw new BadRequestException(
-                    "Impossibile cancellare la sorgente perché ci sono misure già registrate.");
+                    "Impossibile cancellare la sorgente perché ci sono condizioni di irradiazione già registrate.");
         }
-        // 3) Cancello
         sourceRepository.deleteById(id);
     }
 }

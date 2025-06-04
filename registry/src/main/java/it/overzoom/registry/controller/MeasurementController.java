@@ -63,14 +63,14 @@ public class MeasurementController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Measurement> create(@PathVariable("sourceId") String sourceId,
+    public ResponseEntity<Measurement> create(@PathVariable("irradiationConditionId") String irradiationConditionId,
             @Valid @RequestBody Measurement measurement)
             throws BadRequestException, URISyntaxException {
         log.info("REST request to save Measurement : " + measurement.toString());
         if (measurement.getId() != null) {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
         }
-        measurement.setSourceId(sourceId);
+        measurement.setIrradiationConditionId(irradiationConditionId);
         measurement.setDate(LocalDateTime.now());
         measurement = measurementService.create(measurement);
         return ResponseEntity.created(new URI("/api/measurements/" + measurement.getId())).body(measurement);
