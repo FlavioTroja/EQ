@@ -16,28 +16,35 @@ import it.overzoom.registry.repository.SourceRepository;
 @Service
 public class SourceServiceImpl implements SourceService {
 
-    private final IrradiationConditionRepository irradiationConditionRepository;
     private final SourceRepository sourceRepository;
+    private final IrradiationConditionRepository irradiationConditionRepository;
 
-    public SourceServiceImpl(SourceRepository sourceRepository,
+    public SourceServiceImpl(
+            SourceRepository sourceRepository,
             IrradiationConditionRepository irradiationConditionRepository) {
         this.sourceRepository = sourceRepository;
         this.irradiationConditionRepository = irradiationConditionRepository;
     }
 
+    /**
+     * Restituisce una pagina di Source filtrate per departmentId
+     */
     @Override
     public Page<Source> findByDepartmentId(String departmentId, Pageable pageable)
             throws ResourceNotFoundException, BadRequestException {
-
+        // (Puoi eventualmente verificare che departmentId esista in un altro
+        // repository,
+        // ma se non hai un repository Department, salta questa verifica.)
         return sourceRepository.findByDepartmentId(departmentId, pageable);
     }
 
+    /**
+     * Recupera una singola Source per ID (senza popolare ancora le condizioni)
+     */
     @Override
     public Source findById(String id) throws ResourceNotFoundException, BadRequestException {
-        Source source = sourceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovato."));
-
-        return source;
+        return sourceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata: " + id));
     }
 
     @Override
@@ -45,11 +52,20 @@ public class SourceServiceImpl implements SourceService {
         return sourceRepository.existsById(id);
     }
 
+    /**
+     * Crea una nuova Source (initialmente senza alcuna IrradiationCondition).
+     */
     @Override
     public Source create(Source source) throws ResourceNotFoundException, BadRequestException {
+        // azzera la lista (per sicurezza)
+        source.setIrradiationConditions(null);
+        source.setCompletedMeasurements(0);
         return sourceRepository.save(source);
     }
 
+    /**
+     * Partial update: modifica solo i campi non null del JSON ricevuto.
+     */
     @Override
     public Optional<Source> partialUpdate(String id, Source source) {
         return sourceRepository.findById(id)
@@ -60,29 +76,58 @@ public class SourceServiceImpl implements SourceService {
                     if (source.getExpirationDate() != null) {
                         existingSource.setExpirationDate(source.getExpirationDate());
                     }
-                    return existingSource;
-                })
-                .map(sourceRepository::save);
+                    if (source.getPhantom() != null) {
+                        existingSource.setPhantom(source.getPhantom());
+                    }
+                    if (source.getLoad() != null) {
+                        existingSource.setLoad(source.getLoad());
+                    }
+                    if (source.getDepartmentId() != null) {
+                        existingSource.setDepartmentId(source.getDepartmentId());
+                    }
+                    if (source.getMachineId() != null) {
+                        existingSource.setMachineId(source.getMachineId());
+                    }
+                    // non toccare ossessionatamente il campo "completedMeasurements"
+                    return sourceRepository.save(existingSource);
+                });
     }
 
+    /**
+     * Update “completo” (quando il client manda l’oggetto intero).
+     */
     @Override
     public Optional<Source> update(Source source) {
-        return sourceRepository.findById(source.getId()).map(existingSource -> {
-            existingSource.setSn(source.getSn());
-            existingSource.setExpirationDate(source.getExpirationDate());
-            return existingSource;
-        }).map(sourceRepository::save);
+        return sourceRepository.findById(source.getId())
+                .map(existingSource -> {
+                    existingSource.setSn(source.getSn());
+                    existingSource.setExpirationDate(source.getExpirationDate());
+                    existingSource.setPhantom(source.getPhantom());
+                    existingSource.setLoad(source.getLoad());
+                    existingSource.setDepartmentId(source.getDepartmentId());
+                    existingSource.setMachineId(source.getMachineId());
+                    existingSource.setCompletedMeasurements(source.getCompletedMeasurements());
+                    return sourceRepository.save(existingSource);
+                });
     }
 
+    /**
+     * Cancella la Source solo se non esistono ancora condizione di irradiazione
+     * legate a essa.
+     */
     @Override
     @Transactional
     public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
-        sourceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata."));
+        // verifichiamo che esista
+        Source src = sourceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata: " + id));
+
+        // se esistono condizioni collegate, lancio BadRequest
         if (irradiationConditionRepository.existsBySourceId(id)) {
             throw new BadRequestException(
-                    "Impossibile cancellare la sorgente perché ci sono condizioni di irradiazione già registrate.");
+                    "Impossibile cancellare la sorgente perché ci sono ancora condizioni di irradiazione associate.");
         }
+
         sourceRepository.deleteById(id);
     }
 }
