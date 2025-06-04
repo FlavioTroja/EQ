@@ -32,7 +32,8 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
     }
 
     /**
-     * Restituisce una pagina di IrradiationCondition associate alla Source specificata.
+     * Restituisce una pagina di IrradiationCondition associate alla Source
+     * specificata.
      */
     @Override
     public List<IrradiationCondition> findBySourceId(String sourceId) throws ResourceNotFoundException {
@@ -44,7 +45,8 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
     }
 
     /**
-     * Restituisce una singola IrradiationCondition per ID (senza popolare le misurazioni).
+     * Restituisce una singola IrradiationCondition per ID (senza popolare le
+     * misurazioni).
      */
     @Override
     public Optional<IrradiationCondition> findById(String id) {
@@ -66,7 +68,7 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
     }
 
     /**
-     * Crea una nuova IrradiationCondition. 
+     * Crea una nuova IrradiationCondition.
      * Il campo sourceId deve essere già valorizzato nell'oggetto passed.
      */
     @Override
@@ -85,7 +87,8 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
         ic.setMeasurements(new java.util.ArrayList<>());
         IrradiationCondition saved = icRepository.save(ic);
 
-        // Aggiorno anche la lista di IRRADIATION_CONDITIONS dentro la Source (se uso DBRef)
+        // Aggiorno anche la lista di IRRADIATION_CONDITIONS dentro la Source (se uso
+        // DBRef)
         var existingList = src.getIrradiationConditions();
         if (existingList == null) {
             existingList = new java.util.ArrayList<>();
@@ -102,29 +105,31 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
      */
     @Override
     @Transactional
-    public Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic) throws ResourceNotFoundException {
+    public Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic)
+            throws ResourceNotFoundException {
         return icRepository.findById(id)
                 .map(existing -> {
                     if (ic.getSetUpMeasure() != null) {
                         existing.setSetUpMeasure(ic.getSetUpMeasure());
                     }
-                    if (ic.getKey() != null) {
-                        existing.setKey(ic.getKey());
+                    // Se parameters non è null (cioè il client ha inviato un array),
+                    // rimpiazziamo la lista; altrimenti lasciamo quella esistente.
+                    if (ic.getParameters() != null) {
+                        existing.setParameters(ic.getParameters());
                     }
-                    if (ic.getValue() != null) {
-                        existing.setValue(ic.getValue());
-                    }
-                    // attenzione: non modificare sourceId se non strettamente necessario
+                    // Non tocchiamo sourceId a meno che non serva veramente
                     return icRepository.save(existing);
                 });
     }
 
     /**
-     * Update completo: aggiorna tutti i campi di una IrradiationCondition esistente.
+     * Update completo: aggiorna tutti i campi di una IrradiationCondition
+     * esistente.
      */
     @Override
     @Transactional
-    public Optional<IrradiationCondition> update(IrradiationCondition ic) throws ResourceNotFoundException, BadRequestException {
+    public Optional<IrradiationCondition> update(IrradiationCondition ic)
+            throws ResourceNotFoundException, BadRequestException {
         if (ic.getId() == null) {
             throw new BadRequestException("ID mancante per l'update della IrradiationCondition.");
         }
@@ -132,9 +137,11 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
         return icRepository.findById(ic.getId())
                 .map(existing -> {
                     existing.setSetUpMeasure(ic.getSetUpMeasure());
-                    existing.setKey(ic.getKey());
-                    existing.setValue(ic.getValue());
-                    // se si vuole cambiare la sourceId, andrebbe gestito a parte con cautela
+                    // Nel full update sostituiamo sempre la lista di parameters
+                    existing.setParameters(ic.getParameters());
+                    // Se volessi supportare l’eventuale cambio di sourceId, dovresti
+                    // farlo qui con le opportune verifiche (rimuovere dalla vecchia source,
+                    // aggiungere alla nuova).
                     return icRepository.save(existing);
                 });
     }
@@ -145,16 +152,14 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
     @Override
     @Transactional
     public void deleteById(String id) throws ResourceNotFoundException, BadRequestException {
-        IrradiationCondition ic = icRepository.findById(id)
+        icRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Condizione non trovata: " + id));
 
-        // Cancello tutte le misurazioni associate
         if (measurementRepository.existsByIrradiationConditionId(id)) {
             List<Measurement> measurements = measurementRepository.findByIrradiationConditionId(id);
             measurementRepository.deleteAll(measurements);
         }
 
-        // Rimuovo l'entità
         icRepository.deleteById(id);
     }
 }

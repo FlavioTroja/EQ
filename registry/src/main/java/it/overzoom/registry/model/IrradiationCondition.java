@@ -13,9 +13,7 @@ public class IrradiationCondition {
     @Id
     private String id;
     private String setUpMeasure;
-    private String key;
-    private Float value;
-
+    private List<KeyValue> parameters;
     @Indexed
     private String sourceId;
 
@@ -38,20 +36,12 @@ public class IrradiationCondition {
         this.setUpMeasure = setUpMeasure;
     }
 
-    public String getKey() {
-        return key;
+    public List<KeyValue> getParameters() {
+        return parameters;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
+    public void setParameters(List<KeyValue> parameters) {
+        this.parameters = parameters;
     }
 
     public String getSourceId() {

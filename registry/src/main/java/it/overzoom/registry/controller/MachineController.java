@@ -58,10 +58,8 @@ public class MachineController {
 
         Page<Machine> page;
         if (query != null && !query.trim().isEmpty()) {
-            // Autocomplete: filtra per nome
             page = machineService.searchByName(query.trim(), pageable);
         } else {
-            // Se non c'è query, ritorno tutte le macchine paginato
             page = machineService.findAll(pageable);
         }
 

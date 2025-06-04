@@ -1,11 +1,14 @@
 package it.overzoom.registry.dto;
 
+import java.util.List;
+
+import it.overzoom.registry.model.KeyValue;
+
 public class IrradiationConditionDTO {
 
     private String id;
     private String setUpMeasure;
-    private String key;
-    private Float value;
+    private List<KeyValue> parameters;
     private String sourceId;
 
     public String getId() {
@@ -24,20 +27,12 @@ public class IrradiationConditionDTO {
         this.setUpMeasure = setUpMeasure;
     }
 
-    public String getKey() {
-        return key;
+    public List<KeyValue> getParameters() {
+        return parameters;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
+    public void setParameters(List<KeyValue> parameters) {
+        this.parameters = parameters;
     }
 
     public String getSourceId() {
