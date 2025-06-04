@@ -23,7 +23,7 @@ public class Measurement {
     private Float value;
 
     @Indexed
-    private String sourceId;
+    private String irradiationConditionId;
 
     public String getId() {
         return id;
@@ -49,14 +49,6 @@ public class Measurement {
         this.value = value;
     }
 
-    public String getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
-    }
-
     public LocalDateTime getDate() {
         return date;
     }
@@ -65,9 +57,12 @@ public class Measurement {
         this.date = date;
     }
 
-    @Override
-    public String toString() {
-        return "Measurement [id=" + id + ", date=" + date + ", key=" + key + ", value=" + value + ", sourceId="
-                + sourceId + "]";
+    public String getIrradiationConditionId() {
+        return irradiationConditionId;
     }
+
+    public void setIrradiationConditionId(String irradiationConditionId) {
+        this.irradiationConditionId = irradiationConditionId;
+    }
+
 }

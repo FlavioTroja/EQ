@@ -16,6 +16,10 @@ public class Source {
 
     private String sn;
 
+    private String phantom;
+
+    private Integer load;
+
     private Date expirationDate;
 
     @Indexed
@@ -27,7 +31,7 @@ public class Source {
     private Integer completedMeasurements;
 
     @DBRef
-    List<Measurement> measurements;
+    List<IrradiationCondition> irradiationConditions;
 
     public String getId() {
         return id;
@@ -64,16 +68,17 @@ public class Source {
     public String getMachineId() {
         return machineId;
     }
+
     public void setMachineId(String machineId) {
         this.machineId = machineId;
     }
 
-    public List<Measurement> getMeasurements() {
-        return measurements;
+    public List<IrradiationCondition> getIrradiationConditions() {
+        return irradiationConditions;
     }
 
-    public void setMeasurements(List<Measurement> measurements) {
-        this.measurements = measurements;
+    public void setIrradiationConditions(List<IrradiationCondition> irradiationConditions) {
+        this.irradiationConditions = irradiationConditions;
     }
 
     public Integer getCompletedMeasurements() {
@@ -82,6 +87,22 @@ public class Source {
 
     public void setCompletedMeasurements(Integer completedMeasurements) {
         this.completedMeasurements = completedMeasurements;
+    }
+
+    public String getPhantom() {
+        return phantom;
+    }
+
+    public void setPhantom(String phantom) {
+        this.phantom = phantom;
+    }
+
+    public Integer getLoad() {
+        return load;
+    }
+
+    public void setLoad(Integer load) {
+        this.load = load;
     }
 
 }
