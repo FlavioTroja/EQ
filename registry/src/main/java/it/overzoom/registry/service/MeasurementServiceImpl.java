@@ -1,9 +1,8 @@
 package it.overzoom.registry.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +21,8 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public Page<Measurement> findByIrradiationConditionId(String irradiationConditionId, Pageable pageable) {
-        return measurementRepository.findByIrradiationConditionId(irradiationConditionId, pageable);
+    public List<Measurement> findByIrradiationConditionId(String irradiationConditionId) {
+        return measurementRepository.findByIrradiationConditionId(irradiationConditionId);
     }
 
     @Override

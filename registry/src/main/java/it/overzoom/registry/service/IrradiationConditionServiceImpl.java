@@ -3,10 +3,11 @@ package it.overzoom.registry.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.IrradiationCondition;
 import it.overzoom.registry.model.Measurement;
 import it.overzoom.registry.model.Source;
@@ -17,90 +18,143 @@ import it.overzoom.registry.repository.SourceRepository;
 @Service
 public class IrradiationConditionServiceImpl implements IrradiationConditionService {
 
-    private final IrradiationConditionRepository icRepo;
-    private final SourceRepository sourceRepo;
-    private final MeasurementRepository mRepo;
+    private final IrradiationConditionRepository icRepository;
+    private final SourceRepository sourceRepository;
+    private final MeasurementRepository measurementRepository;
 
     public IrradiationConditionServiceImpl(
-            IrradiationConditionRepository icRepo,
-            SourceRepository sourceRepo,
-            MeasurementRepository mRepo) {
-        this.icRepo = icRepo;
-        this.sourceRepo = sourceRepo;
-        this.mRepo = mRepo;
+            IrradiationConditionRepository icRepository,
+            SourceRepository sourceRepository,
+            MeasurementRepository measurementRepository) {
+        this.icRepository = icRepository;
+        this.sourceRepository = sourceRepository;
+        this.measurementRepository = measurementRepository;
     }
 
     /**
-     * Crea una nuova condizione di irradiazione per la Source specificata.
+     * Restituisce una pagina di IrradiationCondition associate alla Source specificata.
      */
-    public IrradiationCondition createCondition(String sourceId, IrradiationCondition ic) {
-        Source s = sourceRepo.findById(sourceId)
-                .orElseThrow(() -> new RuntimeException("Source non trovata: " + sourceId));
+    @Override
+    public List<IrradiationCondition> findBySourceId(String sourceId) throws ResourceNotFoundException {
+        // Verifico che la Source esista
+        sourceRepository.findById(sourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Source non trovata: " + sourceId));
 
-        ic.setSourceId(sourceId);
-        ic.setMeasurements(new java.util.ArrayList<>());
-        IrradiationCondition saved = icRepo.save(ic);
+        return icRepository.findBySourceId(sourceId);
+    }
 
-        // Aggiungo il riferimento dentro la Source
-        var list = s.getIrradiationConditions();
-        if (list == null) {
-            list = new java.util.ArrayList<>();
+    /**
+     * Restituisce una singola IrradiationCondition per ID (senza popolare le misurazioni).
+     */
+    @Override
+    public Optional<IrradiationCondition> findById(String id) {
+        return icRepository.findById(id)
+                .map(ic -> {
+                    // opzionale: popolare le misurazioni a richiesta
+                    List<Measurement> measurements = measurementRepository.findByIrradiationConditionId(ic.getId());
+                    ic.setMeasurements(measurements);
+                    return ic;
+                });
+    }
+
+    /**
+     * Verifica se esiste un IrradiationCondition con quell'ID.
+     */
+    @Override
+    public boolean existsById(String id) {
+        return icRepository.existsById(id);
+    }
+
+    /**
+     * Crea una nuova IrradiationCondition. 
+     * Il campo sourceId deve essere già valorizzato nell'oggetto passed.
+     */
+    @Override
+    @Transactional
+    public IrradiationCondition create(IrradiationCondition ic) throws ResourceNotFoundException, BadRequestException {
+        String sourceId = ic.getSourceId();
+        if (sourceId == null) {
+            throw new BadRequestException("La IrradiationCondition deve avere un sourceId valido.");
         }
-        list.add(saved);
-        s.setIrradiationConditions(list);
-        sourceRepo.save(s);
+
+        // Verifico che la Source esista
+        Source src = sourceRepository.findById(sourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Source non trovata: " + sourceId));
+
+        // Inizializzo la lista di misurazioni
+        ic.setMeasurements(new java.util.ArrayList<>());
+        IrradiationCondition saved = icRepository.save(ic);
+
+        // Aggiorno anche la lista di IRRADIATION_CONDITIONS dentro la Source (se uso DBRef)
+        var existingList = src.getIrradiationConditions();
+        if (existingList == null) {
+            existingList = new java.util.ArrayList<>();
+        }
+        existingList.add(saved);
+        src.setIrradiationConditions(existingList);
+        sourceRepository.save(src);
 
         return saved;
     }
 
-    public Optional<IrradiationCondition> getById(String id) {
-        Optional<IrradiationCondition> opt = icRepo.findById(id);
-        if (opt.isPresent()) {
-            IrradiationCondition ic = opt.get();
-            var measurements = mRepo.findByIrradiationConditionId(ic.getId());
-            ic.setMeasurements(measurements);
-            return Optional.of(ic);
-        }
-        return Optional.empty();
-    }
-
-    public List<IrradiationCondition> getAllBySource(String sourceId) {
-        var list = icRepo.findBySourceId(sourceId);
-        for (IrradiationCondition ic : list) {
-            var measurements = mRepo.findByIrradiationConditionId(ic.getId());
-            ic.setMeasurements(measurements);
-        }
-        return list;
+    /**
+     * Partial update: modifica solo i campi non null della IrradiationCondition.
+     */
+    @Override
+    @Transactional
+    public Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic) throws ResourceNotFoundException {
+        return icRepository.findById(id)
+                .map(existing -> {
+                    if (ic.getSetUpMeasure() != null) {
+                        existing.setSetUpMeasure(ic.getSetUpMeasure());
+                    }
+                    if (ic.getKey() != null) {
+                        existing.setKey(ic.getKey());
+                    }
+                    if (ic.getValue() != null) {
+                        existing.setValue(ic.getValue());
+                    }
+                    // attenzione: non modificare sourceId se non strettamente necessario
+                    return icRepository.save(existing);
+                });
     }
 
     /**
-     * Metodo paginato per ottenere le condizioni di irradiazione di una Source.
+     * Update completo: aggiorna tutti i campi di una IrradiationCondition esistente.
      */
-    public Page<IrradiationCondition> getPageBySource(String sourceId, Pageable pageable) {
-        return icRepo.findBySourceId(sourceId, pageable);
-    }
-
-    public IrradiationCondition updateCondition(String id, IrradiationCondition updated) {
-        return icRepo.findById(id).map(existing -> {
-            existing.setKey(updated.getKey());
-            existing.setValue(updated.getValue());
-            existing.setSetUpMeasure(updated.getSetUpMeasure());
-            // event. gestire il cambio di sourceId
-            return icRepo.save(existing);
-        }).orElseThrow(() -> new RuntimeException("Condizione non trovata: " + id));
-    }
-
-    public void deleteCondition(String id) {
-        // Prima cancello le misurazioni collegate
-        var measurements = mRepo.findByIrradiationConditionId(id);
-        for (Measurement m : measurements) {
-            mRepo.delete(m);
+    @Override
+    @Transactional
+    public Optional<IrradiationCondition> update(IrradiationCondition ic) throws ResourceNotFoundException, BadRequestException {
+        if (ic.getId() == null) {
+            throw new BadRequestException("ID mancante per l'update della IrradiationCondition.");
         }
-        // Rimuovo la condizione
-        icRepo.deleteById(id);
+
+        return icRepository.findById(ic.getId())
+                .map(existing -> {
+                    existing.setSetUpMeasure(ic.getSetUpMeasure());
+                    existing.setKey(ic.getKey());
+                    existing.setValue(ic.getValue());
+                    // se si vuole cambiare la sourceId, andrebbe gestito a parte con cautela
+                    return icRepository.save(existing);
+                });
     }
 
-    public boolean existsBySource(String sourceId) {
-        return icRepo.existsBySourceId(sourceId);
+    /**
+     * Elimina una IrradiationCondition e tutte le misurazioni a essa collegate.
+     */
+    @Override
+    @Transactional
+    public void deleteById(String id) throws ResourceNotFoundException, BadRequestException {
+        IrradiationCondition ic = icRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Condizione non trovata: " + id));
+
+        // Cancello tutte le misurazioni associate
+        if (measurementRepository.existsByIrradiationConditionId(id)) {
+            List<Measurement> measurements = measurementRepository.findByIrradiationConditionId(id);
+            measurementRepository.deleteAll(measurements);
+        }
+
+        // Rimuovo l'entità
+        icRepository.deleteById(id);
     }
 }

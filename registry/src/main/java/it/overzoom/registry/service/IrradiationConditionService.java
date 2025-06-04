@@ -3,24 +3,23 @@ package it.overzoom.registry.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
+import it.overzoom.registry.exception.BadRequestException;
+import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.IrradiationCondition;
 
 public interface IrradiationConditionService {
 
-    IrradiationCondition createCondition(String sourceId, IrradiationCondition ic);
+    IrradiationCondition create(IrradiationCondition ic) throws ResourceNotFoundException, BadRequestException;
 
-    Optional<IrradiationCondition> getById(String id);
+    Optional<IrradiationCondition> findById(String id);
 
-    List<IrradiationCondition> getAllBySource(String sourceId);
+    List<IrradiationCondition> findBySourceId(String sourceId) throws ResourceNotFoundException;
 
-    Page<IrradiationCondition> getPageBySource(String sourceId, Pageable pageable);
+    Optional<IrradiationCondition> update(IrradiationCondition ic) throws ResourceNotFoundException, BadRequestException;
 
-    IrradiationCondition updateCondition(String id, IrradiationCondition updated);
+    Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic) throws ResourceNotFoundException;
 
-    void deleteCondition(String id);
+    void deleteById(String id) throws ResourceNotFoundException, BadRequestException;
 
-    boolean existsBySource(String sourceId);
+    public boolean existsById(String id);
 }

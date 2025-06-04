@@ -33,6 +33,15 @@ public class MachineServiceImpl implements MachineService {
         return machineRepository.findAll(pageable);
     }
 
+    /**
+     * Implementazione dell'autocomplete: cerca tutte le macchine il cui nome contiene
+     * la stringa 'name' (ignorando maiuscole/minuscole), paginato.
+     */
+    @Override
+    public Page<Machine> searchByName(String name, Pageable pageable) {
+        return machineRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
     @Override
     public Optional<MachineDTO> findById(String id) {
         return machineRepository.findById(id)

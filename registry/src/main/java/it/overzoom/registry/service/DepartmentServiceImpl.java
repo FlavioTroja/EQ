@@ -1,9 +1,8 @@
 package it.overzoom.registry.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +25,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Department> findByLocationId(String locationId, Pageable pageable)
+    public List<Department> findByLocationId(String locationId)
             throws ResourceNotFoundException, BadRequestException {
 
-        return departmentRepository.findByLocationId(locationId, pageable);
+        return departmentRepository.findByLocationId(locationId);
     }
 
     @Override

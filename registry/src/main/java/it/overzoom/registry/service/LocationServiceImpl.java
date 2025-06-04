@@ -3,8 +3,6 @@ package it.overzoom.registry.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,15 +33,6 @@ public class LocationServiceImpl implements LocationService {
         this.departmentRepository = departmentRepository;
         this.customerRepository = customerRepository;
         this.locationMapper = locationMapper;
-    }
-
-    @Override
-    public Page<LocationDTO> findByCustomerId(String customerId, Pageable pageable)
-            throws ResourceNotFoundException, BadRequestException {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
-        return locationRepository.findByCustomerId(customer.getId(), pageable)
-                .map(locationMapper::toDto);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package it.overzoom.registry.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -30,12 +31,12 @@ public class SourceServiceImpl implements SourceService {
      * Restituisce una pagina di Source filtrate per departmentId
      */
     @Override
-    public Page<Source> findByDepartmentId(String departmentId, Pageable pageable)
+    public List<Source> findByDepartmentId(String departmentId)
             throws ResourceNotFoundException, BadRequestException {
         // (Puoi eventualmente verificare che departmentId esista in un altro
         // repository,
         // ma se non hai un repository Department, salta questa verifica.)
-        return sourceRepository.findByDepartmentId(departmentId, pageable);
+        return sourceRepository.findByDepartmentId(departmentId);
     }
 
     /**

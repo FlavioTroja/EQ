@@ -2,6 +2,7 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.overzoom.registry.dto.MachineDTO;
@@ -36,11 +38,33 @@ public class MachineController {
         this.machineService = machineService;
     }
 
-    @GetMapping("")
-    public ResponseEntity<Page<Machine>> findAll(Pageable pageable) {
-        log.info("REST request to get a page of Machines");
-        Page<Machine> page = machineService.findAll(pageable);
-        return ResponseEntity.ok().body(page);
+     /**
+     * LISTA PAGINATA di tutte le macchine (oppure ricerca per nome se è passato 'q').
+     *
+     * - Se è presente il parametro 'q', viene chiamato searchByName(q, pageable).
+     * - Altrimenti, ritorna tutte le macchine con findAll(pageable).
+     *
+     * Esempi:
+     *   GET /api/registry/machines?page=0&size=10
+     *   GET /api/registry/machines?q=abc&page=0&size=10
+     */
+    @GetMapping
+    public ResponseEntity<Page<Machine>> findAll(
+            @RequestParam(value = "q", required = false) String query,
+            Pageable pageable) {
+
+        log.info("REST request to get a page of Machines; autocomplete query = {}", query);
+
+        Page<Machine> page;
+        if (query != null && !query.trim().isEmpty()) {
+            // Autocomplete: filtra per nome
+            page = machineService.searchByName(query.trim(), pageable);
+        } else {
+            // Se non c'è query, ritorno tutte le macchine paginato
+            page = machineService.findAll(pageable);
+        }
+
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")

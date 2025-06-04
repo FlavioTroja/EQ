@@ -12,6 +12,11 @@ public interface MachineService {
 
     Page<Machine> findAll(Pageable pageable);
 
+    /**
+     * Cerca (autocomplete) le Machine con name che contiene la stringa data (ignore case).
+     */
+    Page<Machine> searchByName(String name, Pageable pageable);
+    
     Optional<MachineDTO> findById(String id);
 
     boolean existsById(String id);

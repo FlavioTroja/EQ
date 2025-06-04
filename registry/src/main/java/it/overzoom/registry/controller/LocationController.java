@@ -2,6 +2,7 @@ package it.overzoom.registry.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +42,15 @@ public class LocationController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<LocationDTO>> findCustomerId(@PathVariable("customerId") String customerId,
-            Pageable pageable) throws ResourceNotFoundException, BadRequestException {
+    public ResponseEntity<List<LocationDTO>> findCustomerId(@PathVariable("customerId") String customerId) throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Locations by customerId: " + customerId);
 
         if (!customerService.hasAccess(customerId)) {
             throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
-        Page<LocationDTO> page = locationService.findByCustomerId(customerId, pageable);
-        return ResponseEntity.ok().body(page);
+        List<LocationDTO> list = locationService.findByCustomerId(customerId);
+        return ResponseEntity.ok().body(list);
     }
 
     @GetMapping("/{id}")
