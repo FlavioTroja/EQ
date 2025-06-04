@@ -18,6 +18,9 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:8.10.1
     container_name: logstash
+    environment:
+      - LOGSTASH_ELASTICSEARCH_USERNAME=${LOGSTASH_ELASTICSEARCH_USERNAME}
+      - LOGSTASH_ELASTICSEARCH_PASSWORD=${LOGSTASH_ELASTICSEARCH_PASSWORD}
     depends_on:
       - elasticsearch
     ports:
