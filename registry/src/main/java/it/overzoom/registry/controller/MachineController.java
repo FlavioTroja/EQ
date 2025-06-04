@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,20 +38,21 @@ public class MachineController {
         this.machineService = machineService;
     }
 
-     /**
-     * LISTA PAGINATA di tutte le macchine (oppure ricerca per nome se è passato 'q').
+    /**
+     * LISTA PAGINATA di tutte le macchine (oppure ricerca per nome se è passato
+     * 'q').
      *
      * - Se è presente il parametro 'q', viene chiamato searchByName(q, pageable).
      * - Altrimenti, ritorna tutte le macchine con findAll(pageable).
      *
      * Esempi:
-     *   GET /api/registry/machines?page=0&size=10
-     *   GET /api/registry/machines?q=abc&page=0&size=10
+     * GET /api/registry/machines?page=0&size=10
+     * GET /api/registry/machines?q=abc&page=0&size=10
      */
-    @GetMapping
+    @GetMapping("/machines")
     public ResponseEntity<Page<Machine>> findAll(
             @RequestParam(value = "q", required = false) String query,
-            Pageable pageable) {
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
 
         log.info("REST request to get a page of Machines; autocomplete query = {}", query);
 
