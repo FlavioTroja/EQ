@@ -49,7 +49,7 @@ public class MachineController {
      * GET /api/registry/machines?page=0&size=10
      * GET /api/registry/machines?q=abc&page=0&size=10
      */
-    @GetMapping("/machines")
+    @GetMapping("")
     public ResponseEntity<Page<Machine>> findAll(
             @RequestParam(value = "q", required = false) String query,
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
