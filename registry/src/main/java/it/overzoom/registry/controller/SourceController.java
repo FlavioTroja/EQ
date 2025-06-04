@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +48,7 @@ public class SourceController {
      */
     @GetMapping
     public ResponseEntity<List<Source>> findByDepartmentId(
-            @PathVariable("departmentId") String departmentId,
-            Pageable pageable) throws ResourceNotFoundException, BadRequestException {
+            @PathVariable("departmentId") String departmentId) throws ResourceNotFoundException, BadRequestException {
 
         log.info("REST request to get a page of Sources by departmentId: {}", departmentId);
 
