@@ -14,6 +14,14 @@ public interface CustomerService {
 
     Page<CustomerDTO> findAll(Pageable pageable);
 
+    /**
+     * Retrieves a customer by their unique identifier.
+     *
+     * @param id the unique identifier of the customer to retrieve
+     * @return the {@link CustomerDTO} corresponding to the specified id
+     * @throws ResourceNotFoundException if no customer with the given id is found
+     * @throws BadRequestException       if the provided id is invalid or malformed
+     */
     CustomerDTO findById(String id) throws ResourceNotFoundException, BadRequestException;
 
     Page<CustomerDTO> findByUserId(String userId, Pageable pageable);

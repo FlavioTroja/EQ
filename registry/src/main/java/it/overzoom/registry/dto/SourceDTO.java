@@ -25,9 +25,9 @@ public class SourceDTO {
     @NotNull
     private String machineId;
 
-    private Integer completedMeasurements;
+    private Integer completedIrradiationConditions;
 
-    private List<MeasurementDTO> measurements = new ArrayList<>();
+    private List<IrradiationConditionDTO> irradiationConditions = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -61,20 +61,20 @@ public class SourceDTO {
         this.departmentId = departmentId;
     }
 
-    public Integer getCompletedMeasurements() {
-        return completedMeasurements;
+    public Integer getCompletedIrradiationConditions() {
+        return completedIrradiationConditions;
     }
 
-    public void setCompletedMeasurements(Integer completedMeasurements) {
-        this.completedMeasurements = completedMeasurements;
+    public void setCompletedIrradiationConditions(Integer completedIrradiationConditions) {
+        this.completedIrradiationConditions = completedIrradiationConditions;
     }
 
-    public List<MeasurementDTO> getMeasurements() {
-        return measurements;
+    public List<IrradiationConditionDTO> getIrradiationConditions() {
+        return irradiationConditions;
     }
 
-    public void setMeasurements(List<MeasurementDTO> measurements) {
-        this.measurements = measurements;
+    public void setIrradiationConditions(List<IrradiationConditionDTO> irradiationConditions) {
+        this.irradiationConditions = irradiationConditions;
     }
 
     public String getMachineId() {

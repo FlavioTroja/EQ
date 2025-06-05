@@ -17,6 +17,8 @@ public class IrradiationCondition {
     @Indexed
     private String sourceId;
 
+    private Integer completedMeasurements;
+
     @DBRef
     List<Measurement> measurements;
 
@@ -60,4 +62,11 @@ public class IrradiationCondition {
         this.measurements = measurements;
     }
 
+    public Integer getCompletedMeasurements() {
+        return completedMeasurements;
+    }
+
+    public void setCompletedMeasurements(Integer completedMeasurements) {
+        this.completedMeasurements = completedMeasurements;
+    }
 }

@@ -28,7 +28,7 @@ public class Source {
     @Indexed
     private String machineId;
 
-    private Integer completedMeasurements;
+    private Integer completedIrradiationConditions;
 
     @DBRef
     List<IrradiationCondition> irradiationConditions;
@@ -81,12 +81,12 @@ public class Source {
         this.irradiationConditions = irradiationConditions;
     }
 
-    public Integer getCompletedMeasurements() {
-        return completedMeasurements;
+    public Integer getCompletedIrradiationConditions() {
+        return completedIrradiationConditions;
     }
 
-    public void setCompletedMeasurements(Integer completedMeasurements) {
-        this.completedMeasurements = completedMeasurements;
+    public void setCompletedIrradiationConditions(Integer completedIrradiationConditions) {
+        this.completedIrradiationConditions = completedIrradiationConditions;
     }
 
     public String getPhantom() {

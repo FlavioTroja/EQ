@@ -3,8 +3,6 @@ package it.overzoom.registry.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +58,8 @@ public class SourceServiceImpl implements SourceService {
     public Source create(Source source) throws ResourceNotFoundException, BadRequestException {
         // azzera la lista (per sicurezza)
         source.setIrradiationConditions(null);
-        source.setCompletedMeasurements(0);
+        source.setCompletedIrradiationConditions(0);
+
         return sourceRepository.save(source);
     }
 
@@ -107,7 +106,7 @@ public class SourceServiceImpl implements SourceService {
                     existingSource.setLoad(source.getLoad());
                     existingSource.setDepartmentId(source.getDepartmentId());
                     existingSource.setMachineId(source.getMachineId());
-                    existingSource.setCompletedMeasurements(source.getCompletedMeasurements());
+                    existingSource.setCompletedIrradiationConditions(source.getCompletedIrradiationConditions());
                     return sourceRepository.save(existingSource);
                 });
     }
