@@ -13,13 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.dto.DepartmentDTO;
+import it.overzoom.registry.dto.IrradiationConditionDTO;
 import it.overzoom.registry.dto.LocationDTO;
+import it.overzoom.registry.dto.MeasurementDTO;
 import it.overzoom.registry.dto.SourceDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.mapper.CustomerMapper;
 import it.overzoom.registry.mapper.DepartmentMapper;
+import it.overzoom.registry.mapper.IrradiationConditionMapper;
 import it.overzoom.registry.mapper.LocationMapper;
+import it.overzoom.registry.mapper.MeasurementMapper;
 import it.overzoom.registry.mapper.SourceMapper;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
@@ -27,7 +31,9 @@ import it.overzoom.registry.model.Location;
 import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.CustomerRepository;
 import it.overzoom.registry.repository.DepartmentRepository;
+import it.overzoom.registry.repository.IrradiationConditionRepository;
 import it.overzoom.registry.repository.LocationRepository;
+import it.overzoom.registry.repository.MeasurementRepository;
 import it.overzoom.registry.repository.SourceRepository;
 import it.overzoom.registry.security.SecurityUtils;
 
@@ -43,6 +49,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final LocationMapper locationMapper;
     private final DepartmentMapper departmentMapper;
     private final SourceMapper sourceMapper;
+    private final IrradiationConditionRepository irradiationConditionRepository;
+    private final MeasurementRepository measurementRepository;
+    private final IrradiationConditionMapper irradiationConditionMapper;
+    private final MeasurementMapper measurementMapper;
 
     public CustomerServiceImpl(
             CustomerRepository customerRepository,
@@ -53,7 +63,11 @@ public class CustomerServiceImpl implements CustomerService {
             LocationMapper locationMapper,
             LocationService locationService,
             DepartmentMapper departmentMapper,
-            SourceMapper sourceMapper) {
+            SourceMapper sourceMapper,
+            IrradiationConditionRepository irradiationConditionRepository,
+            MeasurementRepository measurementRepository,
+            IrradiationConditionMapper irradiationConditionMapper,
+            MeasurementMapper measurementMapper) {
         this.customerRepository = customerRepository;
         this.locationRepository = locationRepository;
         this.departmentRepository = departmentRepository;
@@ -63,6 +77,10 @@ public class CustomerServiceImpl implements CustomerService {
         this.locationService = locationService;
         this.departmentMapper = departmentMapper;
         this.sourceMapper = sourceMapper;
+        this.irradiationConditionRepository = irradiationConditionRepository;
+        this.measurementRepository = measurementRepository;
+        this.irradiationConditionMapper = irradiationConditionMapper;
+        this.measurementMapper = measurementMapper;
     }
 
     public boolean hasAccess(String customerId) throws ResourceNotFoundException {
@@ -99,6 +117,36 @@ public class CustomerServiceImpl implements CustomerService {
                     .collect(Collectors.toList());
             locDto.setDepartments(deptDtos);
             locDto.setCompletedDepartments(deptDtos.size());
+
+            deptDtos.forEach(deptDto -> {
+                List<SourceDTO> srcDtos = sourceRepository
+                        .findByDepartmentId(deptDto.getId())
+                        .stream()
+                        .map(sourceMapper::toDto)
+                        .collect(Collectors.toList());
+                deptDto.setSources(srcDtos);
+                deptDto.setCompletedSources(srcDtos.size());
+
+                srcDtos.forEach(srcDto -> {
+                    List<IrradiationConditionDTO> icDtos = irradiationConditionRepository
+                            .findBySourceId(srcDto.getId())
+                            .stream()
+                            .map(irradiationConditionMapper::toDto)
+                            .collect(Collectors.toList());
+                    srcDto.setIrradiationConditions(icDtos);
+                    srcDto.setCompletedIrradiationConditions(icDtos.size());
+
+                    icDtos.forEach(icDto -> {
+                        List<MeasurementDTO> mDtos = measurementRepository
+                                .findByIrradiationConditionId(icDto.getId())
+                                .stream()
+                                .map(measurementMapper::toDto)
+                                .collect(Collectors.toList());
+                        icDto.setMeasurements(mDtos);
+                        icDto.setCompletedMeasurements(mDtos.size());
+                    });
+                });
+            });
         });
 
         return dto;
