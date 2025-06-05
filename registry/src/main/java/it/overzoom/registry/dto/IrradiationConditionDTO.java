@@ -8,6 +8,7 @@ import it.overzoom.registry.model.KeyValue;
 public class IrradiationConditionDTO {
 
     private String id;
+    private String name;
     private String setUpMeasure;
     private List<KeyValue> parameters;
     private String sourceId;
@@ -22,6 +23,14 @@ public class IrradiationConditionDTO {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSetUpMeasure() {
