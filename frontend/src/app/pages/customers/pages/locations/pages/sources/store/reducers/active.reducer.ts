@@ -7,8 +7,8 @@ const initialState: Partial<ActiveEntity<Source>> = {};
 
 const activeSourceReducer = createReducer(
   initialState,
-  on(SourceActions.getSourceSuccess, (state, { current }) => ({
-    current: current
+  on(SourceActions.loadActiveSource, (state, { source }) => ({
+    current: source
   })),
   on(SourceActions.sourceActiveChanges, (state, { changes }) => ({
     ...state,

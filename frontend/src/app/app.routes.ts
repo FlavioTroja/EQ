@@ -7,6 +7,7 @@ import { reducers as locationManagementReducers } from "./pages/customers/pages/
 import { reducers as userManagementReducers } from "./pages/users/store/reducers";
 import { reducers as machineManagementReducers } from "./pages/machines/store/reducers";
 import { reducers as reportManagementReducers } from "./pages/reports/store/reducers";
+import { reducers as sourceManagementReducers } from "./pages/customers/pages/locations/pages/sources/store/reducers";
 import { provideEffects } from "@ngrx/effects";
 import { CustomersEffects } from "./pages/customers/store/effects/customers.effects";
 import { UsersEffects } from "./pages/users/store/effects/users.effects";
@@ -69,6 +70,7 @@ export const routes: Routes = [
     providers: [
       provideState("customer-manager", customerManagementReducers),
       provideState("location-manager", locationManagementReducers),
+      provideState("source-manager", sourceManagementReducers),
       provideEffects([CustomersEffects, LocationsEffects, DepartmentsEffects])
     ],
     loadChildren: () => import("./pages/customers/customers.routing")

@@ -12,7 +12,6 @@ import {
 } from "../../../../../components/bottom-sheet/bottom-sheet.component";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { EditSourceComponent } from "../pages/sources/pages/edit/edit-source.component";
-import { DepartmentService } from "../services/department.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { selectCustomRouteParam } from "../../../../../core/router/store/router.selectors";
 import { Store } from "@ngrx/store";
@@ -20,6 +19,8 @@ import { AppState } from "../../../../../app.config";
 import { difference } from "../../../../../../utils/utils";
 import { Source } from "../../../../../models/Source";
 import * as DepartmentsActions from "../store/actions/departments.actions";
+import ViewSourceComponent from "../pages/sources/pages/view/view-source.component";
+import * as SourceActions from "../pages/sources/store/actions/sources.actions";
 
 @Component({
   selector: 'app-location-department-card',
@@ -73,22 +74,22 @@ import * as DepartmentsActions from "../store/actions/departments.actions";
                      class="w-full"/>
         </div>
         <div class="flex flex-col w-full gap-2" [ngClass]="{ 'p-2 bg-grey-1': !viewOnly }">
-          <app-department-source-card class="w-full" *ngFor="let source of sources" [source]="source"/>
+          <app-department-source-card class="w-full" *ngFor="let source of sources" [source]="source" (btnEdit)="editSource(source)" (btnView)="viewSource(source)"/>
           <div class="flex w-full justify-center" *ngIf="!viewOnly">
             <button class="focus:outline-none rounded-full border-input bg-foreground flex items-center"
-                    (click)="addNewSource()">
+                    (click)="addSource()">
               <mat-icon class="align-to-center icon-size material-symbols-rounded scale-75">add</mat-icon>
             </button>
           </div>
         </div>
         <div class="flex justify-end gap-2 w-full" *ngIf="!viewOnly">
-          <div class="flex cursor-pointer error d efault-shadow-hover rounded py-2 px-3 gap-2" 
+          <div class="flex cursor-pointer error d efault-shadow-hover rounded py-2 px-3 gap-2"
                [ngClass]="{'opacity-60  pointer-events-none': isNewDepartment}">
             <mat-icon class="icon-size material-symbols-rounded">delete</mat-icon>
             <div>Rimuovi condizione</div>
           </div>
-          <div class="flex cursor-pointer accent default-shadow-hover rounded py-2 px-3 gap-2" 
-               [ngClass]="{'opacity-60  pointer-events-none': this.departmentForm.invalid}" 
+          <div class="flex cursor-pointer accent default-shadow-hover rounded py-2 px-3 gap-2"
+               [ngClass]="{'opacity-60  pointer-events-none': this.departmentForm.invalid}"
                (click)="saveDepartment()">
             <mat-icon class="icon-size material-symbols-rounded">check</mat-icon>
             <div class="font-bold">Salva</div>
@@ -98,10 +99,12 @@ import * as DepartmentsActions from "../store/actions/departments.actions";
     </div>
 
 
+    <ng-template #editSourceBottomSheet>
+      <app-edit-source/>
+    </ng-template>
 
-
-    <ng-template #addSourceBottomSheet>
-      <app-edit-source />
+    <ng-template #viewSourceBottomSheet>
+      <app-view-source/>
     </ng-template>
   `,
   imports: [
@@ -110,7 +113,8 @@ import * as DepartmentsActions from "../store/actions/departments.actions";
     InputComponent,
     ReactiveFormsModule,
     DepartmentSourceCardComponent,
-    EditSourceComponent
+    EditSourceComponent,
+    ViewSourceComponent
   ],
   styles: [ `` ]
 })
@@ -119,12 +123,12 @@ export class LocationDepartmentCardComponent implements OnChanges {
   @Input({ required: false }) viewOnly: boolean = false;
   @Input({ required: false }) isDepartmentCardOpen?: boolean = false;
 
-  @ViewChild("addSourceBottomSheet") addSourceBottomSheet?: TemplateRef<any>;
+  @ViewChild("editSourceBottomSheet") editSourceBottomSheet?: TemplateRef<any>;
+  @ViewChild("viewSourceBottomSheet") viewSourceBottomSheet?: TemplateRef<any>;
 
   fb = inject(FormBuilder);
   store: Store<AppState> = inject(Store);
   bottomSheet = inject(MatBottomSheet);
-  departmentsService = inject(DepartmentService);
 
   locationId = toSignal(this.store.select(selectCustomRouteParam("locationId")));
 
@@ -148,14 +152,41 @@ export class LocationDepartmentCardComponent implements OnChanges {
     this.isDepartmentCardOpen = !this.isDepartmentCardOpen;
   }
 
-  addNewSource() {
+  viewSource(source: Source) {
+    this.store.dispatch(SourceActions.loadActiveSource({ source }));
     const dialogRef: any = this.bottomSheet.open(BottomSheetComponent, {
       backdropClass: "blur-filter",
       panelClass: "backdropPanelClassForBottomSheet",
       data: <BottomSheetDialogData> {
         title: "",
         content: "",
-        templateContent: this.addSourceBottomSheet,
+        templateContent: this.viewSourceBottomSheet,
+        buttons: [
+          { iconName: "edit_square", label: "Modifica", bgColor: "edit",  onClick: () => dialogRef.dismiss(true) },
+          { iconName: "clear", label: "Chiudi",  onClick: () => dialogRef.dismiss(false) }
+        ]
+      }
+    });
+  }
+
+  editSource(source: Source) {
+    this.store.dispatch(SourceActions.loadActiveSource({ source }));
+    this.openEditSourceModal();
+  }
+
+  addSource() {
+    this.store.dispatch(SourceActions.clearSourceActive());
+    this.openEditSourceModal();
+  }
+
+  openEditSourceModal() {
+    const dialogRef: any = this.bottomSheet.open(BottomSheetComponent, {
+      backdropClass: "blur-filter",
+      panelClass: "backdropPanelClassForBottomSheet",
+      data: <BottomSheetDialogData> {
+        title: "",
+        content: "",
+        templateContent: this.editSourceBottomSheet,
         buttons: [
           { iconName: "check", label: "Conferma", bgColor: "confirm",  onClick: () => dialogRef.dismiss(true) },
           { iconName: "clear", label: "Annulla",  onClick: () => dialogRef.dismiss(false) }

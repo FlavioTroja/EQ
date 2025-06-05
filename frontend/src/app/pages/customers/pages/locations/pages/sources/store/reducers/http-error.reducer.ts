@@ -7,9 +7,6 @@ const initialState: Partial<HttpError> = {};
 const httpErrorReducer = createReducer(
   initialState,
   on(SourceActions.clearSourceHttpError, (state, { }) => ({})),
-  on(SourceActions.getSourceFailed, (state, { error }) => ({
-    ...error
-  })),
   on(SourceActions.editSourceFailed, (state, { error }) => ({
     ...error
   })),

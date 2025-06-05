@@ -15,4 +15,4 @@ export const reducers: ActionReducerMap<SourceManagementState> = {
   httpError: httpErrorReducer
 }
 
-export const selectSourcesManager = createFeatureSelector<SourceManagementState>("location-manager");
+export const selectSourcesManager = createFeatureSelector<SourceManagementState>("source-manager");

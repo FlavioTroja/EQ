@@ -6,11 +6,11 @@ import { AppState } from "../../../../../../../../app.config";
 import { Subject } from "rxjs";
 import { getCurrentSource } from "../../store/selectors/sources.selectors";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
-import { getRouterData, selectCustomRouteParam } from "../../../../../../../../core/router/store/router.selectors";
-import { debounceTime, distinctUntilChanged, map, pairwise, takeUntil } from "rxjs/operators";
+import { getRouterData } from "../../../../../../../../core/router/store/router.selectors";
+import { debounceTime, map, pairwise, takeUntil } from "rxjs/operators";
 import { createSourcePayload, PartialSource } from "../../../../../../../../models/Source";
 import * as SourceActions from "../../store/actions/sources.actions";
-import { difference, toggleBooleanFormValue } from "../../../../../../../../../utils/utils";
+import { difference } from "../../../../../../../../../utils/utils";
 import { SectionHeaderComponent } from "../../../../../../../../components/section-header/section-header.component";
 import { ConditionsCardComponent } from "../../components/conditions-card.component";
 import { InputBooleanComponent } from "../../../../../../../../components/input-boolean/input-boolean.component";
@@ -105,7 +105,6 @@ export class EditSourceComponent implements OnInit, OnDestroy {
   machines$ = this.machineService.loadMachines({ query: {} })
     .pipe(map((res: PaginateDatasource<Machine>) => res.content));
 
-  sourceId = toSignal(this.store.select(selectCustomRouteParam("locationId")));
   viewOnly: Signal<boolean> = toSignal(this.store.select(getRouterData).pipe(
     map(data => data!["viewOnly"] ?? false)
   ));
@@ -126,10 +125,6 @@ export class EditSourceComponent implements OnInit, OnDestroy {
 
   get conditions() {
     return this.f.conditions.value?.filter(o => Object.keys(o).length > 0) as any[];
-  }
-
-  get isNewSource() {
-    return this.sourceId() === "new";
   }
 
   displayMachine(machine: PartialMachine): string {
@@ -156,12 +151,6 @@ export class EditSourceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (!this.isNewSource) {
-      // this.store.dispatch(
-      //   SourcesActions.getSource({ id: this.id() })
-      // );
-    }
-
     this.active$
       .subscribe((value: PartialSource | any) => {
         if(!value) {
@@ -189,7 +178,7 @@ export class EditSourceComponent implements OnInit, OnDestroy {
     this.sourceForm.valueChanges.pipe(
       pairwise(),
       map(([_, newState]) => {
-        if(!Object.values(this.initFormValue).length && !this.isNewSource) {
+        if(!Object.values(this.initFormValue).length) {
           return {};
         }
         const diff = {
@@ -203,7 +192,7 @@ export class EditSourceComponent implements OnInit, OnDestroy {
 
         return createSourcePayload(diff);
       }),
-      map((changes: any) => Object.keys(changes).length !== 0 && !this.sourceForm.invalid ? { ...changes, id: this.sourceId() } : {}),
+      map((changes: any) => Object.keys(changes).length !== 0 && !this.sourceForm.invalid ? { ...changes } : {}),
       takeUntil(this.subject),
       // tap(changes => console.log(changes)),
     ).subscribe((changes: any) => this.store.dispatch(SourceActions.sourceActiveChanges({ changes })));

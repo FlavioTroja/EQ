@@ -15,8 +15,8 @@ import {
 } from "../../store/selectors/reports.selectors";
 import { map } from "rxjs";
 import * as ReportActions from "../../store/actions/reports.actions";
-import { Measurement } from "../../../../models/Measurement";
 import { NAVBAR_ACTION } from "../../../../models/NavBar";
+import { IrradiationCondition } from "../../../../models/IrradiationCondition";
 
 @Component({
   selector: "app-compile-machine",
@@ -36,10 +36,10 @@ import { NAVBAR_ACTION } from "../../../../models/NavBar";
       </div>
       <div class="flex flex-col gap-2">
         <div class="text-xl font-bold">COMPILAZIONI</div>
-        <app-fill-in-container *ngFor="let measurement of (currentSource()?.measurements || []), index as i"
+        <app-fill-in-container *ngFor="let irradiationCondition of (currentSource()?.irradiationConditions || []), index as i"
                                [completedNumber]="0"
                                [totalNumber]="0"
-                               [title]="getMachineName(measurement)"
+                                 [title]="getMachineName(irradiationCondition)"
                                (onClick)="compileReport(i)"
                                componentStyle="compile"
         />
@@ -66,7 +66,7 @@ export default class CompileMachinesComponent implements OnDestroy {
     .pipe(map(array => array.map(source => ({
       id: source.id,
       name: `${source.machine.name} ${source.sn}`,
-      completed: !!(source.completedMeasurements - source.measurements?.length)
+      completed: !!(source.completedMeasurements - source.irradiationConditions?.length)
     } as HeaderItem)))));
 
   productForm = this.fb.group({
@@ -104,8 +104,8 @@ export default class CompileMachinesComponent implements OnDestroy {
     this.store.dispatch(RouterActions.go({ path: [`${this.path()?.split('/').slice(0, -1).join('/')}/${sourceIndex}`] }))
   }
 
-  getMachineName(measurement: Measurement): string {
-    return `${measurement.name}`;
+  getMachineName(irradiationCondition: IrradiationCondition): string {
+    return `${irradiationCondition.setUpMeasure}`;
   }
 
   compileReport(measurementIndex: number): void {

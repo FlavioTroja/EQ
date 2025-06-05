@@ -63,12 +63,12 @@ export const getBackwardSource = (currIndex: number) => createSelector(
 
 export const getActiveSourceMeasurements = createSelector(
   selectReportsManager,
-  (state?: ReportManagementState) => state?.active?.activeSource?.measurements ?? []
+  (state?: ReportManagementState) => state?.active?.activeSource?.irradiationConditions ?? []
 );
 
 export const getActiveSourceMeasurementsLength = createSelector(
   selectReportsManager,
-  (state?: ReportManagementState) => state?.active?.activeSource?.measurements?.length
+  (state?: ReportManagementState) => state?.active?.activeSource?.irradiationConditions?.length
 );
 
 export const getReportsHttpError = createSelector(

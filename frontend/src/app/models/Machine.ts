@@ -1,12 +1,12 @@
 import { isNaN, isNil, omitBy, overSome } from "lodash-es";
 
 export interface Machine {
-    id: string;
-    name: string;
-    type: MachineType;
-    customers: any[];
-    creationDate: string;
-    expirationDate: string;
+    id: string,
+    name: string,
+    type: MachineType,
+    customers: any[],
+    creationDate: string,
+    expirationDate: string,
 }
 
 export enum MachineType {

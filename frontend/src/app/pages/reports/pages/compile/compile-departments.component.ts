@@ -32,7 +32,7 @@ import { NAVBAR_ACTION } from "../../../../models/NavBar";
         <div class="text-xl font-bold">MACCHINE</div>
         <app-fill-in-container *ngFor="let source of (currentDepartment()?.sources || []), index as i"
                                [completedNumber]="source.completedMeasurements"
-                               [totalNumber]="(source.measurements || []).length"
+                               [totalNumber]="(source.irradiationConditions || []).length"
                                [title]="getMachineName(source)"
                                (onClick)="compileReport(i)"
                                componentStyle="compile"

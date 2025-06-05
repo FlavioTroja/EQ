@@ -1,18 +1,19 @@
 import { Machine } from "./Machine";
 import { Department } from "./Department";
-import { Measurement } from "./Measurement";
 import { isNaN, isNil, omitBy, overSome } from "lodash-es";
-import { LocationDTO } from "./Location";
+import { IrradiationCondition } from "./IrradiationCondition";
 
 export interface Source {
   id: string,
   sn: string,
+  phantom: string,
+  load: number,
   expirationDate: string | Date,
   departmentId: string,
   department: Department,
   machineId: number,
   machine: Machine,
-  measurements: Measurement[],
+  irradiationConditions: IrradiationCondition[],
   completedMeasurements: number
 }
 
