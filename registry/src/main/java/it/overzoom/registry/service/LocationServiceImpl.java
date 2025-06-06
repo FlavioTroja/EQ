@@ -13,9 +13,12 @@ import it.overzoom.registry.mapper.LocationMapper;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
+import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.CustomerRepository;
 import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.LocationRepository;
+import it.overzoom.registry.repository.MachineRepository;
+import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class LocationServiceImpl implements LocationService {
@@ -24,15 +27,21 @@ public class LocationServiceImpl implements LocationService {
     private final DepartmentRepository departmentRepository;
     private final CustomerRepository customerRepository;
     private final LocationMapper locationMapper;
+    private final SourceRepository sourceRepository;
+    private final MachineRepository machineRepository;
 
     public LocationServiceImpl(LocationRepository locationRepository,
             DepartmentRepository departmentRepository,
             CustomerRepository customerRepository,
-            LocationMapper locationMapper) {
+            LocationMapper locationMapper,
+            SourceRepository sourceRepository,
+            MachineRepository machineRepository) {
         this.locationRepository = locationRepository;
         this.departmentRepository = departmentRepository;
         this.customerRepository = customerRepository;
         this.locationMapper = locationMapper;
+        this.sourceRepository = sourceRepository;
+        this.machineRepository = machineRepository;
     }
 
     @Override
@@ -50,8 +59,13 @@ public class LocationServiceImpl implements LocationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sede non trovata."));
 
         List<Department> deps = departmentRepository.findByLocationId(id);
-        location.setDepartments(deps);
 
+        for (Department dept : deps) {
+            List<Source> sources = sourceRepository.findByDepartmentId(dept.getId());
+            dept.setSources(sources);
+        }
+
+        location.setDepartments(deps);
         return location;
     }
 

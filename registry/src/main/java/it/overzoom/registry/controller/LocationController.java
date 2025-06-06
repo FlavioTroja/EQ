@@ -3,6 +3,7 @@ package it.overzoom.registry.controller;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.overzoom.registry.dto.DepartmentDTO;
 import it.overzoom.registry.dto.LocationDTO;
+import it.overzoom.registry.dto.MachineDTO;
+import it.overzoom.registry.dto.SourceDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.mapper.DepartmentMapper;
+import it.overzoom.registry.mapper.LocationMapper;
+import it.overzoom.registry.mapper.MachineMapper;
+import it.overzoom.registry.mapper.SourceMapper;
 import it.overzoom.registry.model.Location;
+import it.overzoom.registry.repository.MachineRepository;
 import it.overzoom.registry.service.CustomerService;
 import it.overzoom.registry.service.LocationService;
 import jakarta.validation.Valid;
@@ -31,16 +40,34 @@ public class LocationController {
 
     private static final Logger log = LoggerFactory.getLogger(LocationController.class);
 
-    private final CustomerService customerService;
     private final LocationService locationService;
+    private final CustomerService customerService;
+    private final MachineRepository machineRepository;
+    private final LocationMapper locationMapper;
+    private final DepartmentMapper departmentMapper;
+    private final SourceMapper sourceMapper;
+    private final MachineMapper machineMapper;
 
-    public LocationController(CustomerService customerService, LocationService locationService) {
-        this.customerService = customerService;
+    public LocationController(
+            LocationService locationService,
+            CustomerService customerService,
+            MachineRepository machineRepository,
+            LocationMapper locationMapper,
+            DepartmentMapper departmentMapper,
+            SourceMapper sourceMapper,
+            MachineMapper machineMapper) {
         this.locationService = locationService;
+        this.customerService = customerService;
+        this.machineRepository = machineRepository;
+        this.locationMapper = locationMapper;
+        this.departmentMapper = departmentMapper;
+        this.sourceMapper = sourceMapper;
+        this.machineMapper = machineMapper;
     }
 
     @GetMapping("")
-    public ResponseEntity<List<LocationDTO>> findCustomerId(@PathVariable("customerId") String customerId) throws ResourceNotFoundException, BadRequestException {
+    public ResponseEntity<List<LocationDTO>> findCustomerId(@PathVariable("customerId") String customerId)
+            throws ResourceNotFoundException, BadRequestException {
         log.info("REST request to get a page of Locations by customerId: " + customerId);
 
         if (!customerService.hasAccess(customerId)) {
@@ -52,15 +79,56 @@ public class LocationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Location> findById(@PathVariable(value = "id") String locationId)
+    public ResponseEntity<LocationDTO> findById(@PathVariable("id") String locationId)
             throws ResourceNotFoundException, BadRequestException {
+
+        // 1) Recupero entità Location (già popolata di Department e Source, ma senza
+        // MachineDTO)
         Location location = locationService.findById(locationId);
 
+        // 2) Controllo permessi
         if (!customerService.hasAccess(location.getCustomerId())) {
             throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
-        return ResponseEntity.ok(location);
+        // 3) Converto Location → LocationDTO
+        LocationDTO locationDto = locationMapper.toDto(location);
+
+        // 4) “Annido” Departments → Sources → MachineWithoutCustomers
+        List<DepartmentDTO> deptDtos = location.getDepartments().stream()
+                .map(deptEntity -> {
+                    DepartmentDTO deptDto = departmentMapper.toDto(deptEntity);
+
+                    List<SourceDTO> srcDtos = deptEntity.getSources().stream()
+                            .map(srcEntity -> {
+                                // 4.2.1) Mappa Source → SourceDTO (predefinito)
+                                SourceDTO srcDto = sourceMapper.toDto(srcEntity);
+
+                                // 4.2.2) Se c’è machineId, lo recupero e uso toDtoWithoutCustomers(...)
+                                String machineId = srcEntity.getMachineId();
+                                if (machineId != null) {
+                                    machineRepository.findById(machineId).ifPresent(machineEntity -> {
+                                        // Ecco la differenza: uso toDtoWithoutCustomers
+                                        MachineDTO mDto = machineMapper.toDtoWithoutCustomers(machineEntity);
+                                        srcDto.setMachine(mDto);
+                                    });
+                                }
+
+                                // mantieni eventuali altri campi di SourceDTO
+                                return srcDto;
+                            })
+                            .collect(Collectors.toList());
+
+                    deptDto.setSources(srcDtos);
+                    deptDto.setCompletedSources(srcDtos.size());
+                    return deptDto;
+                })
+                .collect(Collectors.toList());
+
+        locationDto.setDepartments(deptDtos);
+        locationDto.setCompletedDepartments(deptDtos.size());
+
+        return ResponseEntity.ok(locationDto);
     }
 
     @PostMapping("")

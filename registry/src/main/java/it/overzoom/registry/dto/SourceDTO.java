@@ -25,6 +25,8 @@ public class SourceDTO {
     @NotNull
     private String machineId;
 
+    private MachineDTO machine;
+
     private Integer completedIrradiationConditions;
 
     private List<IrradiationConditionDTO> irradiationConditions = new ArrayList<>();
@@ -83,6 +85,14 @@ public class SourceDTO {
 
     public void setMachineId(String machineId) {
         this.machineId = machineId;
+    }
+
+    public MachineDTO getMachine() {
+        return machine;
+    }
+
+    public void setMachine(MachineDTO machine) {
+        this.machine = machine;
     }
 
     public String getPhantom() {

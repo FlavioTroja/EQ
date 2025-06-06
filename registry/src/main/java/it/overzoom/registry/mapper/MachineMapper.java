@@ -22,9 +22,29 @@ public abstract class MachineMapper {
     @Autowired
     protected CustomerMapper customerMapper;
 
+    /**
+     * Metodo “completo”: genera un MachineDTO con la lista di customers (e relative
+     * locations),
+     * sfruttando @AfterMapping per popolare dto.getCustomers().
+     */
     @Mapping(target = "customers", ignore = true)
     public abstract MachineDTO toDto(Machine machine);
 
+    /**
+     * Metodo “semplificato”: genera un MachineDTO SENZA mai toccare customers.
+     * L’annotazione @Mapping(target = "customers", ignore = true) garantisce che
+     * mapStruct
+     * ignori il campo customers e non invochi l’@AfterMapping.
+     */
+    @Mapping(target = "customers", ignore = true)
+    public abstract MachineDTO toDtoWithoutCustomers(Machine machine);
+
+    /**
+     * Questa callback verrà evocata da toDto(...), perché non “vede”
+     * toDtoWithoutCustomers(...)
+     * (ogni mapping method invoca tutti gli @AfterMapping a meno che il target non
+     * sia ignorato).
+     */
     @AfterMapping
     protected void enrichWithCustomers(Machine machine, @MappingTarget MachineDTO dto) {
         List<CustomerDTO> customers = customerService.findCustomersByMachine(machine.getId());
