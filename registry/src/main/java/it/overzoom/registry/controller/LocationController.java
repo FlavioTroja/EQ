@@ -82,39 +82,33 @@ public class LocationController {
     public ResponseEntity<LocationDTO> findById(@PathVariable("id") String locationId)
             throws ResourceNotFoundException, BadRequestException {
 
-        // 1) Recupero entità Location (già popolata di Department e Source, ma senza
-        // MachineDTO)
         Location location = locationService.findById(locationId);
 
-        // 2) Controllo permessi
         if (!customerService.hasAccess(location.getCustomerId())) {
             throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
-        // 3) Converto Location → LocationDTO
         LocationDTO locationDto = locationMapper.toDto(location);
 
-        // 4) “Annido” Departments → Sources → MachineWithoutCustomers
         List<DepartmentDTO> deptDtos = location.getDepartments().stream()
                 .map(deptEntity -> {
                     DepartmentDTO deptDto = departmentMapper.toDto(deptEntity);
 
                     List<SourceDTO> srcDtos = deptEntity.getSources().stream()
                             .map(srcEntity -> {
-                                // 4.2.1) Mappa Source → SourceDTO (predefinito)
                                 SourceDTO srcDto = sourceMapper.toDto(srcEntity);
 
-                                // 4.2.2) Se c’è machineId, lo recupero e uso toDtoWithoutCustomers(...)
                                 String machineId = srcEntity.getMachineId();
                                 if (machineId != null) {
                                     machineRepository.findById(machineId).ifPresent(machineEntity -> {
-                                        // Ecco la differenza: uso toDtoWithoutCustomers
-                                        MachineDTO mDto = machineMapper.toDtoWithoutCustomers(machineEntity);
+                                        MachineDTO mDto = new MachineDTO();
+                                        mDto.setId(machineEntity.getId());
+                                        mDto.setName(machineEntity.getName());
+                                        mDto.setType(machineEntity.getType());
                                         srcDto.setMachine(mDto);
                                     });
                                 }
 
-                                // mantieni eventuali altri campi di SourceDTO
                                 return srcDto;
                             })
                             .collect(Collectors.toList());
