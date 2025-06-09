@@ -14,6 +14,7 @@ services:
     mem_reservation: 1g 
     networks:
       - eq_net
+    restart: always  
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.10.1
@@ -32,6 +33,7 @@ services:
     mem_reservation: 512m
     networks:
       - eq_net
+    restart: always
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.10.1
@@ -50,6 +52,7 @@ services:
     mem_reservation: 512m
     networks:
       - eq_net
+    restart: always
 
   gateway:
     image: overzoom/eq_gateway:latest
@@ -64,6 +67,7 @@ services:
       - eurekaserver
     networks:
       - eq_net
+    restart: always
 
   registry:
     image: overzoom/eq_registry:latest
@@ -77,6 +81,7 @@ services:
       - registrydb
     networks:
       - eq_net
+    restart: always
 
   calendar:
     image: overzoom/eq_calendar:latest
@@ -90,6 +95,7 @@ services:
       - calendardb
     networks:
       - eq_net
+    restart: always
 
   document:
     image: overzoom/eq_document:latest
@@ -104,6 +110,7 @@ services:
       - eurekaserver
     networks:
       - eq_net
+    restart: always
 
   frontend:
     image: overzoom/eq_frontend:latest
@@ -116,6 +123,7 @@ services:
       - gateway
     networks:
       - eq_net
+    restart: always
 
   eurekaserver:
     image: overzoom/eq_eurekaserver:latest
@@ -129,6 +137,7 @@ services:
       - "8761:8761"
     networks:
       - eq_net
+    restart: always
 
   registrydb:
     image: mongo
@@ -146,6 +155,7 @@ services:
       - .env
     networks:
       - eq_net
+    restart: always
 
   calendardb:
     image: postgres
@@ -161,6 +171,7 @@ services:
       - .env
     networks:
       - eq_net
+    restart: always
 
 networks:
   eq_net:
