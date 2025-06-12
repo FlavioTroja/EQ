@@ -20,6 +20,7 @@ import { TooltipOpts } from "../../../global";
          'text-white': !!bgColor,
          'bg-foreground': bgColor === '',
          'remove-element': bgColor === 'remove',
+         'icon-warning': bgColor === 'warning',
          'confirm-element': bgColor === 'confirm',
          'icon-success': bgColor === 'success',
          'icon-accent': bgColor === 'accent',

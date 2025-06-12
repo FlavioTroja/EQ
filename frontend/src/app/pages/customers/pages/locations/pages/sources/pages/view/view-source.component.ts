@@ -20,7 +20,7 @@ import { getCurrentSource } from "../../store/selectors/sources.selectors";
                  class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-gray-100 fit-content">
               {{ source.departmentId }}
             </div>
-            <div class="text-4xl pt-6 pb-4 font-extrabold"> {{ source.machine?.name }}</div>
+            <div class="text-4xl pt-6 pb-4 font-extrabold"> {{ source.machine.name || "" }}</div>
             <div class="flex gap-2">
 
               <div *ngIf="source.sn" class="flex flex-col">

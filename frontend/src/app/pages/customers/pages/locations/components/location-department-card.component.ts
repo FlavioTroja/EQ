@@ -21,6 +21,8 @@ import { Source } from "../../../../../models/Source";
 import * as DepartmentsActions from "../store/actions/departments.actions";
 import ViewSourceComponent from "../pages/sources/pages/view/view-source.component";
 import * as SourceActions from "../pages/sources/store/actions/sources.actions";
+import { getActiveSourceChanges } from "../pages/sources/store/selectors/sources.selectors";
+import { filter, switchMap } from "rxjs";
 
 @Component({
   selector: 'app-location-department-card',
@@ -162,7 +164,7 @@ export class LocationDepartmentCardComponent implements OnChanges {
         content: "",
         templateContent: this.viewSourceBottomSheet,
         buttons: [
-          { iconName: "edit_square", label: "Modifica", bgColor: "edit",  onClick: () => dialogRef.dismiss(true) },
+          { iconName: "edit_square", label: "Modifica", bgColor: "warning",  onClick: () => dialogRef.dismiss(true) },
           { iconName: "clear", label: "Chiudi",  onClick: () => dialogRef.dismiss(false) }
         ]
       }
@@ -193,6 +195,11 @@ export class LocationDepartmentCardComponent implements OnChanges {
         ]
       }
     });
+
+    dialogRef.afterDismissed().pipe(
+      filter(result => !!result),
+      switchMap(() => this.store.select(getActiveSourceChanges)))
+      // .subscribe((changes: any) => { console.log(changes); }; < here is the listen bug
   }
 
   saveDepartment() {

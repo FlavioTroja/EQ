@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, Signal } from "@angular/core";
+import { Component, inject, OnInit, Signal } from "@angular/core";
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { InputComponent } from "../../../../../../../../components/input/input.component";
 import { Store } from "@ngrx/store";
@@ -10,7 +10,6 @@ import { getRouterData } from "../../../../../../../../core/router/store/router.
 import { debounceTime, map, pairwise, takeUntil } from "rxjs/operators";
 import { createSourcePayload, PartialSource } from "../../../../../../../../models/Source";
 import * as SourceActions from "../../store/actions/sources.actions";
-import { difference } from "../../../../../../../../../utils/utils";
 import { SectionHeaderComponent } from "../../../../../../../../components/section-header/section-header.component";
 import { ConditionsCardComponent } from "../../components/conditions-card.component";
 import { InputBooleanComponent } from "../../../../../../../../components/input-boolean/input-boolean.component";
@@ -21,6 +20,7 @@ import { MatOptionModule } from "@angular/material/core";
 import { Machine, PartialMachine } from "../../../../../../../../models/Machine";
 import { PaginateDatasource } from "../../../../../../../../models/Table";
 import { MachinesService } from "../../../../../../../machines/services/machines.service";
+import { IrradiationCondition } from "../../../../../../../../models/IrradiationCondition";
 
 @Component({
   selector: "app-edit-source",
@@ -60,7 +60,8 @@ import { MachinesService } from "../../../../../../../machines/services/machines
                        type="text" class="w-full"/>
           </div>
           <div class="flex md:w-1/4">
-            <app-input-boolean [formControl]="this.f.showPhantom" message="Mostra &quot;Phantom&quot;" class="w-full self-end" />
+            <app-input-boolean [formControl]="this.f.phantom" message="Mostra &quot;Phantom&quot;"
+                               class="w-full self-end"/>
           </div>
         </div>
         <div class="bg-grey-1 rounded gap-2 p-2">
@@ -92,7 +93,7 @@ import { MachinesService } from "../../../../../../../machines/services/machines
   ],
   styles: [ `` ]
 })
-export class EditSourceComponent implements OnInit, OnDestroy {
+export class EditSourceComponent implements OnInit {
 
   store: Store<AppState> = inject(Store);
   fb = inject(FormBuilder);
@@ -110,14 +111,16 @@ export class EditSourceComponent implements OnInit, OnDestroy {
   ));
 
   sourceForm = this.fb.group({
+    id: ["-1"],
     machine: [{ value: "", disabled: this.viewOnly() }, Validators.required ],
     sn: [{ value: "", disabled: this.viewOnly() }],
     umload: [{ value: "", disabled: this.viewOnly() }],
-    showPhantom: [{ value: false, disabled: this.viewOnly() }],
-    conditions: [[{}]],
+    phantom: [{ value: false, disabled: this.viewOnly() }],
+    conditions: [[] as IrradiationCondition[]],
   });
 
   initFormValue: PartialSource = {};
+  isNewSource: boolean = false;
 
   get f() {
     return this.sourceForm.controls;
@@ -154,10 +157,16 @@ export class EditSourceComponent implements OnInit, OnDestroy {
     this.active$
       .subscribe((value: PartialSource | any) => {
         if(!value) {
+          this.isNewSource = true;
           return;
         }
 
-        this.sourceForm.patchValue(value);
+        this.isNewSource = false;
+
+        this.sourceForm.patchValue({
+          ...value,
+          phantom: value.phantom || false
+        });
 
         this.loadConditions(value.conditions);
 
@@ -170,7 +179,7 @@ export class EditSourceComponent implements OnInit, OnDestroy {
 
   loadConditions(conditions: any[]) {
     this.sourceForm.patchValue({
-      conditions: conditions
+      conditions: conditions || []
     });
   }
 
@@ -178,33 +187,17 @@ export class EditSourceComponent implements OnInit, OnDestroy {
     this.sourceForm.valueChanges.pipe(
       pairwise(),
       map(([_, newState]) => {
-        if(!Object.values(this.initFormValue).length) {
+        if(!Object.values(this.initFormValue).length && !this.isNewSource) {
           return {};
         }
-        const diff = {
-          ...difference(this.initFormValue, newState),
 
-          // Array data
-          conditions: [
-            ...(newState.conditions || []),
-          ]
-        };
-
-        return createSourcePayload(diff);
+        return createSourcePayload(newState);
       }),
       map((changes: any) => Object.keys(changes).length !== 0 && !this.sourceForm.invalid ? { ...changes } : {}),
       takeUntil(this.subject),
-      // tap(changes => console.log(changes)),
     ).subscribe((changes: any) => this.store.dispatch(SourceActions.sourceActiveChanges({ changes })));
   }
 
   click() {}
-
-  ngOnDestroy(): void {
-    this.sourceForm.reset();
-
-    this.store.dispatch(SourceActions.clearSourceActive());
-    this.store.dispatch(SourceActions.clearSourceHttpError());
-  }
 
 }
