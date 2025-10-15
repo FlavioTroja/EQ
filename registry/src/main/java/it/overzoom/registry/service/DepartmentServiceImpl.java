@@ -1,5 +1,6 @@
 package it.overzoom.registry.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,19 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
 import it.overzoom.registry.model.Department;
+import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.DepartmentRepository;
-import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-    private final SourceRepository sourceRepository;
+    private final SourceService sourceService;
 
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
-            SourceRepository sourceRepository) {
+            SourceService sourceService) {
         this.departmentRepository = departmentRepository;
-        this.sourceRepository = sourceRepository;
+        this.sourceService = sourceService;
     }
 
     @Override
@@ -65,6 +66,20 @@ public class DepartmentServiceImpl implements DepartmentService {
                     if (department.getName() != null) {
                         existingDepartment.setName(department.getName());
                     }
+
+                    if (department.getSources() != null && !department.getSources().isEmpty()) {
+
+                        List<Source> updatedSources = new ArrayList<>();
+
+                        for (Source source : department.getSources()) {
+                            if (source.getId() != null) {
+                                sourceService.partialUpdate(source.getId(), source)
+                                        .ifPresent(updatedSources::add);
+                            }
+                        }
+                        existingDepartment.setSources(updatedSources);
+                    }
+
                     return existingDepartment;
                 })
                 .map(departmentRepository::save);
@@ -76,7 +91,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reparto non trovato."));
 
-        if (sourceRepository.existsByDepartmentId(id)) {
+        if (sourceService.existsByDepartmentId(id)) {
             throw new BadRequestException(
                     "Impossibile cancellare il reparto perché ci sono delle sorgenti ad esso collegate.");
         }

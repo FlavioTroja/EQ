@@ -119,7 +119,7 @@ public class SourceServiceImpl implements SourceService {
     @Transactional
     public void deleteById(String id) throws BadRequestException, ResourceNotFoundException {
         // verifichiamo che esista
-        Source src = sourceRepository.findById(id)
+        sourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata: " + id));
 
         // se esistono condizioni collegate, lancio BadRequest
@@ -129,5 +129,10 @@ public class SourceServiceImpl implements SourceService {
         }
 
         sourceRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByDepartmentId(String departmentId) {
+        return sourceRepository.existsByDepartmentId(departmentId);
     }
 }

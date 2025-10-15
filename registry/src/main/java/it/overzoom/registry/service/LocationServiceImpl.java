@@ -17,7 +17,6 @@ import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.CustomerRepository;
 import it.overzoom.registry.repository.DepartmentRepository;
 import it.overzoom.registry.repository.LocationRepository;
-import it.overzoom.registry.repository.MachineRepository;
 import it.overzoom.registry.repository.SourceRepository;
 
 @Service
@@ -28,20 +27,17 @@ public class LocationServiceImpl implements LocationService {
     private final CustomerRepository customerRepository;
     private final LocationMapper locationMapper;
     private final SourceRepository sourceRepository;
-    private final MachineRepository machineRepository;
 
     public LocationServiceImpl(LocationRepository locationRepository,
             DepartmentRepository departmentRepository,
             CustomerRepository customerRepository,
             LocationMapper locationMapper,
-            SourceRepository sourceRepository,
-            MachineRepository machineRepository) {
+            SourceRepository sourceRepository) {
         this.locationRepository = locationRepository;
         this.departmentRepository = departmentRepository;
         this.customerRepository = customerRepository;
         this.locationMapper = locationMapper;
         this.sourceRepository = sourceRepository;
-        this.machineRepository = machineRepository;
     }
 
     @Override
