@@ -90,7 +90,7 @@ public class DepartmentController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Department> update(@Valid @RequestBody Department department)
+    public ResponseEntity<Department> update(@PathVariable("locationId") String locationId, @Valid @RequestBody Department department)
             throws BadRequestException, ResourceNotFoundException {
         log.info("REST request to update Department: " + department.toString());
         if (department.getId() == null) {
@@ -105,7 +105,7 @@ public class DepartmentController {
 
     @PatchMapping(value = "/{id}", consumes = { "application/json",
             "application/merge-patch+json" })
-    public ResponseEntity<Department> partialUpdate(@PathVariable(value = "id") String id,
+    public ResponseEntity<Department> partialUpdate(@PathVariable("locationId") String locationId, @PathVariable(value = "id") String id,
             @RequestBody Department department) throws BadRequestException,
             ResourceNotFoundException {
         log.info("REST request to partial update Department: " +
