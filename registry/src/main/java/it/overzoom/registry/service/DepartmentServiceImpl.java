@@ -62,27 +62,26 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Optional<Department> partialUpdate(String id, Department department) {
         return departmentRepository.findById(id)
-                .map(existingDepartment -> {
-                    if (department.getName() != null) {
-                        existingDepartment.setName(department.getName());
-                    }
+            .map(existingDepartment -> {
+                // Aggiorna i campi del Department
+                if (department.getName() != null) {
+                    existingDepartment.setName(department.getName());
+                }
 
-                    if (department.getSources() != null && !department.getSources().isEmpty()) {
-
-                        List<Source> updatedSources = new ArrayList<>();
-
-                        for (Source source : department.getSources()) {
-                            if (source.getId() != null) {
-                                sourceService.partialUpdate(source.getId(), source)
-                                        .ifPresent(updatedSources::add);
-                            }
+                // Logica per l'aggiornamento delle sources
+                if (department.getSources() != null && !department.getSources().isEmpty()) {
+                    List<Source> updatedSources = new ArrayList<>();
+                    for (Source source : department.getSources()) {
+                        if (source.getId() != null) {
+                            sourceService.partialUpdate(source.getId(), source)
+                                    .ifPresent(updatedSources::add);
                         }
-                        existingDepartment.setSources(updatedSources);
                     }
+                    existingDepartment.setSources(updatedSources);
+                }
 
-                    return existingDepartment;
-                })
-                .map(departmentRepository::save);
+                return existingDepartment;
+            }).map(departmentRepository::save);
     }
 
     @Override
