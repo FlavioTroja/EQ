@@ -20,4 +20,8 @@ public interface MeasurementService {
     Optional<Measurement> partialUpdate(String id, Measurement measurement);
 
     void deleteById(String id) throws ResourceNotFoundException, BadRequestException;
+
+    boolean existsByIrradiationConditionId(String irradiationConditionId);
+
+    void deleteAll(List<Measurement> measurements);
 }

@@ -142,7 +142,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .stream()
                                 .map(measurementMapper::toDto)
                                 .collect(Collectors.toList());
-                        icDto.setMeasurements(mDtos);
+                        icDto.setMeasurementPoints(mDtos);
                         icDto.setCompletedMeasurements(mDtos.size());
                     });
                 });

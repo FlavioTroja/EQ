@@ -1,5 +1,6 @@
 package it.overzoom.registry.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +13,6 @@ import it.overzoom.registry.model.IrradiationCondition;
 import it.overzoom.registry.model.Measurement;
 import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.IrradiationConditionRepository;
-import it.overzoom.registry.repository.MeasurementRepository;
 import it.overzoom.registry.repository.SourceRepository;
 
 @Service
@@ -20,15 +20,15 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
 
     private final IrradiationConditionRepository icRepository;
     private final SourceRepository sourceRepository;
-    private final MeasurementRepository measurementRepository;
+    private final MeasurementService measurementService;
 
     public IrradiationConditionServiceImpl(
             IrradiationConditionRepository icRepository,
             SourceRepository sourceRepository,
-            MeasurementRepository measurementRepository) {
+            MeasurementService measurementService) {
         this.icRepository = icRepository;
         this.sourceRepository = sourceRepository;
-        this.measurementRepository = measurementRepository;
+        this.measurementService = measurementService;
     }
 
     /**
@@ -53,8 +53,8 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
         return icRepository.findById(id)
                 .map(ic -> {
                     // opzionale: popolare le misurazioni a richiesta
-                    List<Measurement> measurements = measurementRepository.findByIrradiationConditionId(ic.getId());
-                    ic.setMeasurements(measurements);
+                    List<Measurement> measurementPoints = measurementService.findByIrradiationConditionId(ic.getId());
+                    ic.setMeasurementPoints(measurementPoints);
                     return ic;
                 });
     }
@@ -84,7 +84,7 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
                 .orElseThrow(() -> new ResourceNotFoundException("Source non trovata: " + sourceId));
 
         // Inizializzo la lista di misurazioni
-        ic.setMeasurements(new java.util.ArrayList<>());
+        ic.setMeasurementPoints(new java.util.ArrayList<>());
         IrradiationCondition saved = icRepository.save(ic);
 
         // Aggiorno anche la lista di IRRADIATION_CONDITIONS dentro la Source (se uso
@@ -104,20 +104,34 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
      * Partial update: modifica solo i campi non null della IrradiationCondition.
      */
     @Override
-    @Transactional
-    public Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic)
-            throws ResourceNotFoundException {
+    public Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition condition) {
         return icRepository.findById(id)
                 .map(existing -> {
-                    if (ic.getSetUpMeasure() != null) {
-                        existing.setSetUpMeasure(ic.getSetUpMeasure());
+                    if (condition.getName() != null)
+                        existing.setName(condition.getName());
+                    if (condition.getSetUpMeasure() != null)
+                        existing.setSetUpMeasure(condition.getSetUpMeasure());
+                    if (condition.getParameters() != null)
+                        existing.setParameters(condition.getParameters());
+                    if (condition.getCompletedMeasurements() != null)
+                        existing.setCompletedMeasurements(condition.getCompletedMeasurements());
+
+                    // gestisci anche le measurementPoints
+                    if (condition.getMeasurementPoints() != null && !condition.getMeasurementPoints().isEmpty()) {
+                        List<Measurement> updatedMeasurements = new ArrayList<>();
+                        for (Measurement m : condition.getMeasurementPoints()) {
+                            m.setIrradiationConditionId(existing.getId());
+                            if (m.getId() != null) {
+                                measurementService.partialUpdate(m.getId(), m)
+                                        .ifPresent(updatedMeasurements::add);
+                            } else {
+                                m.setIrradiationConditionId(existing.getId());
+                                updatedMeasurements.add(measurementService.create(m));
+                            }
+                        }
+                        existing.setMeasurementPoints(updatedMeasurements);
                     }
-                    // Se parameters non è null (cioè il client ha inviato un array),
-                    // rimpiazziamo la lista; altrimenti lasciamo quella esistente.
-                    if (ic.getParameters() != null) {
-                        existing.setParameters(ic.getParameters());
-                    }
-                    // Non tocchiamo sourceId a meno che non serva veramente
+
                     return icRepository.save(existing);
                 });
     }
@@ -155,11 +169,20 @@ public class IrradiationConditionServiceImpl implements IrradiationConditionServ
         icRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Condizione non trovata: " + id));
 
-        if (measurementRepository.existsByIrradiationConditionId(id)) {
-            List<Measurement> measurements = measurementRepository.findByIrradiationConditionId(id);
-            measurementRepository.deleteAll(measurements);
+        if (measurementService.existsByIrradiationConditionId(id)) {
+            List<Measurement> measurements = measurementService.findByIrradiationConditionId(id);
+            measurementService.deleteAll(measurements);
         }
 
         icRepository.deleteById(id);
+    }
+
+    /**
+     * Verifica se esiste almeno una IrradiationCondition associata alla Source
+     * specificata.
+     */
+    @Override
+    public boolean existsBySourceId(String sourceId) {
+        return icRepository.existsBySourceId(sourceId);
     }
 }

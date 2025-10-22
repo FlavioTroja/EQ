@@ -42,19 +42,25 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    @Transactional
-    public Optional<Measurement> partialUpdate(String id, Measurement measurement) {
-        return this.findById(id)
-                .map(existingMeasurement -> {
-                    if (measurement.getKey() != null) {
-                        existingMeasurement.setKey(measurement.getKey());
-                    }
-                    if (measurement.getValue() != null) {
-                        existingMeasurement.setValue(measurement.getValue());
-                    }
-                    return existingMeasurement;
-                })
-                .map(this::create);
+    public Optional<Measurement> partialUpdate(String id, Measurement m) {
+        return measurementRepository.findById(id)
+                .map(existing -> {
+                    if (m.getDate() != null)
+                        existing.setDate(m.getDate());
+                    if (m.getName() != null)
+                        existing.setName(m.getName());
+                    if (m.getUnitMeasurement1() != null)
+                        existing.setUnitMeasurement1(m.getUnitMeasurement1());
+                    if (m.getUnitMeasurement2() != null)
+                        existing.setUnitMeasurement2(m.getUnitMeasurement2());
+                    if (m.getValue1() != null)
+                        existing.setValue1(m.getValue1());
+                    if (m.getValue2() != null)
+                        existing.setValue2(m.getValue2());
+                    if (m.getIrradiationConditionId() != null)
+                        existing.setIrradiationConditionId(m.getIrradiationConditionId());
+                    return measurementRepository.save(existing);
+                });
     }
 
     @Override
@@ -63,5 +69,16 @@ public class MeasurementServiceImpl implements MeasurementService {
         measurementRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Misurazione non trovata."));
         measurementRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByIrradiationConditionId(String irradiationConditionId) {
+        return measurementRepository.existsByIrradiationConditionId(irradiationConditionId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAll(List<Measurement> measurements) {
+        measurementRepository.deleteAll(measurements);
     }
 }

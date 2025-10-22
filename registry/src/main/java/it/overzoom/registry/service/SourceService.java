@@ -20,7 +20,7 @@ public interface SourceService {
 
     Optional<Source> update(Source department);
 
-    Optional<Source> partialUpdate(String id, Source department);
+    Optional<Source> partialUpdate(String id, Source department) throws ResourceNotFoundException, BadRequestException;
 
     void deleteById(String id) throws BadRequestException, ResourceNotFoundException;
 

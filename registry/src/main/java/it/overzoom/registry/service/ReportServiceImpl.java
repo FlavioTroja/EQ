@@ -80,14 +80,14 @@ public class ReportServiceImpl implements ReportService {
 
     /**
      * Prepara un ReportDTO per una determinata Location:
-     *   - recupera Location → Customer
-     *   - recupera tutti i Department legati a quella Location
-     *   - per ciascun Department, recupera tutte le Source
-     *   - per ciascuna Source, recupera tutte le IrradiationCondition
-     *   - per ciascuna IrradiationCondition, recupera tutte le Measurement
-     *   - infine, costruisce due liste di Measurement:
-     *       • lastMeasurements  (quelle del giorno più recente)
-     *       • prospectMeasurements (il resto)
+     * - recupera Location → Customer
+     * - recupera tutti i Department legati a quella Location
+     * - per ciascun Department, recupera tutte le Source
+     * - per ciascuna Source, recupera tutte le IrradiationCondition
+     * - per ciascuna IrradiationCondition, recupera tutte le Measurement
+     * - infine, costruisce due liste di Measurement:
+     * • lastMeasurements (quelle del giorno più recente)
+     * • prospectMeasurements (il resto)
      */
     @Override
     public ReportDTO prepare(String locationId) throws ResourceNotFoundException {
@@ -118,7 +118,7 @@ public class ReportServiceImpl implements ReportService {
                 conditions.forEach(ic -> {
                     List<Measurement> measurements = measurementRepository
                             .findByIrradiationConditionId(ic.getId());
-                    ic.setMeasurements(measurements);
+                    ic.setMeasurementPoints(measurements);
                 });
 
                 // 7) Assegno la lista di condizioni (popolate di misurazioni) alla Source
@@ -130,7 +130,7 @@ public class ReportServiceImpl implements ReportService {
         });
 
         // 9) Ora costruisco la lista unica di tutte le misurazioni:
-        //    departments → sources → conditions → measurements
+        // departments → sources → conditions → measurements
         List<Measurement> allMeasurements = departments.stream()
                 // filtro eventuali dept senza sources
                 .filter(dept -> dept.getSources() != null)
@@ -139,8 +139,8 @@ public class ReportServiceImpl implements ReportService {
                 .filter(source -> source.getIrradiationConditions() != null)
                 .flatMap(source -> source.getIrradiationConditions().stream())
                 // filtro eventuali condition senza misurazioni
-                .filter(ic -> ic.getMeasurements() != null)
-                .flatMap(ic -> ic.getMeasurements().stream())
+                .filter(ic -> ic.getMeasurementPoints() != null)
+                .flatMap(ic -> ic.getMeasurementPoints().stream())
                 .collect(Collectors.toList());
 
         if (!allMeasurements.isEmpty()) {
@@ -150,7 +150,8 @@ public class ReportServiceImpl implements ReportService {
                     .max(Comparator.naturalOrder())
                     .orElseThrow(); // non verrà mai lanciato perché la lista non è vuota
 
-            // 11) Copio in due liste separate: quelle del giorno più recente e tutte le altre
+            // 11) Copio in due liste separate: quelle del giorno più recente e tutte le
+            // altre
             List<Measurement> lastMeasurements = allMeasurements.stream()
                     .filter(m -> m.getDate().toLocalDate().equals(latestDay))
                     .collect(Collectors.toList());

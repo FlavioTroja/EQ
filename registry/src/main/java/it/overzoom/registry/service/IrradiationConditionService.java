@@ -15,11 +15,14 @@ public interface IrradiationConditionService {
 
     List<IrradiationCondition> findBySourceId(String sourceId) throws ResourceNotFoundException;
 
-    Optional<IrradiationCondition> update(IrradiationCondition ic) throws ResourceNotFoundException, BadRequestException;
+    Optional<IrradiationCondition> update(IrradiationCondition ic)
+            throws ResourceNotFoundException, BadRequestException;
 
-    Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic) throws ResourceNotFoundException;
+    Optional<IrradiationCondition> partialUpdate(String id, IrradiationCondition ic);
 
     void deleteById(String id) throws ResourceNotFoundException, BadRequestException;
 
-    public boolean existsById(String id);
+    boolean existsById(String id);
+
+    boolean existsBySourceId(String sourceId);
 }
