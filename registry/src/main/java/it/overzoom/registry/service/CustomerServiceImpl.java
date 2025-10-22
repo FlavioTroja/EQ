@@ -13,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.dto.DepartmentDTO;
-import it.overzoom.registry.dto.IrradiationConditionDTO;
 import it.overzoom.registry.dto.LocationDTO;
-import it.overzoom.registry.dto.MeasurementDTO;
 import it.overzoom.registry.dto.SourceDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
@@ -90,66 +88,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<CustomerDTO> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable)
-                .map(customerMapper::toDto);
+    public Page<Customer> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     @Override
-    public CustomerDTO findById(String customerId) throws ResourceNotFoundException {
-        Customer customer = customerRepository.findById(customerId)
+    public Customer findById(String customerId) throws ResourceNotFoundException {
+        return customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato"));
-
-        CustomerDTO dto = customerMapper.toDto(customer);
-
-        List<LocationDTO> locDtos = locationRepository
-                .findByCustomerId(customerId)
-                .stream()
-                .map(locationMapper::toDto)
-                .collect(Collectors.toList());
-        dto.setLocations(locDtos);
-
-        locDtos.forEach(locDto -> {
-            List<DepartmentDTO> deptDtos = departmentRepository
-                    .findByLocationId(locDto.getId())
-                    .stream()
-                    .map(departmentMapper::toDto)
-                    .collect(Collectors.toList());
-            locDto.setDepartments(deptDtos);
-            locDto.setCompletedDepartments(deptDtos.size());
-
-            deptDtos.forEach(deptDto -> {
-                List<SourceDTO> srcDtos = sourceRepository
-                        .findByDepartmentId(deptDto.getId())
-                        .stream()
-                        .map(sourceMapper::toDto)
-                        .collect(Collectors.toList());
-                deptDto.setSources(srcDtos);
-                deptDto.setCompletedSources(srcDtos.size());
-
-                srcDtos.forEach(srcDto -> {
-                    List<IrradiationConditionDTO> icDtos = irradiationConditionRepository
-                            .findBySourceId(srcDto.getId())
-                            .stream()
-                            .map(irradiationConditionMapper::toDto)
-                            .collect(Collectors.toList());
-                    srcDto.setIrradiationConditions(icDtos);
-                    srcDto.setCompletedIrradiationConditions(icDtos.size());
-
-                    icDtos.forEach(icDto -> {
-                        List<MeasurementDTO> mDtos = measurementRepository
-                                .findByIrradiationConditionId(icDto.getId())
-                                .stream()
-                                .map(measurementMapper::toDto)
-                                .collect(Collectors.toList());
-                        icDto.setMeasurementPoints(mDtos);
-                        icDto.setCompletedMeasurements(mDtos.size());
-                    });
-                });
-            });
-        });
-
-        return dto;
     }
 
     @Override

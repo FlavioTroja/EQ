@@ -12,7 +12,7 @@ import it.overzoom.registry.model.Customer;
 
 public interface CustomerService {
 
-    Page<CustomerDTO> findAll(Pageable pageable);
+    Page<Customer> findAll(Pageable pageable);
 
     /**
      * Retrieves a customer by their unique identifier.
@@ -22,7 +22,7 @@ public interface CustomerService {
      * @throws ResourceNotFoundException if no customer with the given id is found
      * @throws BadRequestException       if the provided id is invalid or malformed
      */
-    CustomerDTO findById(String id) throws ResourceNotFoundException, BadRequestException;
+    Customer findById(String id) throws ResourceNotFoundException, BadRequestException;
 
     Page<CustomerDTO> findByUserId(String userId, Pageable pageable);
 
