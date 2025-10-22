@@ -9,7 +9,7 @@ import it.overzoom.registry.model.Location;
 
 public interface LocationService {
 
-        List<LocationDTO> findByCustomerId(String customerId)
+        List<Location> findByCustomerId(String customerId)
                         throws ResourceNotFoundException, BadRequestException;
 
         Location findById(String id) throws ResourceNotFoundException, BadRequestException;

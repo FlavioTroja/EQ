@@ -11,74 +11,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.overzoom.registry.dto.CustomerDTO;
-import it.overzoom.registry.dto.DepartmentDTO;
-import it.overzoom.registry.dto.LocationDTO;
-import it.overzoom.registry.dto.SourceDTO;
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
-import it.overzoom.registry.mapper.CustomerMapper;
-import it.overzoom.registry.mapper.DepartmentMapper;
-import it.overzoom.registry.mapper.IrradiationConditionMapper;
-import it.overzoom.registry.mapper.LocationMapper;
-import it.overzoom.registry.mapper.MeasurementMapper;
-import it.overzoom.registry.mapper.SourceMapper;
 import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Department;
 import it.overzoom.registry.model.Location;
 import it.overzoom.registry.model.Source;
 import it.overzoom.registry.repository.CustomerRepository;
 import it.overzoom.registry.repository.DepartmentRepository;
-import it.overzoom.registry.repository.IrradiationConditionRepository;
 import it.overzoom.registry.repository.LocationRepository;
-import it.overzoom.registry.repository.MeasurementRepository;
 import it.overzoom.registry.repository.SourceRepository;
 import it.overzoom.registry.security.SecurityUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private final LocationService locationService;
     private final CustomerRepository customerRepository;
     private final LocationRepository locationRepository;
     private final DepartmentRepository departmentRepository;
     private final SourceRepository sourceRepository;
-    private final CustomerMapper customerMapper;
-    private final LocationMapper locationMapper;
-    private final DepartmentMapper departmentMapper;
-    private final SourceMapper sourceMapper;
-    private final IrradiationConditionRepository irradiationConditionRepository;
-    private final MeasurementRepository measurementRepository;
-    private final IrradiationConditionMapper irradiationConditionMapper;
-    private final MeasurementMapper measurementMapper;
 
     public CustomerServiceImpl(
             CustomerRepository customerRepository,
             LocationRepository locationRepository,
             DepartmentRepository departmentRepository,
-            SourceRepository sourceRepository,
-            CustomerMapper customerMapper,
-            LocationMapper locationMapper,
-            LocationService locationService,
-            DepartmentMapper departmentMapper,
-            SourceMapper sourceMapper,
-            IrradiationConditionRepository irradiationConditionRepository,
-            MeasurementRepository measurementRepository,
-            IrradiationConditionMapper irradiationConditionMapper,
-            MeasurementMapper measurementMapper) {
+            SourceRepository sourceRepository) {
         this.customerRepository = customerRepository;
         this.locationRepository = locationRepository;
         this.departmentRepository = departmentRepository;
         this.sourceRepository = sourceRepository;
-        this.customerMapper = customerMapper;
-        this.locationMapper = locationMapper;
-        this.locationService = locationService;
-        this.departmentMapper = departmentMapper;
-        this.sourceMapper = sourceMapper;
-        this.irradiationConditionRepository = irradiationConditionRepository;
-        this.measurementRepository = measurementRepository;
-        this.irradiationConditionMapper = irradiationConditionMapper;
-        this.measurementMapper = measurementMapper;
     }
 
     public boolean hasAccess(String customerId) throws ResourceNotFoundException {
@@ -99,19 +60,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<CustomerDTO> findByUserId(String userId, Pageable pageable) {
-        return customerRepository.findByUserId(userId, pageable)
-                .map(customerMapper::toDto)
-                .map(dto -> {
-                    List<LocationDTO> locDtos;
-                    try {
-                        locDtos = locationService.findByCustomerId(dto.getId());
-                    } catch (ResourceNotFoundException | BadRequestException e) {
-                        locDtos = Collections.emptyList();
-                    }
-                    dto.setLocations(locDtos);
-                    return dto;
-                });
+    public Page<Customer> findByUserId(String userId, Pageable pageable) {
+        return customerRepository.findByUserId(userId, pageable);
     }
 
     @Override
@@ -120,35 +70,31 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO create(Customer customer) {
-        return customerMapper.toDto(customerRepository.save(customer));
+    public Customer create(Customer customer) {
+        return customerRepository.save(customer);
     }
 
     @Override
     @Transactional
-    public CustomerDTO createWithNested(CustomerDTO dto) {
-        Customer customer = customerMapper.toEntity(dto);
+    public Customer createWithNested(Customer customer) {
         customer.setLocations(Collections.emptyList());
         customer = customerRepository.save(customer);
 
         List<Location> savedLocs = new ArrayList<>();
-        for (LocationDTO locDto : dto.getLocations()) {
-            locDto.setCustomerId(customer.getId());
-            Location loc = locationMapper.toEntity(locDto);
+        for (Location loc : customer.getLocations()) {
+            loc.setCustomerId(customer.getId());
             loc.setDepartments(Collections.emptyList());
             loc = locationRepository.save(loc);
 
             List<Department> savedDeps = new ArrayList<>();
-            for (DepartmentDTO depDto : locDto.getDepartments()) {
-                depDto.setLocationId(loc.getId());
-                Department dep = departmentMapper.toEntity(depDto);
+            for (Department dep : loc.getDepartments()) {
+                dep.setLocationId(loc.getId());
                 dep.setSources(Collections.emptyList());
                 dep = departmentRepository.save(dep);
 
                 List<Source> savedSrcs = new ArrayList<>();
-                for (SourceDTO srcDto : depDto.getSources()) {
-                    srcDto.setDepartmentId(dep.getId());
-                    Source src = sourceMapper.toEntity(srcDto);
+                for (Source src : dep.getSources()) {
+                    src.setDepartmentId(dep.getId());
                     savedSrcs.add(sourceRepository.save(src));
                 }
                 dep.setSources(savedSrcs);
@@ -161,12 +107,12 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setLocations(savedLocs);
         customer = customerRepository.save(customer);
 
-        return customerMapper.toDto(customer);
+        return customer;
     }
 
     @Override
     @Transactional
-    public CustomerDTO update(Customer customer) throws ResourceNotFoundException, BadRequestException {
+    public Customer update(Customer customer) throws ResourceNotFoundException, BadRequestException {
         Customer existingCustomer = customerRepository.findById(customer.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
 
@@ -180,12 +126,12 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         existingCustomer.setNotes(customer.getNotes());
 
-        return this.create(existingCustomer);
+        return customerRepository.save(existingCustomer);
     }
 
     @Override
     @Transactional
-    public CustomerDTO partialUpdate(String id, Customer customer)
+    public Customer partialUpdate(String id, Customer customer)
             throws ResourceNotFoundException, BadRequestException {
         Customer existingCustomer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente non trovato."));
@@ -218,7 +164,7 @@ public class CustomerServiceImpl implements CustomerService {
             existingCustomer.setNotes(customer.getNotes());
         }
 
-        return this.create(existingCustomer);
+        return customerRepository.save(existingCustomer);
 
     }
 
@@ -236,7 +182,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> findCustomersByMachine(String machineId) {
+    public List<Customer> findCustomersByMachine(String machineId) {
         List<Source> sources = sourceRepository.findByMachineId(machineId);
 
         Set<String> deptIds = sources.stream()
@@ -272,8 +218,6 @@ public class CustomerServiceImpl implements CustomerService {
             return List.of();
         }
 
-        return customers.stream()
-                .map(customerMapper::toDto)
-                .collect(Collectors.toList());
+        return customers;
     }
 }

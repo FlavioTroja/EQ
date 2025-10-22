@@ -74,7 +74,9 @@ public class LocationController {
             throw new BadRequestException("Non hai i permessi per accedere a questa sede.");
         }
 
-        List<LocationDTO> list = locationService.findByCustomerId(customerId);
+        List<LocationDTO> list = locationService.findByCustomerId(customerId).stream()
+                .map(locationMapper::toDto)
+                .collect(Collectors.toList());
         return ResponseEntity.ok().body(list);
     }
 

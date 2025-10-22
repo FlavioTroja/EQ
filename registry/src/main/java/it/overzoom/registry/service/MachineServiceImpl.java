@@ -2,15 +2,17 @@ package it.overzoom.registry.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.dto.MachineDTO;
+import it.overzoom.registry.mapper.CustomerMapper;
 import it.overzoom.registry.mapper.MachineMapper;
+import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Machine;
 import it.overzoom.registry.repository.MachineRepository;
 
@@ -19,12 +21,14 @@ public class MachineServiceImpl implements MachineService {
 
     private final MachineRepository machineRepository;
     private final CustomerService customerService;
+    private final CustomerMapper customerMapper;
     private final MachineMapper machineMapper;
 
     public MachineServiceImpl(MachineRepository machineRepository, CustomerService customerService,
-            MachineMapper machineMapper) {
+            CustomerMapper customerMapper, MachineMapper machineMapper) {
         this.machineRepository = machineRepository;
         this.customerService = customerService;
+        this.customerMapper = customerMapper;
         this.machineMapper = machineMapper;
     }
 
@@ -47,8 +51,8 @@ public class MachineServiceImpl implements MachineService {
         return machineRepository.findById(id)
                 .map(machine -> {
                     MachineDTO dto = machineMapper.toDto(machine);
-                    List<CustomerDTO> customers = customerService.findCustomersByMachine(id);
-                    dto.setCustomers(customers);
+                    List<Customer> customers = customerService.findCustomersByMachine(id);
+                    dto.setCustomers(customers.stream().map(customerMapper::toDto).collect(Collectors.toList()));
                     return dto;
                 });
     }

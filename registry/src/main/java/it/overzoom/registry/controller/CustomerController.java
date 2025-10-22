@@ -85,10 +85,28 @@ public class CustomerController {
     @GetMapping("")
     public ResponseEntity<Page<CustomerDTO>> findAll(Pageable pageable) throws ResourceNotFoundException {
         log.info("REST request to get a page of Customers");
-        Page<CustomerDTO> page = !SecurityUtils.isAdmin()
-                ? customerService.findByUserId(SecurityUtils.getCurrentUserId(), pageable)
-                : customerService.findAll(pageable).map(customerMapper::toDto);
-        return ResponseEntity.ok().body(page);
+
+        Page<CustomerDTO> page;
+
+        if (SecurityUtils.isAdmin()) {
+            // Caso admin: prendo tutti i clienti e li mappo in DTO
+            page = customerService.findAll(pageable)
+                    .map(customerMapper::toDto);
+        } else {
+            // Caso utente normale: prendo solo i suoi clienti
+            Page<Customer> customers = customerService.findByUserId(SecurityUtils.getCurrentUserId(), pageable);
+
+            page = customers.map(customer -> {
+                CustomerDTO dto = customerMapper.toDto(customer);
+                    List<LocationDTO> locDtos = locationRepository.findByCustomerId(dto.getId()).stream()
+                            .map(locationMapper::toDto)
+                            .collect(Collectors.toList());
+                    dto.setLocations(locDtos);
+                return dto;
+            });
+        }
+
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
@@ -160,10 +178,12 @@ public class CustomerController {
             throw new BadRequestException("Un nuovo cliente non può già avere un ID");
         }
         dto.setUserId(SecurityUtils.getCurrentUserId());
-        CustomerDTO result = customerService.createWithNested(dto);
+
+        Customer customer = customerMapper.toEntity(dto);
+        Customer result = customerService.createWithNested(customer);
         return ResponseEntity
                 .created(new URI("/api/registry/customers/" + result.getId()))
-                .body(result);
+                .body(customerMapper.toDto(result));
     }
 
     @PutMapping("")
@@ -177,9 +197,9 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        CustomerDTO updateCustomer = customerService.update(customer);
+        Customer updateCustomer = customerService.update(customer);
 
-        return ResponseEntity.ok().body(updateCustomer);
+        return ResponseEntity.ok().body(customerMapper.toDto(updateCustomer));
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
@@ -193,9 +213,9 @@ public class CustomerController {
             throw new ResourceNotFoundException("Cliente non trovato.");
         }
 
-        CustomerDTO updateCustomer = customerService.partialUpdate(id, customer);
+        Customer updateCustomer = customerService.partialUpdate(id, customer);
 
-        return ResponseEntity.ok().body(updateCustomer);
+        return ResponseEntity.ok().body(customerMapper.toDto(updateCustomer));
     }
 
     @DeleteMapping("/{id}")

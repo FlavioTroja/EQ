@@ -1,6 +1,7 @@
 package it.overzoom.registry.mapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -8,8 +9,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.overzoom.registry.dto.CustomerDTO;
 import it.overzoom.registry.dto.MachineDTO;
+import it.overzoom.registry.model.Customer;
 import it.overzoom.registry.model.Machine;
 import it.overzoom.registry.service.CustomerService;
 
@@ -33,7 +34,7 @@ public abstract class MachineMapper {
      */
     @AfterMapping
     protected void enrichWithCustomers(Machine machine, @MappingTarget MachineDTO dto) {
-        List<CustomerDTO> customers = customerService.findCustomersByMachine(machine.getId());
-        dto.setCustomers(customers);
+        List<Customer> customers = customerService.findCustomersByMachine(machine.getId());
+        dto.setCustomers(customers.stream().map(customerMapper::toDto).collect(Collectors.toList()));
     }
 }
