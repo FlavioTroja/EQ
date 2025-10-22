@@ -1,5 +1,6 @@
 package it.overzoom.registry.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,21 +9,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.overzoom.registry.exception.BadRequestException;
 import it.overzoom.registry.exception.ResourceNotFoundException;
+import it.overzoom.registry.model.IrradiationCondition;
 import it.overzoom.registry.model.Source;
-import it.overzoom.registry.repository.IrradiationConditionRepository;
 import it.overzoom.registry.repository.SourceRepository;
 
 @Service
 public class SourceServiceImpl implements SourceService {
 
     private final SourceRepository sourceRepository;
-    private final IrradiationConditionRepository irradiationConditionRepository;
+    private final IrradiationConditionService irradiationConditionService;
 
     public SourceServiceImpl(
             SourceRepository sourceRepository,
-            IrradiationConditionRepository irradiationConditionRepository) {
+            IrradiationConditionService irradiationConditionService) {
         this.sourceRepository = sourceRepository;
-        this.irradiationConditionRepository = irradiationConditionRepository;
+        this.irradiationConditionService = irradiationConditionService;
     }
 
     /**
@@ -67,30 +68,48 @@ public class SourceServiceImpl implements SourceService {
      * Partial update: modifica solo i campi non null del JSON ricevuto.
      */
     @Override
-    public Optional<Source> partialUpdate(String id, Source source) {
-        return sourceRepository.findById(id)
-                .map(existingSource -> {
-                    if (source.getSn() != null) {
-                        existingSource.setSn(source.getSn());
-                    }
-                    if (source.getExpirationDate() != null) {
-                        existingSource.setExpirationDate(source.getExpirationDate());
-                    }
-                    if (source.getPhantom() != null) {
-                        existingSource.setPhantom(source.getPhantom());
-                    }
-                    if (source.getLoad() != null) {
-                        existingSource.setLoad(source.getLoad());
-                    }
-                    if (source.getDepartmentId() != null) {
-                        existingSource.setDepartmentId(source.getDepartmentId());
-                    }
-                    if (source.getMachineId() != null) {
-                        existingSource.setMachineId(source.getMachineId());
-                    }
-                    // non toccare ossessionatamente il campo "completedMeasurements"
-                    return sourceRepository.save(existingSource);
-                });
+    public Optional<Source> partialUpdate(String id, Source source)
+            throws ResourceNotFoundException, BadRequestException {
+        Optional<Source> existingOptional = sourceRepository.findById(id);
+        if (existingOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Source existingSource = existingOptional.get();
+        if (source.getSn() != null) {
+            existingSource.setSn(source.getSn());
+        }
+        if (source.getExpirationDate() != null) {
+            existingSource.setExpirationDate(source.getExpirationDate());
+        }
+        if (source.getPhantom() != null) {
+            existingSource.setPhantom(source.getPhantom());
+        }
+        if (source.getLoad() != null) {
+            existingSource.setLoad(source.getLoad());
+        }
+        if (source.getDepartmentId() != null) {
+            existingSource.setDepartmentId(source.getDepartmentId());
+        }
+        if (source.getMachineId() != null) {
+            existingSource.setMachineId(source.getMachineId());
+        }
+        if (source.getIrradiationConditions() != null && !source.getIrradiationConditions().isEmpty()) {
+            List<IrradiationCondition> updatedConditions = new ArrayList<>();
+
+            for (IrradiationCondition condition : source.getIrradiationConditions()) {
+                if (condition.getId() != null) {
+                    irradiationConditionService.partialUpdate(condition.getId(), condition)
+                            .ifPresent(updatedConditions::add);
+                } else {
+                    condition.setSourceId(existingSource.getId());
+                    updatedConditions.add(irradiationConditionService.create(condition));
+                }
+            }
+
+            existingSource.setIrradiationConditions(updatedConditions);
+        }
+        return Optional.of(sourceRepository.save(existingSource));
     }
 
     /**
@@ -123,7 +142,7 @@ public class SourceServiceImpl implements SourceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sorgente non trovata: " + id));
 
         // se esistono condizioni collegate, lancio BadRequest
-        if (irradiationConditionRepository.existsBySourceId(id)) {
+        if (irradiationConditionService.existsBySourceId(id)) {
             throw new BadRequestException(
                     "Impossibile cancellare la sorgente perché ci sono ancora condizioni di irradiazione associate.");
         }

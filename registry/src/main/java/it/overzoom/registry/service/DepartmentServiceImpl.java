@@ -60,28 +60,36 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Optional<Department> partialUpdate(String id, Department department) {
-        return departmentRepository.findById(id)
-            .map(existingDepartment -> {
-                // Aggiorna i campi del Department
-                if (department.getName() != null) {
-                    existingDepartment.setName(department.getName());
-                }
+    public Optional<Department> partialUpdate(String id, Department department)
+            throws ResourceNotFoundException, BadRequestException {
+        Optional<Department> existingDepartmentOptional = departmentRepository.findById(id);
+        if (!existingDepartmentOptional.isPresent()) {
+            return Optional.empty();
+        }
 
-                // Logica per l'aggiornamento delle sources
-                if (department.getSources() != null && !department.getSources().isEmpty()) {
-                    List<Source> updatedSources = new ArrayList<>();
-                    for (Source source : department.getSources()) {
-                        if (source.getId() != null) {
-                            sourceService.partialUpdate(source.getId(), source)
-                                    .ifPresent(updatedSources::add);
-                        }
-                    }
-                    existingDepartment.setSources(updatedSources);
-                }
+        Department existingDepartment = existingDepartmentOptional.get();
+        // Aggiorna i campi del Department
+        if (department.getName() != null) {
+            existingDepartment.setName(department.getName());
+        }
 
-                return existingDepartment;
-            }).map(departmentRepository::save);
+        // Logica per l'aggiornamento delle sources
+        if (department.getSources() != null && !department.getSources().isEmpty()) {
+            List<Source> updatedSources = new ArrayList<>();
+            for (Source source : department.getSources()) {
+                if (source.getId() != null) {
+                    sourceService.partialUpdate(source.getId(), source)
+                            .ifPresent(updatedSources::add);
+                } else {
+                    source.setDepartmentId(existingDepartment.getId());
+                    updatedSources.add(sourceService.create(source));
+                }
+            }
+            existingDepartment.setSources(updatedSources);
+        }
+
+        Department savedDepartment = departmentRepository.save(existingDepartment);
+        return Optional.of(savedDepartment);
     }
 
     @Override

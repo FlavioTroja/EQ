@@ -20,7 +20,8 @@ public interface DepartmentService {
 
     Optional<Department> update(Department department);
 
-    Optional<Department> partialUpdate(String id, Department department);
+    Optional<Department> partialUpdate(String id, Department department)
+            throws ResourceNotFoundException, BadRequestException;
 
     void deleteById(String id) throws BadRequestException, ResourceNotFoundException;
 }

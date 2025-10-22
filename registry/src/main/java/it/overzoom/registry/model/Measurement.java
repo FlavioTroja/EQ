@@ -14,13 +14,18 @@ public class Measurement {
     @Id
     private String id;
 
+    @NotNull
+    private String name;
+
+    private String unitMeasurement1;
+
+    private String unitMeasurement2;
+
     private LocalDateTime date;
 
-    @NotNull
-    private String key;
+    private Float value1;
 
-    @NotNull
-    private Float value;
+    private Float value2;
 
     @Indexed
     private String irradiationConditionId;
@@ -33,20 +38,44 @@ public class Measurement {
         this.id = id;
     }
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Float getValue() {
-        return value;
+    public String getUnitMeasurement1() {
+        return unitMeasurement1;
     }
 
-    public void setValue(Float value) {
-        this.value = value;
+    public void setUnitMeasurement1(String unitMeasurement1) {
+        this.unitMeasurement1 = unitMeasurement1;
+    }
+
+    public String getUnitMeasurement2() {
+        return unitMeasurement2;
+    }
+
+    public void setUnitMeasurement2(String unitMeasurement2) {
+        this.unitMeasurement2 = unitMeasurement2;
+    }
+
+    public Float getValue1() {
+        return value1;
+    }
+
+    public void setValue1(Float value1) {
+        this.value1 = value1;
+    }
+
+    public Float getValue2() {
+        return value2;
+    }
+
+    public void setValue2(Float value2) {
+        this.value2 = value2;
     }
 
     public LocalDateTime getDate() {

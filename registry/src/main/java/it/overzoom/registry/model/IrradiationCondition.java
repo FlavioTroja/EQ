@@ -21,7 +21,7 @@ public class IrradiationCondition {
     private Integer completedMeasurements;
 
     @DBRef
-    List<Measurement> measurements;
+    List<Measurement> measurementPoints;
 
     public String getId() {
         return id;
@@ -63,12 +63,12 @@ public class IrradiationCondition {
         this.sourceId = sourceId;
     }
 
-    public List<Measurement> getMeasurements() {
-        return measurements;
+    public List<Measurement> getMeasurementPoints() {
+        return measurementPoints;
     }
 
-    public void setMeasurements(List<Measurement> measurements) {
-        this.measurements = measurements;
+    public void setMeasurementPoints(List<Measurement> measurementPoints) {
+        this.measurementPoints = measurementPoints;
     }
 
     public Integer getCompletedMeasurements() {

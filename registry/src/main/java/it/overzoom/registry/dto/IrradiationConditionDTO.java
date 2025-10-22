@@ -15,7 +15,7 @@ public class IrradiationConditionDTO {
 
     private Integer completedMeasurements;
 
-    private List<MeasurementDTO> measurements = new ArrayList<>();
+    private List<MeasurementDTO> measurementPoints = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -57,12 +57,12 @@ public class IrradiationConditionDTO {
         this.sourceId = sourceId;
     }
 
-    public List<MeasurementDTO> getMeasurements() {
-        return measurements;
+    public List<MeasurementDTO> getMeasurementPoints() {
+        return measurementPoints;
     }
 
-    public void setMeasurements(List<MeasurementDTO> measurements) {
-        this.measurements = measurements;
+    public void setMeasurementPoints(List<MeasurementDTO> measurementPoints) {
+        this.measurementPoints = measurementPoints;
     }
 
     public Integer getCompletedMeasurements() {
